@@ -1,3 +1,8 @@
+This is an already filled tournament.
+The functionality of the program can be tested by 
+following these steps
+
+
 1Start
  forgot password
  Tornament Full
@@ -5,6 +10,10 @@
 2Login Admin
  Show DbGrid Functionality
  Control panel
+
+Username for Admin: 01DiaWis
+Password for Admin: DW9561A
+Password as a user: DW9561 
 
 
 3Querries
