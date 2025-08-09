@@ -1,0 +1,5 @@
+object dmDataA: TdmDataA
+  OldCreateOrder = False
+  Height = 302
+  Width = 482
+end

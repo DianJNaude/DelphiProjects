@@ -1,0 +1,84 @@
+object dmDataA: TdmDataA
+  OldCreateOrder = False
+  Height = 302
+  Width = 482
+  object ADOConnectionM: TADOConnection
+    LoginPrompt = False
+    Mode = cmReadWrite
+    Provider = 'Microsoft.ACE.OLEDB.12.0'
+    Left = 240
+    Top = 72
+  end
+  object DSAnimal: TDataSource
+    DataSet = tblAnimals
+    Left = 40
+    Top = 232
+  end
+  object tblAnimals: TADOTable
+    Connection = ADOConnectionM
+    CursorType = ctStatic
+    TableName = 'tblAnimals'
+    Left = 40
+    Top = 168
+  end
+  object tblProducts: TADOTable
+    Connection = ADOConnectionM
+    CursorType = ctStatic
+    TableName = 'tblProducts'
+    Left = 104
+    Top = 168
+  end
+  object tblService: TADOTable
+    Connection = ADOConnectionM
+    CursorType = ctStatic
+    TableName = 'tblService'
+    Left = 168
+    Top = 168
+  end
+  object tblPurchaserecord: TADOTable
+    Connection = ADOConnectionM
+    CursorType = ctStatic
+    TableName = 'tblPurchaseRecord'
+    Left = 248
+    Top = 168
+  end
+  object tblTransaction: TADOTable
+    Connection = ADOConnectionM
+    CursorType = ctStatic
+    TableName = 'tblTransaction'
+    Left = 336
+    Top = 168
+  end
+  object tblClient: TADOTable
+    Connection = ADOConnectionM
+    CursorType = ctStatic
+    TableName = 'tblClient'
+    Left = 408
+    Top = 168
+  end
+  object DSProducts: TDataSource
+    DataSet = tblProducts
+    Left = 112
+    Top = 232
+  end
+  object DSService: TDataSource
+    DataSet = tblService
+    Left = 184
+    Top = 232
+  end
+  object DSPurchaserecord: TDataSource
+    DataSet = tblPurchaserecord
+    Left = 256
+    Top = 232
+  end
+  object DSTransaction: TDataSource
+    DataSet = tblTransaction
+    Left = 344
+    Top = 232
+  end
+  object DSClient: TDataSource
+    DataSet = tblClient
+    Left = 416
+    Top = 232
+  end
+end

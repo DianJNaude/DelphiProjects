@@ -1,0 +1,234 @@
+object frmUser: TfrmUser
+  Left = 0
+  Top = 0
+  Caption = 'frmUser'
+  ClientHeight = 541
+  ClientWidth = 773
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object imgP1: TImage
+    Left = 8
+    Top = 72
+    Width = 137
+    Height = 385
+  end
+  object lblTitlescore: TLabel
+    Left = 208
+    Top = 42
+    Width = 81
+    Height = 35
+    Caption = 'Score'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object lblSM: TLabel
+    Left = 372
+    Top = 42
+    Width = 230
+    Height = 35
+    Caption = 'Schedule Match'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object btnResign: TButton
+    Left = 620
+    Top = 476
+    Width = 145
+    Height = 25
+    Caption = 'Withdraw from tournament'
+    TabOrder = 0
+  end
+  object btnAppointment: TButton
+    Left = 401
+    Top = 388
+    Width = 201
+    Height = 78
+    Caption = 'Show my scheduled matches'
+    TabOrder = 1
+  end
+  object btnLogout: TButton
+    Left = 24
+    Top = 476
+    Width = 75
+    Height = 25
+    Caption = 'Logout'
+    TabOrder = 2
+  end
+  object pnlScheduleMatch: TPanel
+    Left = 364
+    Top = 72
+    Width = 254
+    Height = 310
+    TabOrder = 3
+    object lblDaterime: TLabel
+      Left = 27
+      Top = 156
+      Width = 112
+      Height = 13
+      Caption = 'Date and time of match'
+    end
+    object lblVenue: TLabel
+      Left = 26
+      Top = 92
+      Width = 49
+      Height = 13
+      Caption = 'Venue'
+    end
+    object lblOppNo: TLabel
+      Left = 19
+      Top = 20
+      Width = 88
+      Height = 13
+      Caption = 'Opponent Number'
+    end
+    object edtVenue: TEdit
+      Left = 26
+      Top = 111
+      Width = 121
+      Height = 21
+      TabOrder = 0
+    end
+    object dtpMatch: TDateTimePicker
+      Left = 25
+      Top = 175
+      Width = 186
+      Height = 21
+      Date = 44819.000000000000000000
+      Time = 0.447828472220862800
+      TabOrder = 1
+    end
+    object sedPlayer: TSpinEdit
+      Left = 26
+      Top = 39
+      Width = 41
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 2
+      Value = 0
+    end
+    object tpGame: TTimePicker
+      Left = 29
+      Top = 202
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      TabOrder = 3
+      Time = 44819.448408796300000000
+      TimeFormat = 'h:mm AMPM'
+    end
+    object btnMatch: TButton
+      Left = 33
+      Top = 254
+      Width = 121
+      Height = 30
+      Caption = 'Schedule a match'
+      TabOrder = 4
+    end
+  end
+  object pnlAddScore: TPanel
+    Left = 165
+    Top = 73
+    Width = 185
+    Height = 104
+    TabOrder = 4
+    object lblUser: TLabel
+      Left = 19
+      Top = 10
+      Width = 22
+      Height = 13
+      Caption = 'User'
+    end
+    object lblOponenet: TLabel
+      Left = 71
+      Top = 10
+      Width = 42
+      Height = 13
+      Caption = 'Oponent'
+    end
+    object sedOponent: TSpinEdit
+      Left = 72
+      Top = 29
+      Width = 41
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 0
+      Value = 0
+    end
+    object sedUser: TSpinEdit
+      Left = 9
+      Top = 29
+      Width = 40
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 0
+    end
+    object btnScoring: TButton
+      Left = 9
+      Top = 64
+      Width = 97
+      Height = 25
+      Caption = 'Add a Score'
+      TabOrder = 2
+    end
+  end
+  object pnlQuerries: TPanel
+    Left = 165
+    Top = 220
+    Width = 193
+    Height = 154
+    TabOrder = 5
+    object btnLeft: TButton
+      Left = 0
+      Top = 10
+      Width = 177
+      Height = 25
+      Caption = 'How many matches do I have left'
+      TabOrder = 0
+    end
+    object btnWinrate: TButton
+      Left = 0
+      Top = 41
+      Width = 177
+      Height = 25
+      Caption = 'How many matches have I won'
+      TabOrder = 1
+    end
+    object btnLost: TButton
+      Left = 0
+      Top = 72
+      Width = 169
+      Height = 25
+      Caption = 'How many matches have I lost'
+      TabOrder = 2
+    end
+    object btnMyscore: TButton
+      Left = 0
+      Top = 103
+      Width = 97
+      Height = 25
+      Caption = 'show my Points'
+      TabOrder = 3
+    end
+  end
+end

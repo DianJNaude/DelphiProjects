@@ -1,0 +1,233 @@
+unit TClientX_U;
+
+interface
+uses
+  SysUtils, Math, DateUtils;
+
+type
+  TClient = class(TObject)
+    private
+      var
+      fClientID:integer;
+      fName:string;
+      fSurname:string;
+      fCompany:string;
+      fBeginDate:Tdate ;
+      fLastlogindate:Tdate;
+      fTimespent:TdateTime;
+      fMoneyspent:real;
+      fDonate:real;
+
+    public
+    constructor create(pClientID: integer; pTimespent:TdateTime; pBeginDate, pLastlogindate:Tdate);
+   // constructor create(pClientID: integer; pTimespent:real; pName, pCompany:string; pBeginDate, pLastlogindate:Tdate; pMoneyspent, pDonate:real);
+   {
+
+    function FavouriteAnimal():integer;
+    function BiggestDonation:real;}
+    function ToString():string;
+    procedure LastLogin ;
+    function getMoneyspent :real ;
+    function getDonated :real;
+    function getName:string;
+    function getSurname:string;
+    function getCompany:string ;
+    function GetMembershiptime:string;
+     function getTime: tDateTime;
+     function getBeginDate:tDateTime;
+     function getLastLogin: tDateTime;
+   procedure increasetime(tTimeincreased:tDateTime);
+
+
+
+end;
+
+implementation
+uses User, Login, dmData ;
+
+{ TTransaction }
+
+
+
+{ TClient }
+
+constructor TClient.create(pClientID: integer; pTimespent: TdateTime; pBeginDate,
+  pLastlogindate: Tdate);
+  var
+  iPerson:integer;
+begin
+//Create and instantiate
+fClientID := pClientID;
+fBeginDate := pBeginDate;
+fLastlogindate := pLastlogindate;
+fTimespent := pTimespent;
+dmDataA.tblClient.First;
+fName := '';
+fCompany := '';
+fSurname := '';
+fMoneyspent :=  0;
+fDonate := 0;
+
+
+end;
+
+function TClient.getBeginDate: tDateTime;
+begin
+//get
+Result := fBeginDate ;
+end;
+
+function TClient.getCompany: string;
+begin
+//get
+dmDataA.tblClient.First ;
+while not dmDataA.tblClient.Eof do
+ begin
+  if dmDataA.tblClient['ClientID'] = fClientID then
+  begin
+    fCompany := dmDataA.tblClient['Company']  ;
+  end;
+
+ dmDataA.tblClient.Next;
+ end;
+ result := fCompany;
+end;
+
+function TClient.getDonated: real;
+begin
+//get
+ dmDataA.tblTransaction.First;
+ while not dmDataA.tblTransaction.Eof do
+  begin
+   if dmDataA.tblTransaction['ClientID'] = fClientID then
+    begin
+    fDonate := fDonate + dmDataA.tblTransaction['DonateAnimal'] ;
+    end;
+
+  dmDataA.tblTransaction.Next;
+  end;
+  result := fDonate ;
+end;
+
+function TClient.getLastLogin: tDateTime;
+begin
+//get
+result := fLastlogindate;
+end;
+
+function TClient.GetMembershiptime: string;
+var
+iD, iY, iM:Integer;
+sOut :string;
+begin
+//Dtermines membership time
+sOut :=  '' ;
+iD := DaysBetween(today,fBeginDate);
+iY := YearsBetween(today,fBeginDate)  ;
+ if not(iY = 0) then
+  begin
+   sOut :=  inttostr(iY) + ' years ' ;
+   iD := iD -365*iY ;
+  end ;
+
+if not(iD div 30 = 0) then
+ begin
+   iM := iD div 30 ;
+   sOut := sOut + inttostr(iM) + ' months '   ;
+   iD := iD -30*IM ;
+ end;
+
+ if not(iD = 0) then
+  begin
+   sOut := sOut + inttostr(iD) + ' days'   ;
+  end;
+
+  result := sout;
+
+
+end;
+
+function TClient.getMoneyspent: real;
+begin
+//Determines how much money was spent
+ dmDataA.tblTransaction.First;
+ while not dmDataA.tblTransaction.Eof do
+  begin
+   if dmDataA.tblTransaction['ClientID'] = fClientID then
+    begin
+    fMoneyspent := fMoneyspent + dmDataA.tblTransaction['Total'] ;
+    end;
+
+  dmDataA.tblTransaction.Next;
+  end;
+
+  result := fMoneyspent ;
+end;
+
+function TClient.getName: string;
+begin
+//Gets name
+dmDataA.tblClient.First ;
+  while not dmDataA.tblClient.Eof do
+ begin
+  if dmDataA.tblClient['ClientID'] = fClientID then
+  begin
+    fName := dmDataA.tblClient['Name'] ;
+  end;
+
+ dmDataA.tblClient.Next;
+ end;
+
+ result := fName;
+end;
+
+function TClient.getSurname: string;
+begin
+//Gets surname
+dmDataA.tblClient.First ;
+ while not dmDataA.tblClient.Eof do
+ begin
+  if dmDataA.tblClient['ClientID'] = fClientID then
+  begin
+  fSurname := dmDataA.tblClient['Surname']  ;
+  end;
+
+ dmDataA.tblClient.Next;
+ end;
+ result := fSurname ;
+end;
+
+function TClient.getTime: tDateTime;
+begin
+//Get time spent
+result := fTimespent;
+end;
+
+procedure TClient.increasetime(tTimeincreased: tDateTime);
+begin
+//Increases time spent
+fTimespent := fTimespent + tTimeincreased ;
+end;
+
+procedure TClient.LastLogin;
+begin
+//Gets last log in
+fLastlogindate := today ;
+end;
+
+function TClient.ToString: string;
+begin
+//T string for summary of Client
+result := 'REPORT' + #10 ;
+result:= result + 'Name: ' + getName +#10 + 'Surname ' + getSurname + #10 + 'Company: ' + getCompany + #10 + 'Client ID: ' + inttostr(fClientID) + #10 ;
+result := result + 'Joined on: ' + datetostr(fBeginDate)  + #10 + 'Last login: ' + datetostr(fLastlogindate) + #10 ;
+result := result + 'Membership time: ' + GetMembershiptime + #10;
+result := result + 'Money spent in total: ' + floattostrF(getMoneyspent,FFcurrency,10,2)  + #10 + 'Total money spent on donations: ' + floattostrF(getDonated,FFcurrency,10,2);
+
+end;
+
+end.
+
+ 
+
+

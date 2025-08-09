@@ -1,0 +1,1206 @@
+unit Login;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, jpeg,
+  Vcl.ComCtrls, Vcl.Buttons, Math, REST.Types, REST.Client, DateUtils,
+  REST.Authenticator.Basic, Data.Bind.Components, Data.Bind.ObjectScope,
+  System.JSON,
+  System.Net.HttpClient, Vcl.MPlayer;
+  //TwilioClient in 'OTPTwillo.pas' ;
+
+
+
+
+type
+  TfrmLogin = class(TForm)
+    PageControlLogin: TPageControl;
+    tbsLogin: TTabSheet;
+    tbsAddClient: TTabSheet;
+    imgLogin: TImage;
+    btnLogin: TButton;
+    edtPass: TEdit;
+    edtUser: TEdit;
+    pnlAddPlayer: TPanel;
+    lblFname: TLabel;
+    lblEmailSC: TLabel;
+    lblPhoneCS: TLabel;
+    lblComSC: TLabel;
+    lblLName: TLabel;
+    btnAdd: TButton;
+    edtNameL: TEdit;
+    EdtLastNameL: TEdit;
+    edtCom: TEdit;
+    edtPhoneL: TEdit;
+    edtEmailL: TEdit;
+    btnAccount: TButton;
+    btnForgot: TButton;
+    btnBack: TButton;
+    imgLion: TImage;
+    Label1: TLabel;
+    Label2: TLabel;
+    edtAdress: TEdit;
+    lblAdressCS: TLabel;
+    pnlNameXXX: TPanel;
+    btnSign: TButton;
+    mpSong: TMediaPlayer;
+    procedure btnLoginClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnAccountClick(Sender: TObject);
+    procedure bmbBackClick(Sender: TObject);
+    procedure btnBackClick(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure btnForgotClick(Sender: TObject);
+    procedure btnSignClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+   // procedure Button1Click(Sender: TObject);
+  private
+   {client: TTwilioClient;
+  allParams: TStringList;
+  response: TTwilioClientResponse;
+  json: TJSONValue;}
+  fromPhoneNumber: string;
+  toPhoneNumber: string;
+  sOTPx:string ;
+  bBeginX:boolean;
+  dAdd:integer;
+  bIsClient:boolean;
+  procedure clearALLItems;
+  procedure PopulateuUserArray;
+  procedure PasswordGenerator(sPhone:string; sPass:string);
+  procedure Admin;
+  procedure createTFiles(sNumber, sID:string) ;
+
+
+  //////
+  //notes Ammount donated and animal donations  data redundancy
+
+
+
+    { Private declarations }
+  public
+   tStartTime:tDateTime;
+   bMessagingACTIVE:boolean;
+  tFileUP, tAdmin:textFile ;
+  sAdmin, sInUser, sPhonenumADmin:string;
+  arrUsername, arrPassword:array[1..30] of string;
+  arrPANumA :array[1..30] of Integer ;
+  iCounterarray:integer ;
+  iTransaction, iAniamalDonateID, iIDAnimal, iClientID, iService, iProduct, iPurchaseRecord:integer;
+  sProductID, sServiceID, sPurchaseRecordID, sIDL:string;
+  sCNamelogin, sCSurnameLogin, sUserPhone:string ;
+  procedure OTPExecute(sPhoneNum, sOTP:string);
+  procedure formatPhone(var sfPhone:string);
+  procedure formatADDPhone(var sfPhonex:string);
+  function Phonevalidate(sPhone:string): boolean ;
+  procedure ChangePhoneSettings(sPhoneNew, sPhoneChange:string);
+  procedure ActivateDatabase;
+
+
+    { Public declarations }
+  end;
+
+var
+  frmLogin: TfrmLogin;
+
+implementation
+uses User, Admin, dmData, OTPTwillo;
+
+{$R *.dfm}
+
+procedure TfrmLogin.ActivateDatabase;
+begin
+dmDataA.ADOConnectionM.Connected := False ;
+dmDataA.ADOConnectionM.ConnectionString := 'Provider=Microsoft.ACE.OLEDB.12.0;User ID=Admin;Data Source=Store.accdb;Mode=ReadWrite;' ;
+dmDataA.ADOConnectionM.Connected := true;
+dmDataA.tblAnimals.Active := true;
+dmDataA.tblProducts.Active := true;
+dmDataA.tblService.Active := true;
+dmDataA.tblPurchaserecord.Active := true;
+dmDataA.tblTransaction.Active := true;
+dmDataA.tblClient.Active := true;
+dmDataA.tblAnimalDonations.Active := true;
+
+dmDataA.ADOConnectionM.Connected := true;
+end;
+
+procedure TfrmLogin.Admin;
+var
+f:integer;
+begin
+///This procedure determines the identity of the Admin and stores the Identity in sAdmin
+///  his/her identity is found in the textfile
+if FileExists('Admin.txt') then
+ begin
+ PopulateuUserArray;
+  AssignFile(tAdmin,'Admin.txt');
+  Reset(tAdmin);
+  Readln(tAdmin,sAdmin);
+    for f := 1 to iCounterarray do
+    begin
+     if sAdmin = arrUsername[f] then
+     begin
+     dAdd := f ;
+     end;
+    end;
+
+
+    dmDataA.tblClient.First;
+
+  while not dmDataA.tblClient.Eof do
+  begin
+
+   if sAdmin = inttostr(dmDataA.tblClient['ClientID'])  then
+   begin
+   //Get Admin phone number
+    sPhonenumADmin := dmDataA.tblClient['Phone'];
+   end;
+
+
+  dmDataA.tblClient.Next
+  end;
+  sAdmin := sAdmin + 'A' ;
+ end
+ else
+ begin
+   ShowMessage('File:Admin.txt not found');
+ end;
+ CloseFile(tAdmin);
+end;
+
+procedure TfrmLogin.bmbBackClick(Sender: TObject);
+begin
+//Changes tabsheets
+tbsAddClient.Visible := false;
+tbsLogin.Visible := true;
+end;
+
+procedure TfrmLogin.btnAddClick(Sender: TObject);
+var
+sName, sLastName, sCompany, sPhone, sEmail, sIDentity, sAdres:string;
+bEx, Bnotnull :boolean;
+rTest:real;
+iError, i, iSpace, ipos, icom:integer;
+sDay, sMonth, sYear, sDateF:string;
+sOut, sPerson:string ;
+bP :boolean ;
+sPassword, sConfirm:string;
+sInput:string;
+bDok:boolean;
+bPhone:boolean;
+begin
+///  This button adds or edits the data of a client
+///  When the client is new and slects the sign up the sign up code will run
+///  which is stored in the global boolean to determin if it is a new client or
+///  an existing one
+bBeginX := True ;
+sName:= edtNameL.Text;
+sLastName:= EdtLastNameL.Text;
+sCompany := edtCom.Text;
+sPhone := edtPhoneL.Text;
+sEmail := edtEmailL.Text;
+sAdres := edtAdress.Text;
+bEx:= True ;
+bP := true;
+sIDL:= inttostr(frmUser.iPlayerUser);
+formatADDPhone(sPhone);
+bPhone := Phonevalidate(sPhone) ;
+formatPhone(sPhone);
+
+if bIsClient = False then
+begin
+   //Validation
+ if sName = '' then
+  begin
+    ShowMessage('Enter name');
+    edtNameL.SetFocus;
+    bEx := False;
+  end;
+
+
+  if sLastName = '' then
+  begin
+    ShowMessage('Enter lastname');
+    EdtLastNameL.SetFocus;
+     bEx := False;
+  end;
+
+  if sCompany = '' then
+  begin
+    ShowMessage('Enter company');
+    edtCom.SetFocus;
+     bEx := False;
+  end;
+   bp := True ;
+  if sPhone = '' then
+  begin
+    ShowMessage('Enter phone number');
+    edtPhoneL.SetFocus;
+     bEx := False;
+  end
+  else
+  begin
+  for i := 1 to Length(sPhone) do
+   begin
+    if not(sPhone[i] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] ) or ((Length(sPhone) > 11)) or ((Length(sPhone) < 10)) then
+     begin
+     bp := False  ;
+     bEx := False ;
+     end;
+   end;
+
+   val(sPhone, rTest, iError) ;
+  if (length(sPhone) = 8)  or (not(iError = 0)) then
+   begin
+     bEx := False;
+     bP := false
+   end;
+      if bp = False then
+   begin
+   ShowMessage('Invalid phone number');
+   edtPhoneL.SetFocus;
+   end;
+   if bp = True then
+   begin
+   if bPhone = True then
+    begin
+    ShowMessage('Phone number already in use') ;
+    bEx := False;
+    end;
+   end;
+
+  end;
+
+   if sEmail = '' then
+  begin
+    ShowMessage('Enter email');
+    edtEmailL.SetFocus;
+     bEx := False;
+  end
+  else
+  begin
+  iSpace := pos(' ',sEmail);
+  ipos := pos('@',sEmail);
+  iCom := pos('.',sEmail);
+  if (iPos = 0) or (iCom = 0)  or (sEmail = '') or not(iSpace = 0) then
+  begin
+  ShowMessage('Email is not valid');
+    edtEmailL.SetFocus;
+     bEx := False;
+  end;
+  end;
+
+    if sAdres = '' then
+  begin
+    ShowMessage('Enter Adress');
+    edtAdress.SetFocus;
+    bEx := False;
+  end;
+///bEX is true which means that all the input is correct
+  if bEx = true then
+  begin
+  ///a password is created and confirmed
+       sPassword := inputbox('Create a strong password', 'Password:', 'Password');
+    sConfirm :=  inputbox('Confirm password', 'Password:', 'Password');
+
+
+    if sPassword = sConfirm then
+    begin
+
+     formatADDPhone(sPhone);
+     //Query is created with the data values
+    sOut := 'insert into tblClient (ClientID, Name, Surname, Company, Phone, Adress, Email)'; //values(20, "Hiking in the karoo", "12 GangGum street", 100, 5, "Northern Cape"))' ;
+    sOut := sOut +   'Values (' +  quotedstr(inttostr(iClientID))+ ', ' +  QuotedStr(sName) + ', ' +  QuotedStr(sLastName) + ', ' + QuotedStr(sCompany) + ', ' +QuotedStr(sPhone) + ', ' + QuotedStr(sAdres) + ', '  + QuotedStr(sEmail) + ')' ;
+    //Query is execurted and data is added
+    dmDataA.qrStore.Close;
+    dmDataA.qrStore.SQL.Clear;
+    dmDataA.qrStore.SQL.Add(sOut) ;
+    dmDataA.qrStore.ExecSQL;
+    dmDataA.qrStore.Close;
+    PasswordGenerator(sPhone,SPassword);
+    ShowMessage('Database has been updated')  ;
+    // Clients Textfiles are created and stores values
+
+     createTFiles(sPhone, inttostr(iClientID)) ;
+
+    // Clears all items
+    clearALLItems;
+    inc(iClientID);  //ClientID stores the ID value of the next user to be added ( it is a counter)
+    tbsAddClient.Visible := false ;
+    tbsLogin.Visible := True;
+    mpSong.Open;
+    mpSong.Play;
+    end
+    else
+    begin
+      ShowMessage('Password was not the same please try again') ;
+    end;
+  end;
+end;
+ ////////////////////////////////////////////////////////////////////////////////////////////////////
+///Change Client Data
+///  Of existing clients
+///  Uses boolean bIsclient
+
+if bIsClient = True then
+begin
+ if bBeginX = True then
+begin
+  bp := True;
+   dmDataA.tblClient.First;
+
+while not dmDataA.tblClient.Eof do
+begin
+ //Validates data
+if dmDataA.tblClient['ClientID'] = sIdL then
+ begin
+  dmDataA.tblClient.Edit ;
+   if not(sName = '') then
+   begin
+    dmDataA.tblClient['Name'] := sName ;
+   end;
+
+   if not(sLastName = '') then
+   begin
+    dmDataA.tblClient['Surname'] := sLastName ;
+   end;
+
+   if not(sCompany = '') then
+   begin
+    dmDataA.tblClient['Company'] := sLastName ;
+   end;
+
+   if not(sPhone = '') then
+   begin
+   for i := 1 to Length(sPhone) do
+    begin
+     if not(sPhone[i] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] ) or ((Length(sPhone) > 11)) or ((Length(sPhone) < 10)) then
+      begin
+      bp := False  ;
+      bEx := False ;
+      end;
+    end;
+
+
+   val(sPhone, rTest, iError) ;
+   if not(length(sPhone) = 10)  or (not(iError = 0)) then
+     begin
+     bEx := False;
+     bp := False  ;
+     end;
+
+    if bp = False then
+    begin
+    ShowMessage('Invalid phone number');
+    end
+   else
+    begin
+     if bPhone =True then
+      begin
+        ShowMessage('Phone number already exists, you cannot change to it');
+        bEx := False;
+      end
+      else
+      begin
+      formatADDPhone(sPhone);
+      ChangePhoneSettings(sPhone, sUserPhone) ;
+       dmDataA.tblClient['Phone'] := sPhone ;
+
+      end;
+
+    end;
+   end;
+
+   if not(sEmail = '') then
+   begin
+   iSpace := pos(' ',sEmail);
+   ipos := pos('@',sEmail);
+   iCom := pos('.',sEmail);
+   if (iPos = 0) or (iCom = 0) or  (sEmail = '') or not(iSpace = 0) then
+    begin
+    bEx := False;
+     bP := False ;
+     ShowMessage('Email is not valid');
+    edtEmailL.SetFocus;
+    end
+   else
+    begin
+    dmDataA.tblClient['Email'] := sEmail ;
+    end;
+   end;
+
+   if not(sAdres = '') then
+   begin
+   dmDataA.tblClient['Adress'] := sAdres ;
+   end;
+   dmDataA.tblClient.post ;
+ end;
+
+
+  dmDataA.tblClient.Next;
+end;
+
+if bEX = True then
+ begin
+ ///All data was validated
+ ShowMessage('Client data has been edited') ;
+ tbsAddClient.Visible := false ;
+ tbsLogin.Visible := True;
+ mpSong.Open;
+ mpSong.Play;
+ clearALLItems;
+ end;
+end;
+end;
+
+
+end;
+
+procedure TfrmLogin.btnBackClick(Sender: TObject);
+begin
+//Changes tabsheets
+mpSong.Open;
+mpSong.Play;
+tbsAddClient.Visible := false ;
+tbsLogin.Visible := True;
+end;
+
+procedure TfrmLogin.btnForgotClick(Sender: TObject);
+var
+i, ipos, p, q:integer;
+sRecievedOTP, sPhone, sTemp, sPhoneadmin, sOut: string;
+begin
+ ///Forgot password
+ /// An  OTP is sent to the number entered in username
+ /// This is then used to log into the users
+ /// Account.His password is then shown to him after he is in his/ her account
+ ActivateDatabase;
+if not(edtUser.Text = '') then
+begin
+ admin ;
+sPhone := edtUser.Text ;
+formatADDPhone(sPhone);
+if sPhonenumADmin+ 'A' = sphone then
+ begin
+ sPhone := 'A';
+ end;
+
+ if Phonevalidate(sPhone) = true then
+begin
+
+ShowMessage('A one time OTP has been sent to you');
+sOTPx := '';
+for i  := 1 to 4 do
+  begin
+  sOTPx := sOTPx + inttostr(RandomRange(0,10));
+  end;
+ formatPhone(sPhone);
+ //ShowMessage(sPhone);
+ sOut := 'Hi heres your one time OTP for your SOA acount: ' + sOTPx ;
+ if bMessagingACTIVE = True then
+  begin
+   OTPExecute(sPhone, sOut) ;
+  end;
+//ShowMessage(sOut);
+
+ sRecievedOTP := InputBox('Enter 4 digit OTP sent', 'OTP:', '0000');
+
+  if sRecievedOTP = sOTPx then
+   begin
+
+   formatADDPhone(sPhone);
+   for p := 1 to iCounterarray do
+   begin
+    if (inttostr(frmUser.iPlayerUser) = arrUsername[p]) then
+    begin
+    edtUser.clear;
+    edtPass.clear ;
+    mpSong.Close;
+    frmLogin.Visible := False ;
+    frmUser.Visible := True ;
+    frmUser.tbsUser.Visible := true;
+    ShowMessage('Your password is: ' + arrPassword[p]) ;
+     ShowMessage('Welcome ' + sCNamelogin + ' ' + sCSurnameLogin + ' to SOA !!!  ');
+    ShowMessage('Please do not hesitate to to click on the help button for any assistance');
+     end;
+    end;
+   end
+   else
+   begin
+    ShowMessage('OTP was not correct')
+   end;
+end
+else
+begin
+  ShowMessage('Phone number is not registered') ;
+  ShowMessage('Go to sign up and create an acount') ;
+end;
+end
+else
+begin
+  ShowMessage('Enter Username(phonenumber)');
+end;
+
+
+end;
+
+procedure TfrmLogin.btnLoginClick(Sender: TObject);
+var
+ sInpass:string;
+ p, q, i, d, e, f, iTotal, iRank, ipos:integer ;
+bCheck, bAllScore :boolean;
+arrNameSur:array[1..30] of string ;
+sMyname, sTemp:string ;
+bDjok:boolean;
+sMesssage, sPhoneInput:string;
+begin
+///btnLogin
+///  Tests if Username/phonenumber exist
+///  Checks if password is correct
+///  Determines if the person is a client or Admin
+///  There is only one Admin
+//Identify Admin
+
+//Activate
+
+ActivateDatabase;
+PopulateuUserArray;
+Admin ;
+iTotal := 0;
+bAllScore := True;
+sPhoneInput := edtUser.Text;
+formatADDPhone(sPhoneInput) ;
+bDjok := Phonevalidate(sPhoneInput) ;
+//ShowMessage(sInuser) ;
+if sPhoneInput = sPhonenumADmin +'A' then
+ begin
+ sInUser := sAdmin;
+ end
+ else
+ begin
+
+ if bDjok = True then
+  begin
+    sInUser := inttostr(frmUser.iPlayerUser);
+      sUserPhone := sPhoneInput ;
+
+  end
+  else
+  begin
+    sInuser := 'X' ;
+  end;
+ end;
+
+
+sInpass := edtPass.Text;
+
+ if (sInUser = '') or (sInpass = '') then
+ begin
+
+
+    if sInUser = '' then
+    begin
+      ShowMessage('Enter username');
+      edtUser.SetFocus;
+    end;
+
+    if sInpass = '' then
+    begin
+      ShowMessage('Enter Password');
+      edtPass.SetFocus;
+    end;
+
+    if (sInUser = '') and  (sInpass = '') then
+  begin
+  edtUser.SetFocus;
+  end;
+
+ end
+ else
+begin
+
+bCheck := False;
+for p := 1 to iCounterarray do
+ begin
+   if (sInUser = arrUsername[p]) and not (sInUser = sAdmin) then
+  begin
+  bCheck := True;
+  if sInpass = arrPassword[p] then
+   begin
+   edtUser.clear;
+   edtPass.clear ;
+    //Sends a message to inform you about the Login on your SOA acount
+    //SOA deactivited
+    sMesssage := 'Log in detected in your SOA acount' ;
+     if bMessagingACTIVE = True then
+    begin
+    OTPExecute(sUserPhone,sMesssage) ;
+    end;
+
+   mpSong.Close;
+   frmLogin.Visible := False ;
+   frmUser.Visible := True ;
+   frmUser.tbsUser.Visible := true;
+   ShowMessage('Welcome ' + sCNamelogin + ' ' + sCSurnameLogin + ' to SOA !!!  ');
+   ShowMessage('Please do not hesitate to to click on the help button for any assistance');
+   end
+   else
+   begin
+     ShowMessage('The password is incorrect');
+   end;
+
+  end;
+ end;
+
+
+  ///If person is the Admin
+  ///  Admin is a Username + "A" an Admin can aso have a client account
+   if  sAdmin= sInUser then
+  begin
+  bCheck := True;
+  if  arrPassword[dAdd] = sInpass then
+   begin
+   edtUser.clear;
+   edtPass.clear ;
+   sInuser := copy(sInuser, 1,length(sInUser)-1);
+   bDjok := Phonevalidate(sInuser) ;
+   frmUser.iPlayerUser := 0 ;
+   mpSong.Close;
+   frmLogin.Visible := False ;
+   frmAdmin.Visible := True ;
+   frmAdmin.tbsAdmin.Visible := True;
+
+
+   end
+   else
+   begin
+     ShowMessage('The password is incorrect');
+   end;
+
+
+  end;
+
+  if bCheck = False then
+  begin
+    ShowMessage('The username does not exist');
+  end;
+end;
+
+end;
+
+
+procedure TfrmLogin.btnSignClick(Sender: TObject);
+begin
+///Creates hints
+///  and sets everthing up for a new sign up user
+ mpSong.Close;
+pnlNameXXX.Caption := 'New Client' ;
+edtNameL.TextHint := 'John' ;
+EdtLastNameL.TextHint := 'Bucks' ;
+edtCom.TextHint := 'ComAir' ;
+edtEmailL.TextHint := 'buddyYolo@comAir.com' ;
+edtPhoneL.TextHint := '0986756459' ;
+edtAdress.TextHint := '22 Bokke straat Boksburg' ;
+btnAdd.Caption := 'Create Account';
+bIsClient := False ;
+tbsLogin.Visible := False;
+tbsAddClient.Visible := true;
+end;
+
+procedure TfrmLogin.ChangePhoneSettings(sPhoneNew, sPhoneChange: string);
+var
+tFileNew, tFileOLD:TextFile;
+sLine:string;
+begin
+if not(sPhoneNew = sPhoneChange) then
+ begin
+
+ AssignFile(tFileOLD, sPhoneChange+ '.txt') ;
+ AssignFile(tFileNew, sPhoneNew+ '.txt') ;
+ rewrite(tFileNew);
+ reset(tFileOLD);
+
+ while not Eof(tFileOLD) do
+  begin
+    readln(tFileOLD, sLine) ;
+    writeln(tFileNew, sLine);
+  end;
+
+  closeFile(tFileNew);
+  closeFile(tFileOLD);
+
+  DeleteFile(sPhoneChange+ '.txt');
+ end;
+
+
+end;
+
+procedure TfrmLogin.btnAccountClick(Sender: TObject);
+var
+i, ierror, p:integer;
+rX:real;
+bValidatePhone:boolean;
+sPass:string;
+bGo :boolean;
+begin
+///Sets code to edit the clients account
+///  Creates hints
+mpSong.Close;
+ActivateDatabase;
+bIsClient := True ;
+pnlNameXXX.Caption := 'Client' ;
+edtNameL.TextHint := 'EDIT' ;
+EdtLastNameL.TextHint := 'EDIT' ;
+edtCom.TextHint := 'EDIT' ;
+edtEmailL.TextHint := 'EDIT' ;
+edtPhoneL.TextHint := 'EDIT' ;
+edtAdress.TextHint := 'EDIT' ;
+btnAdd.Caption := 'Edit Information';
+bValidatePhone := False;
+///Identifies user
+///  and checks if the password is correct
+    sUserPhone := inputbox('Enter the phone number', 'Phone:', '0826530404') ;
+    val(sUserPhone,rX,ierror);
+ if not(ierror = 0) then
+  begin
+   ShowMessage('Phone number is not valid') ;
+  end
+  else
+  begin
+    formatADDPhone(sUserPhone) ;
+    bValidatePhone := Phonevalidate(sUserPhone) ;
+   if bValidatePhone = False then
+    begin
+     ShowMessage('Client does not exist. Go to sign up and create an account') ;
+    end
+    else
+    begin
+       sPass := inputbox('Enter your password', 'Password:', 'XXXXXXX') ;
+         bGo := False;
+         p:= 0;
+      while (p<= iCounterarray) and (bGo = False) do
+      begin
+        inc(p) ;
+      if arrUsername[p] = inttostr(frmUser.iPlayerUser) then
+       begin
+        if sPass = arrPassword[p] then
+         begin
+         bBeginX := True ;
+         ShowMessage('Welcome ' + sCNamelogin) ;
+         pnlNameXXX.Caption := sCNamelogin ;
+
+         bGo := true;
+         tbsLogin.Visible := False;
+         tbsAddClient.Visible := true;
+
+         end;
+
+       end;
+
+      end;
+
+      if bGo = False then
+       begin
+         ShowMessage('Password is incorrect') ;
+       end;
+    end;
+  end;
+end;
+
+
+
+procedure TfrmLogin.clearALLItems;
+begin
+//Clears
+edtNameL.Clear;
+EdtLastNameL.Clear;
+edtCom.Clear;
+edtPhoneL.Clear;
+edtEmailL.Clear;
+edtAdress.Clear;
+bBeginX := False ;
+end;
+
+
+
+procedure TfrmLogin.createTFiles(sNumber, sID: string);
+var
+tFile1, tFile2:textfile;
+sOut:string;
+begin
+///Creates a new users datafiles
+/// default values of todays date with no time spent
+/// on the website yet
+sNumber := sNumber + '.txt' ;
+sID := sID +  '.txt' ;
+AssignFile(tFile1, sNumber) ;
+AssignFile(tFile2, sID);
+
+rewrite(tFile1);
+rewrite(tFile2);
+sOut := '00:00:00' ;
+writeln(tFile2, sOut);
+sOut := dateTimetostr(today);
+writeln(tFile2,sOut);
+writeln(tFile2,sOut);
+CloseFile(tFile1);
+Closefile(tFile2);
+
+end;
+
+procedure TfrmLogin.FormActivate(Sender: TObject);
+var
+tFile:TextFile;
+sPass, sUser, sTester, sTemp:string ;
+i, ipos, iTest, x:integer ;
+sLine, sOutcome:string;
+
+begin
+  ///To see exceptional message feature make bMessagingActive = True  NB!!
+///Activate Twillo
+bMessagingACTIVE := False;
+
+
+///Instantiate values
+mpSong.Hide;
+mpSong.FileName := 'Zootycoon.wav' ;
+//MediaPlayerA.FileName := 'K:\PAT2021_NaudeDian\Fase2\Media\Music\Zootycoon.wav' ;
+//MediaPlayerA.FileName := 'C:\Users\Jan\Documents\Dian\Delphi\Files\PAT2021_NaudeDian\Fase 2\Media\Music\Zootycoon.wav' ;
+
+mpSong.Open ;
+mpSong.Play  ;
+FormatSettings.ShortDateFormat := 'dd/mm/yyyy' ;
+
+dmDataA.ADOConnectionM.ConnectionString := 'Provider=Microsoft.ACE.OLEDB.12.0;User ID=Admin;Data Source=Store.accdb;Mode=ReadWrite;' ;
+dmDataA.ADOConnectionM.Connected := true;
+dmDataA.tblAnimals.Active := true;
+dmDataA.tblProducts.Active := true;
+dmDataA.tblService.Active := true;
+dmDataA.tblPurchaserecord.Active := true;
+dmDataA.tblTransaction.Active := true;
+dmDataA.tblClient.Active := true;
+dmDataA.tblAnimalDonations.Active := true;
+
+imgLogin.Stretch := true;
+imgLogin.Proportional := true;
+tbsLogin.TabVisible := False;
+tbsAddClient.TabVisible := FAlse ;
+tbsLogin.Visible := true;
+
+
+/// No auto number is used thus the largest ID number must be determined
+/// and one must be added to it to have the correct ID number when adding a new client
+/// Transaction purchase record etc..
+/// a maximum is thus determined
+///
+ //Identify New Transaction ID
+dmDataA.tblTransaction.first;
+ iTransaction := 0;
+ iTest := 0;
+while not dmDataA.tblTransaction.Eof do
+ begin
+  iTest := dmDataA.tblTransaction['TransactionID'] ;
+   if iTransaction < iTest then
+   begin
+   iTransaction := iTest ;
+   end;
+   dmDataA.tblTransaction.Next;
+ end;
+iTransaction := iTransaction +1 ;
+
+
+  //Identify iAniamalDonateID
+
+  dmDataA.tblAnimalDonations.first;
+ iAniamalDonateID := 0;
+ iTest := 0;
+while not dmDataA.tblAnimalDonations.Eof do
+ begin
+  iTest := dmDataA.tblAnimalDonations['ID'] ;
+   if iAniamalDonateID < iTest then
+   begin
+   iAniamalDonateID := iTest ;
+   end;
+   dmDataA.tblAnimalDonations.Next;
+ end;
+iAniamalDonateID := iAniamalDonateID +1 ;
+
+
+
+ //Identify iIDAnimal
+   dmDataA.tblAnimals.first;
+ iIDAnimal := 0;
+ iTest := 0;
+while not dmDataA.tblAnimals.Eof do
+ begin
+  iTest := dmDataA.tblAnimals['AnimalID'] ;
+   if iIDAnimal < iTest then
+   begin
+   iIDAnimal := iTest ;
+   end;
+   dmDataA.tblAnimals.Next;
+ end;
+iIDAnimal := iIDAnimal +1 ;
+
+
+
+  //ClientID
+    dmDataA.tblClient.first;
+ iClientID := 0;
+ iTest := 0;
+while not dmDataA.tblClient.Eof do
+ begin
+  iTest := dmDataA.tblClient['ClientID'] ;
+   if iClientID < iTest then
+   begin
+   iClientID := iTest ;
+   end;
+   dmDataA.tblClient.Next;
+ end;
+iClientID := iClientID +1 ;
+
+
+
+
+ //ServiceID
+     dmDataA.tblService.first;
+  sServiceID := ''  ;
+  sTester := '' ;
+ iTest := 0;
+ iService := 0;
+while not dmDataA.tblService.Eof do
+ begin
+  sTester := '' ;
+  sTemp := dmDataA.tblService['ServiceID'] ;
+  for x := 2 to length(sTemp) do
+    begin
+     sTester := sTester + sTemp[x] ;
+    end;
+
+
+   iTest := strtoint(sTester) ;
+
+   if iService < iTest then
+   begin
+   iService := iTest ;
+   end;
+   dmDataA.tblService.Next;
+ end;
+iService := iService +1 ;
+  sServiceID := 'S' + inttostr(iService) ;
+
+  ///ProductID
+      dmDataA.tblProducts.first;
+  sProductID := ''  ;
+  sTester := '' ;
+ iTest := 0;
+ iProduct := 0;
+while not dmDataA.tblProducts.Eof do
+ begin
+  sTester := '' ;
+  sTemp := dmDataA.tblProducts['ProductID'] ;
+  for x := 2 to length(sTemp) do
+    begin
+     sTester := sTester + sTemp[x] ;
+    end;
+
+   iTest := strtoint(sTester) ;
+
+   if iProduct < iTest then
+   begin
+   iProduct := iTest ;
+   end;
+   dmDataA.tblProducts.Next;
+ end;
+iProduct := iProduct +1 ;
+  sProductID := 'P' + inttostr(iProduct) ;
+
+////Purchaserecord
+       dmDataA.tblPurchaserecord.first;
+  sPurchaseRecordID := ''  ;
+  sTester := '' ;
+ iTest := 0;
+ iPurchaseRecord := 0;
+while not dmDataA.tblPurchaserecord.Eof do
+ begin
+  sTester := '' ;
+  sTemp := dmDataA.tblPurchaserecord['IDNumPR'] ;
+  for x := 2 to length(sTemp) do
+    begin
+     sTester := sTester + sTemp[x] ;
+    end;
+   iTest := strtoint(sTester) ;
+
+   if iPurchaseRecord < iTest then
+   begin
+   iPurchaseRecord := iTest ;
+   end;
+   dmDataA.tblPurchaserecord.Next;
+ end;
+iPurchaseRecord := iPurchaseRecord +1 ;
+  sPurchaseRecordID := 'A' + inttostr(iPurchaseRecord) ;
+
+ //Password array and Username array  procedure
+   PopulateuUserArray;
+
+    //Identify Admin
+Admin;
+
+end;
+
+procedure TfrmLogin.formatADDPhone(var sfPhonex: string);
+var
+sInput:string;
+begin
+//Changes format of the phone number
+    sInput := '-' ;
+    Insert(sInput, sfPhonex, 4) ;
+    Insert(sInput, sfPhonex, 8) ;
+end;
+
+procedure TfrmLogin.formatPhone(var sfPhone: string);
+var
+i:integer;
+sTemp :string;
+begin
+//Coverts format back to original
+sTemp:= '';
+ for i := 1 to length(sfphone) do
+  begin
+    if not(sfPhone[i] = '-') then
+    begin
+     sTemp := sTemp + sfPhone[i]
+    end;
+
+  end;
+   sfPhone := sTemp ;
+end;
+
+
+
+procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+dmDataA.ADOConnectionM.Connected := False ;
+end;
+
+procedure TfrmLogin.OTPExecute(sPhoneNum, sOTP: string);
+var
+  client: TTwilioClient;
+  allParams: TStringList;
+  response: TTwilioClientResponse;
+  json: TJSONValue;
+  fromPhoneNumber: string;
+  toPhoneNumber: string;
+begin
+   ///Twillo procedure which interacts with OTP Twillo
+   ///  first the object is created using my personal twillo account reference with a username and password
+      client := TTwilioClient.Create('AC6efd9fe99ed9f83ce69e6b5d1316f67d', '4f2daf3c23da4f33ad0c0a3749846bfc', '');
+   ///Twillo registered number and my own number
+   ///  For Demo purposes my number alone will be used
+   ///  but in production the register fee will be paid to Twillo and
+   ///   and the clients number will be used (sPhoneNum) ;
+   ///  sOTP contains the message
+    fromPhoneNumber := '+17067025293';
+    toPhoneNumber := '+27826530404';
+    allParams := TStringList.Create;
+    allParams.Add('From=' + fromPhoneNumber);
+    allParams.Add('To=' + toPhoneNumber);
+   ///Twillo URL
+    allParams.Add('Url=http://demo.twilio.com/docs/voice.xml');
+    response := client.Post('Calls', allParams);
+    //al params creates format of message
+    allParams := TStringList.Create;
+    allParams.Add('From=' + fromPhoneNumber);
+    allParams.Add('To=' + toPhoneNumber);
+    allParams.Add('Body= ' + sOTP);
+    //All paramaters are sent to OTPTwillo
+    response := client.Post('Messages', allParams);
+    // message is sent to client
+    ///Obj is closed
+    client.Free;
+  ShowMessage('Success')
+end;
+
+procedure TfrmLogin.PasswordGenerator(sPhone:string; sPass:string);
+var
+sline:string;
+begin
+    //Adds passwords and user name to files
+   sLine := inttostr(iClientID) + '#' + sPass + '#' ;
+   AssignFile(tFileUP,'UsernamePass.txt');
+   Append(tFileUP);
+   Writeln(tFileUP, sLine);
+   CloseFile(tFileUP);
+
+   ShowMessage('This is your new username:  ' + sPhone);
+   ShowMessage('This is your new password: ' + sPass );
+   PopulateuUserArray;
+end;
+
+
+
+function TfrmLogin.Phonevalidate(sPhone: string): boolean;
+begin
+//Checks if phone number exists
+// and instantiates name
+Result := False ;
+dmDataA.tblClient.First;
+
+while not dmDataA.tblClient.Eof do
+ begin
+
+   if sPhone = dmDataA.tblClient['Phone']  then
+   begin
+    result := True ;
+    frmUser.iPlayerUser := dmDataA.tblClient['ClientID'];
+    //Instantiate ClientsName and clientsSurname
+    sCNamelogin := dmDataA.tblClient['Name'];
+    sCSurnameLogin := dmDataA.tblClient['Surname'];
+   end;
+
+
+ dmDataA.tblClient.Next
+ end;
+
+end;
+
+procedure TfrmLogin.PopulateuUserArray;
+var
+iPos:integer;
+sUser, sOutcome, sPass:string;
+begin
+//creates 2 parallell arrays
+if FileExists('UsernamePass.txt') then
+ begin
+
+ iCounterarray:= 0;
+ AssignFile(tFileUP,'UsernamePass.txt');
+ Reset(tFileUP);
+ while not eof(tFileUP) do
+ begin
+ inc(iCounterArray) ;
+ Readln(tFileUP, sOutcome);
+
+  ipos := pos('#',sOutcome);
+  sUser  := copy(sOutcome,1,ipos-1);
+  Delete(sOutcome,1,ipos);
+
+  ipos := pos('#',sOutcome);
+   sPass:= copy(sOutcome,1,ipos-1);
+  Delete(sOutcome,1,ipos);
+  arrUsername[frmLogin.iCounterArray] := sUser;
+  arrPassword[frmLogin.iCounterArray] := sPass;
+  //ShowMessage(sUser);
+
+
+ end;
+ CloseFile(tFileUP);
+ end
+ else
+ begin
+  ShowMessage('File:UsernamePass.txt not found');
+ end;
+end;
+end.

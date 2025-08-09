@@ -1,0 +1,96 @@
+unit frmMain_DNu;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.MPlayer;
+
+type
+  TfrmMain = class(TForm)
+    imgBackround: TImage;
+    pnlG2: TPanel;
+    pnlG3: TPanel;
+    pnlG4: TPanel;
+    btnBack: TButton;
+    lblHeadingX: TLabel;
+    btnCloseX: TButton;
+    mpB: TMediaPlayer;
+    procedure pnlG2Click(Sender: TObject);
+    procedure pnlG3Click(Sender: TObject);
+    procedure pnlG4Click(Sender: TObject);
+    procedure btnBackClick(Sender: TObject);
+    procedure btnCloseXClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormActivate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    sName :string
+  end;
+
+var
+  frmMain: TfrmMain;
+
+implementation
+uses
+frmEntry_DNu, frmGame1_DNu, frmGame2_DNu, frmGame3_DNu, frmGame4_DNu  ;
+
+{$R *.dfm}
+
+procedure TfrmMain.btnBackClick(Sender: TObject);
+begin
+mpB.Close;
+frmEntry.Show ;
+frmMain.Hide;
+end;
+
+procedure TfrmMain.btnCloseXClick(Sender: TObject);
+begin
+mpB.Stop;
+Application.Terminate;
+ Application.MainForm.Close;
+end;
+
+procedure TfrmMain.FormActivate(Sender: TObject);
+begin
+//Mediaplayer
+  mpB.FileName := 'Zootycoon.wav' ;
+//MediaPlayerB.FileName := 'K:\PAT2021_NaudeDian\Fase2\Media\Music\Zootycoon.wav' ;
+//MediaPlayerB.FileName := 'C:\Users\Jan\Documents\Dian\Delphi\Files\PAT2021_NaudeDian\Fase 2\Media\Music\Zootycoon.wav' ;
+
+
+ sName := frmEntry.sGivenName;
+mpB.Open;
+ mpB.Play;
+end;
+
+procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Application.Terminate;
+end;
+
+procedure TfrmMain.pnlG2Click(Sender: TObject);
+begin
+ frmGame2.Show;
+ frmMain.Hide;
+ mpB.Stop;
+end;
+
+procedure TfrmMain.pnlG3Click(Sender: TObject);
+begin
+mpB.Stop;
+  frmGame3.Show;
+ frmMain.Hide;
+end;
+
+procedure TfrmMain.pnlG4Click(Sender: TObject);
+begin
+mpB.Stop;
+ frmGame4.Show;
+ frmMain.Hide;
+end;
+
+end.

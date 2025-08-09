@@ -1,0 +1,36 @@
+object dmDataA: TdmDataA
+  OldCreateOrder = False
+  Height = 302
+  Width = 482
+  object ADOConnection1: TADOConnection
+    Connected = True
+    ConnectionString = 
+      'Provider=Microsoft.ACE.OLEDB.12.0;Data Source=K:\PAT 2022\PAT202' +
+      '2_NaudeDian\Task2\NauDia1000.accdb;Mode=ReadWrite;Persist Securi' +
+      'ty Info=False'
+    LoginPrompt = False
+    Mode = cmReadWrite
+    Provider = 'Microsoft.ACE.OLEDB.12.0'
+    Left = 168
+    Top = 56
+  end
+  object DataSource1: TDataSource
+    Left = 168
+    Top = 208
+  end
+  object ADOTable1: TADOTable
+    Connection = ADOConnection1
+    TableName = 'tblMatches'
+    Left = 120
+    Top = 136
+  end
+  object ADOTable2: TADOTable
+    Connection = ADOConnection1
+    Left = 168
+    Top = 136
+  end
+  object ADOTable3: TADOTable
+    Left = 224
+    Top = 144
+  end
+end

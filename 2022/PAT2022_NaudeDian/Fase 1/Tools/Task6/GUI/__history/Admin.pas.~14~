@@ -1,0 +1,81 @@
+unit Admin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Samples.Spin,
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.Menus, Vcl.ComCtrls, Vcl.Buttons, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, Vcl.WinXPickers;
+
+type
+  TfrmAdmin = class(TForm)
+    imgA1: TImage;
+    pnlAddScoreA: TPanel;
+    lblUserA: TLabel;
+    lblOponenetA: TLabel;
+    sedOponentA: TSpinEdit;
+    sedUserA: TSpinEdit;
+    btnScoringA: TButton;
+    pnlAddRemove: TPanel;
+    btnRemove: TButton;
+    btnAdd: TButton;
+    lblAdmin: TLabel;
+    lblPlayer1: TLabel;
+    lblPlayer2: TLabel;
+    SpinEdit1: TSpinEdit;
+    SpinEdit2: TSpinEdit;
+    rgpEdit: TRadioGroup;
+    btnEdit: TButton;
+    RedOutput: TRichEdit;
+    lblScoreInput: TLabel;
+    lblQuerriesA: TLabel;
+    bmbLogoutAdmin: TBitBtn;
+    DBGriddDisplay: TDBGrid;
+    DBNavigator1: TDBNavigator;
+    pnlTables: TPanel;
+    btnMatch: TButton;
+    Player: TButton;
+    btnVenue: TButton;
+    btnScore: TButton;
+    menAdmin: TMainMenu;
+    btnLeaderBoard: TMenuItem;
+    btnLeader: TMenuItem;
+    btnOldestPlayer: TMenuItem;
+    btnYoungestPlayer: TMenuItem;
+    btnSearchPlayer: TMenuItem;
+    btnAverageAgeofPlater: TMenuItem;
+    pnlScheduleMatchA: TPanel;
+    lblDaterimeA: TLabel;
+    lblVenueA: TLabel;
+    lblOppNoA: TLabel;
+    edtVenueA: TEdit;
+    dtpMatchA: TDateTimePicker;
+    sedPlayerA: TSpinEdit;
+    tpGameA: TTimePicker;
+    BtnScheduleA: TButton;
+    lblSMADmin: TLabel;
+    SpinEdit3: TSpinEdit;
+    lblPlayerB: TLabel;
+    procedure bmbLogoutAdminClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAdmin: TfrmAdmin;
+
+implementation
+uses User, Login, dmData;
+
+{$R *.dfm}
+
+procedure TfrmAdmin.bmbLogoutAdminClick(Sender: TObject);
+begin
+frmAdmin.Hide;
+frmLogin.Show;
+end;
+
+end.

@@ -1,0 +1,54 @@
+unit User;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Samples.Spin, Vcl.WinXPickers, Vcl.ComCtrls, Vcl.Imaging.jpeg;
+
+type
+  TfrmUser = class(TForm)
+    imgP1: TImage;
+    btnScoring: TButton;
+    btnMyscore: TButton;
+    btnMatch: TButton;
+    btnResign: TButton;
+    btnAppointment: TButton;
+    btnLeft: TButton;
+    btnWinrate: TButton;
+    btnLost: TButton;
+    sedUser: TSpinEdit;
+    sedOponent: TSpinEdit;
+    lblUser: TLabel;
+    lblOponenet: TLabel;
+    sedPlayer: TSpinEdit;
+    lblOppNo: TLabel;
+    btnLogout: TButton;
+    lblVenue: TLabel;
+    edtVenue: TEdit;
+    dtpMatch: TDateTimePicker;
+    lblDaterime: TLabel;
+    tpGame: TTimePicker;
+    pnlScheduleMatch: TPanel;
+    pnlAddScore: TPanel;
+    pnlQuerries: TPanel;
+    lblTitlescore: TLabel;
+    lblSM: TLabel;
+    lblQuerries: TLabel;
+    imgP2: TImage;
+    Label1: TLabel;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmUser: TfrmUser;
+
+implementation
+
+{$R *.dfm}
+
+end.

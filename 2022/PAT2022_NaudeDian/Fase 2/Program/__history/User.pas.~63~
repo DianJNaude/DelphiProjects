@@ -1,0 +1,1018 @@
+unit User;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Samples.Spin, Vcl.WinXPickers, Vcl.ComCtrls, Vcl.Imaging.jpeg, Vcl.Buttons,
+  Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, DateUtils;
+
+type
+  TfrmUser = class(TForm)
+    bmbLogout: TBitBtn;
+    bmbHelp: TBitBtn;
+    PageControlUser: TPageControl;
+    tbsUser: TTabSheet;
+    tbsScoreU: TTabSheet;
+    tbsMatchU: TTabSheet;
+    tbsQuerriesU: TTabSheet;
+    DBGridDisplayUsers: TDBGrid;
+    pnlTables: TPanel;
+    btnMatchU: TButton;
+    btnPlayerU: TButton;
+    btnVenueU: TButton;
+    DBNUser: TDBNavigator;
+    imgP2: TImage;
+    imgP1: TImage;
+    lblHomeU: TLabel;
+    pnlAddScore: TPanel;
+    lblUser: TLabel;
+    lblOponenet: TLabel;
+    sedOponent: TSpinEdit;
+    sedUser: TSpinEdit;
+    btnScoring: TButton;
+    sedOPPA: TSpinEdit;
+    pnlScheduleMatch: TPanel;
+    lblDaterime: TLabel;
+    lblVenue: TLabel;
+    lblOppNo: TLabel;
+    sedPlayer: TSpinEdit;
+    btnMatch: TButton;
+    btnResign: TButton;
+    pnlQuerries: TPanel;
+    btnLeft: TButton;
+    btnWinrate: TButton;
+    btnLost: TButton;
+    btnMyscore: TButton;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    Label1: TLabel;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    Image8: TImage;
+    Image9: TImage;
+    lblSM: TLabel;
+    lblTitlescore: TLabel;
+    lstRequests: TListBox;
+    pnlDecline: TPanel;
+    pnlAccept: TPanel;
+    pnlMatchR: TPanel;
+    Label2: TLabel;
+    Image10: TImage;
+    btnMatchUDirect: TButton;
+    btnScoreDirectU: TButton;
+    btnQuerriesdirectU: TButton;
+    btnHome1U: TButton;
+    btnHome3U: TButton;
+    btnHome2U: TButton;
+    cmbVenueU: TComboBox;
+    DtpMatch: TDateTimePicker;
+    sedTimeU: TSpinEdit;
+    Label11: TLabel;
+    Label3: TLabel;
+    procedure bmbLogoutClick(Sender: TObject);
+    procedure bmbHelpClick(Sender: TObject);
+    procedure btnMatchClick(Sender: TObject);
+    procedure btnMatchUDirectClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnScoreDirectUClick(Sender: TObject);
+    procedure btnQuerriesdirectUClick(Sender: TObject);
+    procedure btnHome3UClick(Sender: TObject);
+    procedure btnHome1UClick(Sender: TObject);
+    procedure btnHome2UClick(Sender: TObject);
+    procedure btnMatchUClick(Sender: TObject);
+    procedure btnPlayerUClick(Sender: TObject);
+    procedure btnVenueUClick(Sender: TObject);
+    procedure btnScoringClick(Sender: TObject);
+    procedure pnlAcceptClick(Sender: TObject);
+    procedure btnMyscoreClick(Sender: TObject);
+    procedure btnLeftClick(Sender: TObject);
+    procedure btnWinrateClick(Sender: TObject);
+    procedure btnLostClick(Sender: TObject);
+    procedure btnResignClick(Sender: TObject);
+    procedure pnlDeclineClick(Sender: TObject);
+    procedure sedUserChange(Sender: TObject);
+    procedure sedOponentChange(Sender: TObject);
+
+  private
+    sInn, sP1, sP2, sRVenueU, sDate, sTime, scom1, scom2 :string;
+    arrMatches:array[1..99] of string ;
+   //TextFile matches
+   tMatch:TextFile;
+  procedure ReadfromFile( var sInn, sP1, sP2, sRVenueU, sDate, sTime, scom1, scom2 :string ) ;   //670
+  procedure AddScore(iPlayerA, iPlayerB:integer; iScoreA, iScoreB:byte) ;
+
+
+
+    { Private declarations }
+  public
+    iPlayerUser:integer ;
+   procedure GeneratePoints(var arrP1ABNum, arrScore:array of integer) ; //580
+    procedure RemoveLineFromFile(var tInputFile:textFile; sLineOut:string); //630
+    { Public declarations }
+  end;
+
+var
+  frmUser: TfrmUser;
+
+implementation
+uses  Admin, dmData, Login;
+
+{$R *.dfm}
+
+procedure TfrmUser.AddScore(iPlayerA, iPlayerB: integer; iScoreA,
+  iScoreB: byte);
+var
+i:integer;
+bFound:boolean;
+begin
+dmDataA.tblMatchesM.Open ;
+dmDataA.tblMatchesM.First;
+ bFound := False;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+
+     if (dmDataA.tblMatchesM['PlayerA'] = iPlayerA) and (dmDataA.tblMatchesM['PlayerB'] = iPlayerB) then
+     begin
+     bFound := true;
+     //ShowMessage('Hi');
+     if (dmDataA.tblMatchesM['Score A']= null) and (dmDataA.tblMatchesM['Score B']= null) then
+      begin
+
+       dmDataA.tblMatchesM.Edit;
+       dmDataA.tblMatchesM['Score A'] := iScoreA ;
+       dmDataA.tblMatchesM['Score B'] := iScoreB ;
+       dmDataA.tblMatchesM.Post;
+       ShowMessage('Score added');
+
+      end
+      else
+      begin
+        if frmUser.iPlayerUser = 0 then
+        begin
+        dmDataA.tblMatchesM.Edit;
+        dmDataA.tblMatchesM['Score A'] := iScoreA ;
+        dmDataA.tblMatchesM['Score B'] := iScoreB ;
+        dmDataA.tblMatchesM.Post;
+        ShowMessage('Score has been updated');
+
+        end
+        else
+        begin
+        ShowMessage('The score has alredy been added!');
+        end;
+
+      end;
+     end;
+
+     if (dmDataA.tblMatchesM['PlayerA'] = iPlayerB) and (dmDataA.tblMatchesM['PlayerB'] = iPlayerA) then
+     begin
+     bFound := true;
+      if (dmDataA.tblMatchesM['Score A']= null) and (dmDataA.tblMatchesM['Score B']= null) then
+      begin
+
+       dmDataA.tblMatchesM.Edit;
+       dmDataA.tblMatchesM['Score B'] := iScoreA ;
+       dmDataA.tblMatchesM['Score A'] := iScoreB ;
+       dmDataA.tblMatchesM.Post;
+       ShowMessage('Score added');
+
+      end
+      else
+      begin
+        if frmUser.iPlayerUser = 0 then
+        begin
+        dmDataA.tblMatchesM.Edit;
+         dmDataA.tblMatchesM['Score B'] := iScoreA ;
+         dmDataA.tblMatchesM['Score A'] := iScoreB ;
+         dmDataA.tblMatchesM.Post;
+         ShowMessage('Score has been updated');
+
+        end
+        else
+        begin
+        ShowMessage('The score has alredy been added!');
+        end;
+
+      end;
+
+     end;
+
+  dmDataA.tblMatchesM.Next;
+ end;
+
+
+
+
+ if bFound = False then
+ begin
+   ShowMessage('Match has not been Scheduled yet!');
+   ShowMessage('Schedule Match and then add Score');
+ end;
+end;
+procedure TfrmUser.bmbHelpClick(Sender: TObject);
+var
+i:integer;
+sPhoneAdmin:string;
+begin
+i:= 0;
+dmDataA.tblPlayersM.First;
+while not dmDataA.tblPlayersM.Eof do
+ begin
+ inc(i);
+  if i = frmLogin.iAdmin then
+  begin
+    sPhoneAdmin :=  dmDataA.tblPlayersM['Phone'] ;
+  end;
+   dmDataA.tblPlayersM.Next;
+ end;
+
+ShowMessage('Contact the Admin at: ' + sPhoneAdmin);
+end;
+
+procedure TfrmUser.bmbLogoutClick(Sender: TObject);
+var
+sLine:string;
+tfile:textFile;
+i:integer;
+begin
+AssignFile(tFile,'Entries.txt');
+
+  if FileExists('Entries.txt') then
+  begin
+   Reset(tFile);
+   Readln(tFile,sLine);
+   if sLine = '0' then
+   begin
+     frmLogin.btnSignUp.Enabled := False ;
+     frmAdmin.btnCloseEntries.Enabled := False ;
+   end
+   else
+   begin
+    frmAdmin.btnOpenEntries.Enabled := False ;
+   end;
+
+   CloseFile(tFile);
+  end
+  else
+  begin
+  Exit
+  end;
+
+sedOponent.Text := '9';
+sedUser.Text := '0';
+sedOPPA.Text := '1';
+sedPlayer.Text := '1';
+sedTimeU.Text := '8' ;
+ for i  := 1 to 99 do
+   begin
+   lstRequests.Items[i] := ' ';
+   end;
+
+
+
+dmDataA.ADOConnectionM.Connected := False ;
+frmUser.Visible := False;
+frmLogin.Visible := True;
+
+tbsScoreU.Visible := False;
+tbsQuerriesU.Visible := False;
+tbsMatchU.Visible := False;
+tbsUser.Visible := True ;
+
+end;
+
+procedure TfrmUser.btnHome1UClick(Sender: TObject);
+var
+i:integer;
+begin
+sedOponent.Text := '9';
+sedUser.Text := '0';
+sedOPPA.Text := '1';
+sedPlayer.Text := '1';
+sedTimeU.Text := '8' ;
+ for i  := 1 to 99 do
+   begin
+   lstRequests.Items[i] := ' ';
+   end;
+tbsScoreU.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.btnMatchClick(Sender: TObject);
+var
+iOppM, i: integer ;
+sVenue, sOut:string;
+DateM:TDateTime;
+sTimeU:string;
+tMatch:TextFile ;
+sDateA:string;
+bGo2 :Boolean;
+sOppN :string ;
+bCheck :boolean;
+begin
+ sVenue := inttostr(cmbVenueU.ItemIndex+1) ;
+ DateM := dtpMatch.Date;
+ // ShowMessage(inttostr(cmbVenueU.ItemIndex));
+     bGo2 := True ;
+     bCheck := True;
+
+  if cmbVenueU.ItemIndex < 0 then
+  begin
+    ShowMessage('Venue does not exist');
+    bCheck := False ;
+  end;
+
+      if sedPlayer.Text = '' then
+  begin
+   ShowMessage('Fill in a opponent number !');
+   bCheck := False ;
+  end
+  else
+  begin
+  iOppM := strtoint(sedPlayer.Text) ;
+  sOppN := frmAdmin.NotoNameSur(ioppM);
+    if (sedPlayer.Text = inttostr(iPlayerUser)) then
+    begin
+      ShowMessage('Sorry, you can not play against yourself!');
+      bCheck := False ;
+    end;
+  end;
+
+  if sedTimeU.Text = '' then
+  begin
+   ShowMessage('Fill in a your score !');
+   bCheck := False ;
+  end
+  else
+  begin
+    sTimeU := sedTimeU.Text + ':00' ;
+  end;
+
+
+  if sOppN = '' then
+  begin
+  ShowMessage('Player ' + inttostr(iOppM) + ' does not exist');
+  bCheck := False ;
+  end;
+
+
+  if bCheck = True then
+begin
+ dmDataA.tblMatchesM.First;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+ if  ((dmDataA.tblMatchesM['PlayerA'] = iOppM ) or  (dmDataA.tblMatchesM['PlayerB'] = iOppM )) and  ((dmDataA.tblMatchesM['PlayerA'] = iPlayerUser ) or  (dmDataA.tblMatchesM['PlayerB'] = iPlayerUser )) then
+  begin
+   ShowMessage('This match has already been scheduled in the database');
+   bGo2 := False;
+  end;
+
+ dmDataA.tblMatchesM.Next
+ end;
+
+ if bGo2 = True then
+ begin
+ sOut :=';'+ Inttostr(iOppM) + ';' + inttostr(iPlayerUser) +';' + sVenue + ';' + datetostr(DateM) + ';' + sTimeU + ';' + inttostr(iPlayerUser) +';' + '0' +';' ;
+
+
+ AssignFile(tMatch,'Matches.txt');
+ if FileExists('Matches.txt') then
+  begin
+   ShowMessage('File found');
+   Append(tMatch);
+   Writeln(tMatch,sOut);
+   CloseFile(tMatch);
+
+  end
+  else
+  Begin
+    exit
+  End;
+ end;
+
+end;
+
+
+
+
+
+
+
+
+end;
+
+procedure TfrmUser.btnMatchUClick(Sender: TObject);
+begin
+DBNUser.DataSource := dmDataA.DataSourceMM ;
+DBGridDisplayUsers.DataSource := dmDataA.DataSourceMM ;
+end;
+
+procedure TfrmUser.btnMatchUDirectClick(Sender: TObject);
+  var
+  i, q:integer;
+   //tMatch:TextFile;
+   sHold:string ;
+begin
+
+ //Forms
+  tbsUser.Visible := False;
+  tbsMatchU.Visible := True ;
+
+  //Combobox
+  dmDataA.tblVenueM.Open;
+  dmDataA.tblVenueM.First ;
+  for i := 1 to dmDataA.tblVenueM.RecordCount do
+  begin
+    cmbVenueU.Items[i-1] := dmDataA.tblVenueM['Venue'];
+    dmDataA.tblVenueM.Next;
+  end;
+
+
+
+   //Match request
+  q := 0;
+  AssignFile(tMatch,'Matches.txt');
+ if FileExists('Matches.txt') then
+  begin
+  ShowMessage('File found');
+  Reset(tMatch);
+  while not eof(tMatch) do
+    begin
+
+     Readln(tMatch,sInn);
+     sHold := sInn ;
+     //ShowMessage(sHold);
+
+      ReadfromFile(sInn, sP1, sP2, sRVenueU, sDate, sTime, scom1,scom2);
+       // ShowMessage(sP1);
+      if (sP1 = inttostr(iPlayerUser)) or (sP2 = inttostr(iPlayerUser))  then
+        begin
+
+             if (not(scom1 = inttostr(iPlayerUser))) and (not(scom2 = inttostr(iPlayerUser))) then
+             begin
+             lstRequests.Items[q] := sHold ;
+             Inc(q);
+             end;
+
+        end;
+
+    end;
+
+  CloseFile(tMatch);
+  end
+  else
+  Begin
+    exit
+  End;
+
+  cmbVenueU.ItemIndex := 1;
+
+end;
+
+procedure TfrmUser.btnMyscoreClick(Sender: TObject);
+var
+x:integer;
+begin
+ x:= frmLogin.PlayerNotoRank(iPlayerUser) ;
+
+ShowMessage('Your score is currently '+ IntToStr(frmAdmin.arrScoreA[x]) +' points');
+end;
+
+procedure TfrmUser.btnPlayerUClick(Sender: TObject);
+begin
+DBNUser.DataSource := dmDataA.DataSourceMP ;
+DBGridDisplayUsers.DataSource := dmDataA.DataSourceMP ;
+end;
+
+procedure TfrmUser.btnQuerriesdirectUClick(Sender: TObject);
+begin
+ tbsUser.Visible := False;
+ tbsQuerriesU.Visible := True ;
+end;
+
+procedure TfrmUser.btnResignClick(Sender: TObject);
+
+begin
+frmAdmin.RemovePlayer(iPlayerUser);
+end;
+
+procedure TfrmUser.btnScoreDirectUClick(Sender: TObject);
+begin
+ tbsUser.Visible := False;
+ tbsScoreU.Visible := True ;
+end;
+
+procedure TfrmUser.btnScoringClick(Sender: TObject);
+var
+iPlayerAU, iPlayerBU :integer;
+iScoreAU, iScoreBU:byte;
+sPlayerBU:string;
+bCheck :boolean;
+begin
+
+bCheck := True ;
+//ShowMessage(sPlayerBU);
+  if sedOPPA.Text = '' then
+  begin
+   ShowMessage('Fill in a opponent Number !');
+   bCheck := False ;
+  end
+  else
+  begin
+  iPlayerBU := strtoint(sedOPPA.Text) ;
+  sPlayerBU := frmAdmin.NotoNameSur(iPlayerBU) ;
+  if iPlayerBU = iPlayerUser then
+   begin
+    ShowMessage('You can not play against yourself');
+     bCheck := False ;
+   end;
+
+  end;
+
+  if sedUser.Text = '' then
+  begin
+   ShowMessage('Fill in a your score !');
+   bCheck := False ;
+  end;
+
+   if sedOponent.Text = '' then
+  begin
+   ShowMessage('Fill in a opponent score !');
+   bCheck := False ;
+  end;
+
+
+
+
+ if sPlayerBU = '' then
+ begin
+ ShowMessage('Player ' + inttostr(iPlayerBU) + ' does not exist');
+ bCheck := False ;
+ end ;
+
+
+if sedOponent.Text = inttostr(iPlayerUser) then
+ begin
+ ShowMessage('Sorry, you can not play against yourself!');
+ bCheck := False ;
+ end ;
+
+
+ if (bCheck = True) then
+ begin
+
+  iPlayerAU := iPlayerUser;
+  iScoreAU := strtoint(sedUser.Text) ;
+  iScoreBU := strtoint(sedOponent.Text);
+
+  AddScore(iPlayerAU, iPlayerBU, iScoreAU, iScoreBU);
+ end;
+
+
+
+
+end;
+
+procedure TfrmUser.btnVenueUClick(Sender: TObject);
+begin
+DBNUser.DataSource := dmDataA.DataSourceMV ;
+DBGridDisplayUsers.DataSource := dmDataA.DataSourceMV ;
+end;
+
+procedure TfrmUser.btnWinrateClick(Sender: TObject);
+var
+ iWin:integer;
+begin
+iWin := 0;
+
+dmDataA.tblMatchesM.First;
+  while not dmDataA.tblMatchesM.Eof do
+   begin
+    if not(dmDataA.tblMatchesM['Score B']= null) and  not(dmDataA.tblMatchesM['Score A']= null) then
+    begin
+
+     if (iPlayerUser = dmDataA.tblMatchesM['PlayerA']) or (iPlayerUser = dmDataA.tblMatchesM['PlayerB']) then
+     begin
+     //ShowMessage('Hi');
+     if (iPlayerUser = dmDataA.tblMatchesM['PlayerA']) then
+     begin
+     if (dmDataA.tblMatchesM['Score A'] > 4) then
+      begin
+      inc(iWin);
+      end;
+     end;
+
+     if (iPlayerUser = dmDataA.tblMatchesM['PlayerB']) then
+     begin
+     if (dmDataA.tblMatchesM['Score B'] > 4) then
+      begin
+      inc(iWin);
+      end;
+     end;
+     end;
+    end;
+    dmDataA.tblMatchesM.Next
+   end;
+   ShowMessage('You have won ' + inttostr(iWin) + ' matches');
+end;
+
+procedure TfrmUser.btnHome3UClick(Sender: TObject);
+var
+i:integer;
+begin
+sedOponent.Text := '9';
+sedUser.Text := '0';
+sedOPPA.Text := '1';
+sedPlayer.Text := '1';
+sedTimeU.Text := '8' ;
+ for i  := 1 to 99 do
+   begin
+   lstRequests.Items[i] := ' ';
+   end;
+tbsQuerriesU.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.btnLeftClick(Sender: TObject);
+var
+iPlayed, i, iTotal:integer;
+begin
+iPlayed := 0;
+//ShowMessage(inttostr(iPlayerUser));
+dmDataA.tblMatchesM.First;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+   if (iPlayerUser = dmDataA.tblMatchesM['PlayerA']) or (iPlayerUser = dmDataA.tblMatchesM['PlayerB'])then
+     begin
+     //ShowMessage('hello');
+      if not(dmDataA.tblMatchesM['Score A'] = null) and not(dmDataA.tblMatchesM['Score B'] = null) then
+      begin
+      inc(iPlayed);
+      //ShowMessage(inttostr(iPlayed));
+      end;
+     end;
+  dmDataA.tblMatchesM.Next;
+ end;
+ ShowMessage('You have ' + inttostr(dmDataA.tblPlayersM.RecordCount-1-iPlayed) + ' matches left' );
+end;
+
+procedure TfrmUser.btnLostClick(Sender: TObject);
+var
+iLost :integer ;
+begin
+iLost := 0;
+
+dmDataA.tblMatchesM.First;
+  while not dmDataA.tblMatchesM.Eof do
+   begin
+    if not(dmDataA.tblMatchesM['Score B']= null) and  not(dmDataA.tblMatchesM['Score A']= null) then
+    begin
+
+     if (iPlayerUser = dmDataA.tblMatchesM['PlayerA']) or (iPlayerUser = dmDataA.tblMatchesM['PlayerB']) then
+     begin
+     if (iPlayerUser = dmDataA.tblMatchesM['PlayerA']) then
+     begin
+     if (dmDataA.tblMatchesM['Score A'] < 5) then
+      begin
+      inc(iLost);
+      end;
+     end;
+
+     if (iPlayerUser = dmDataA.tblMatchesM['PlayerB']) then
+     begin
+     if (dmDataA.tblMatchesM['Score B'] < 5) then
+      begin
+      inc(iLost);
+      end;
+     end;
+     end;
+    end;
+    dmDataA.tblMatchesM.Next
+   end;
+   ShowMessage('You have lost ' + inttostr(iLost) + ' matches');
+end;
+
+procedure TfrmUser.btnHome2UClick(Sender: TObject);
+var
+i:integer;
+begin
+sedOponent.Text := '9';
+sedUser.Text := '0';
+sedOPPA.Text := '1';
+sedPlayer.Text := '1';
+sedTimeU.Text := '8' ;
+ for i  := 1 to 99 do
+   begin
+   lstRequests.Items[i] := ' ';
+   end;
+tbsMatchU.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.FormActivate(Sender: TObject);
+begin
+tbsUser.TabVisible := false;
+tbsScoreU.TabVisible := false;
+tbsMatchU.TabVisible := false;
+tbsQuerriesU.TabVisible := false;
+tbsUser.Visible := True ;
+
+sedOponent.Text := '9';
+sedUser.Text := '0';
+sedOPPA.Text := '1';
+sedPlayer.Text := '1';
+sedTimeU.Text := '8' ;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+procedure TfrmUser.GeneratePoints(var arrP1ABNum, arrScore: array of integer);
+
+var
+iScore, iPlayer, q, i:integer;
+
+begin
+
+
+ dmDataA.tblPlayersM.First;
+ while not dmDataA.tblPlayersM.Eof do
+  begin
+   Inc(i);
+   arrP1ABNum[i] := dmDataA.tblPlayersM['PlayerNo'];
+   dmDataA.tblPlayersM.Next;
+  end;
+
+q:= 0;
+iPlayer := 0;
+ dmDataA.tblPlayersM.First;
+ while not dmDataA.tblPlayersM.Eof do
+ begin
+   inc(q);
+   iPlayer := dmDataA.tblPlayersM['PlayerNo'] ;
+   iScore := 0;
+  dmDataA.tblMatchesM.First;
+  while not dmDataA.tblMatchesM.Eof do
+   begin
+
+   if (iPlayer = dmDataA.tblMatchesM['PlayerA']) or (iPlayer = dmDataA.tblMatchesM['PlayerB']) then
+    begin
+     if (iPlayer = dmDataA.tblMatchesM['PlayerA']) then
+     begin
+     if not(dmDataA.tblMatchesM['Score A'] = Null) then
+      begin
+      iScore := iScore + dmDataA.tblMatchesM['Score A']
+      end;
+     end;
+
+     if (iPlayer = dmDataA.tblMatchesM['PlayerB']) then
+     begin
+     if not(dmDataA.tblMatchesM['Score B'] = Null) then
+      begin
+      iScore := iScore + dmDataA.tblMatchesM['Score B']
+      end;
+     end;
+    end;
+    dmDataA.tblMatchesM.Next
+   end;
+   arrScore[q-1] := iScore ;
+   dmDataA.tblPlayersM.Next;
+ end;
+end;
+
+procedure TfrmUser.RemoveLineFromFile(var tInputFile: textFile;
+  sLineOut: string);
+  var
+  tTemp:TextFile;
+  sLine:string ;
+begin
+//AssignFile(tInputFile,'Matches.txt');
+AssignFile(tTemp,'Temp.txt');
+Rewrite(tTemp);
+Reset(tInputFile);
+ShowMessage(sLineOut);
+while not (Eof(tInputFile)) do
+ begin
+
+    readln(tInputFile,sLine);
+
+     if not(sLineOut = sLine) then
+     begin
+        Append(tTemp);
+       Writeln(tTemp,sLine);
+     end
+
+
+
+ end;
+  
+
+ sLine := '';
+ Rewrite(tInputFile);
+ Reset(tTemp);
+ while not eof(tTemp) do
+  begin
+
+    Readln(tTemp,sLine);
+    Writeln(tInputFile,sLine);
+  end;
+
+  CloseFile(tInputFile);
+  CloseFile(tTemp);
+ // ShowMessage('Hello');
+end;
+
+procedure TfrmUser.sedOponentChange(Sender: TObject);
+begin
+sedUser.Text :=inttostr( 9 - strtoint(sedOponent.Text )) ;
+end;
+
+procedure TfrmUser.sedUserChange(Sender: TObject);
+begin
+sedOponent.Text :=inttostr( 9 - strtoint(sedUser.Text )) ;
+end;
+
+procedure TfrmUser.ReadfromFile( var sInn, sP1, sP2, sRVenueU, sDate, sTime, scom1, scom2 :string ) ;
+ var
+  ipos:integer;
+begin
+ipos := pos(';',sInn);
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+sp1 :=copy(sInn,1,ipos-1);
+//ShowMessage(Sp1);
+
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+sp2 :=copy(sInn,1,ipos-1);
+//ShowMessage(Sp2);
+
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+sRVenueU :=copy(sInn,1,ipos-1);
+//ShowMessage(sRVenueU);
+
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+sDate :=copy(sInn,1,ipos-1);
+//ShowMessage(sDate);
+
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+sTime :=copy(sInn,1,ipos-1);
+//ShowMessage(sTime);
+
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+scom1 :=copy(sInn,1,ipos-1);
+//ShowMessage(scom1);
+
+delete(sInn,1,ipos);
+ipos := pos(';',sInn);
+scom2 :=copy(sInn,1,ipos-1);
+//ShowMessage(scom2);
+
+delete(sInn,1,ipos);
+
+//ShowMessage('hi');
+//ShowMessage(sInn);
+
+end;
+
+procedure TfrmUser.pnlAcceptClick(Sender: TObject);
+  var
+  sOutA:string;
+  iCounter, i, iCourts:integer;
+begin
+
+if not(lstRequests.ItemIndex = -1) and not(lstRequests.Items[lstRequests.ItemIndex] = ' ' ) and not(lstRequests.Items[lstRequests.ItemIndex] = '' )then
+begin
+sOutA := lstRequests.Items[lstRequests.ItemIndex] ;
+sInn := sOutA ;
+ReadfromFile(sInn, sP1, sP2, sRVenueU, sDate, sTime, scom1, scom2);
+
+if (not(scom1 = '0')) or (not (scom2 = '0') )then
+  begin
+  iCounter := 0;
+  dmDataA.tblMatchesM.First;
+   while not dmDataA.tblMatchesM.Eof  do
+   begin
+   if (dmDataA.tblMatchesM['VenueNo']=strtoint(sRVenueU)) and( dmDataA.tblMatchesM['Time'] = sTime) then
+    begin
+    Inc(iCounter);
+    end;
+
+   dmDataA.tblMatchesM.Next
+   end;
+
+   dmDataA.tblVenueM.First;
+   i:= 0 ;
+   iCourts := 0;
+   while not dmDataA.tblVenueM.Eof do
+   begin
+    inc(i);
+     if i = strtoint(sRVenueU) then
+     begin
+      iCourts := dmDataA.tblVenueM['Number_of_courts'];
+     end;
+
+    dmDataA.tblVenueM.Next
+   end;
+
+   if iCounter> iCourts then
+   begin
+    ShowMessage('The venue is currently fully booked at this given time');
+    ShowMessage('The match is declined. Reschedule a different time or venue');
+    RemoveLineFromFile(tMatch,sOutA);
+   end
+   else
+   begin
+   dmDataA.tblMatchesM.First;
+   while not dmDataA.tblMatchesM.Eof do
+     begin
+     if  ((dmDataA.tblMatchesM['PlayerA'] = strtoint(sP1) ) or  (dmDataA.tblMatchesM['PlayerB'] = strtoint(sP1) )) and  ((dmDataA.tblMatchesM['PlayerA'] = strtoint(sP2) ) or  (dmDataA.tblMatchesM['PlayerB'] = strtoint(sP2) )) then
+     begin
+     ShowMessage('This match has already been scheduled in the database');
+     end
+     else
+     begin
+     RemoveLineFromFile(tMatch,sOutA);
+      dmDataA.tblMatchesM.Open ;
+      dmDataA.tblMatchesM.Append;
+      dmDataA.tblMatchesM['PlayerA'] := strtoint(sP1) ;
+      dmDataA.tblMatchesM['PlayerB'] := strtoint(sP2) ;
+      dmDataA.tblMatchesM['VenueNo'] := strtoint(sRVenueU) ;
+      dmDataA.tblMatchesM['Time'] := sTime ;
+      dmDataA.tblMatchesM['Date'] := strtoDate(sDate) ;
+      dmDataA.tblMatchesM.Post;
+      lstRequests.Items[lstRequests.ItemIndex] := '';
+      ShowMessage('Match has been scheduled');
+      ShowMessage(sDate);
+     end;
+
+    dmDataA.tblMatchesM.Next
+    end;
+
+
+   end;
+
+  end
+  else
+  begin
+
+
+   if (scom1 = '0') and  (scom2 = '0')  then
+   begin
+
+    RemoveLineFromFile(tMatch,sOutA);
+    sCom1 := inttostr(iPlayerUser);
+    sOutA :=';'+ sP1 + ';' + sP2 +';' + sRVenueU + ';' + sDate + ';' + sTime + ';' + scom1 +';' + sCom2 +';' ;
+
+    Append(tMatch);
+    Writeln(tMatch,sOutA);
+    CloseFile(tMatch);
+    ShowMessage('Match has been sent to Opponent for confirmation');
+    lstRequests.Items[lstRequests.ItemIndex] := '';
+   end;
+
+  end;
+
+end
+else
+begin
+  ShowMessage('Choose a match');
+end;
+end;
+
+procedure TfrmUser.pnlDeclineClick(Sender: TObject);
+var
+sOutA:string ;
+begin
+if  (lstRequests.Items[lstRequests.ItemIndex] = '' ) then
+begin
+   ShowMessage('cool');
+end;
+sOutA := lstRequests.Items[lstRequests.ItemIndex] ;
+RemoveLineFromFile(tMatch,sOutA);
+lstRequests.Items[lstRequests.ItemIndex] := '';
+ShowMessage('Match has been cancelled');
+
+end;
+
+end.

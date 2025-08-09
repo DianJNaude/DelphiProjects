@@ -1,0 +1,24 @@
+program Bobs_Zoo_DNp;
+
+uses
+  Vcl.Forms,
+  frmEntry_DNu in 'frmEntry_DNu.pas' {Form1},
+  frmMain_DNu in 'frmMain_DNu.pas' {Form2},
+  frmGame1_DNu in 'frmGame1_DNu.pas' {Form3},
+  frmGame2_DNu in 'frmGame2_DNu.pas' {Form4},
+  frmGame3_DNu in 'frmGame3_DNu.pas' {Form5},
+  frmGame4_DNu in 'frmGame4_DNu.pas' {Form6};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TForm4, Form4);
+  Application.CreateForm(TForm5, Form5);
+  Application.CreateForm(TForm6, Form6);
+  Application.Run;
+end.

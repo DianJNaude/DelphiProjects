@@ -1,0 +1,1454 @@
+unit User;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Samples.Spin, Vcl.WinXPickers, Vcl.ComCtrls, Vcl.Imaging.jpeg, Vcl.Buttons,
+  Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, DateUtils, Vcl.Imaging.pngimage, TClientX_U, ShellApi;
+
+type
+  TfrmUser = class(TForm)
+    bmbLogout: TBitBtn;
+    bmbHelp: TBitBtn;
+    PageControlUser: TPageControl;
+    tbsUser: TTabSheet;
+    tbsProducts: TTabSheet;
+    tbsService: TTabSheet;
+    tbsBasket: TTabSheet;
+    lblHomeU: TLabel;
+    btnHome1U: TButton;
+    btnHome3U: TButton;
+    btnHome2U: TButton;
+    pnlNameNum: TPanel;
+    sedAmount: TSpinEdit;
+    btnAddtoB: TButton;
+    cmbTime: TComboBox;
+    Label1: TLabel;
+    btnIncrease: TButton;
+    btnDecrease: TButton;
+    btnRemove: TButton;
+    btnContinue: TButton;
+    tbsDonate: TTabSheet;
+    lblAnimal1: TLabel;
+    cmbA1: TComboBox;
+    lblAnimal2: TLabel;
+    lblAnimal3: TLabel;
+    cmbA2: TComboBox;
+    cmbA3: TComboBox;
+    btnDonate: TButton;
+    Label7: TLabel;
+    lblCaptionSelect: TLabel;
+    dtpService: TDateTimePicker;
+    pnlDonate: TPanel;
+    Label11: TLabel;
+    pnlAmmountof: TPanel;
+    sedPersons: TSpinEdit;
+    btnAddtoBS: TButton;
+    Label13: TLabel;
+    Label14: TLabel;
+    btnHomeDonate: TButton;
+    imgNature: TImage;
+    pnlPercP: TPanel;
+    Label15: TLabel;
+    Label16: TLabel;
+    lblFinal: TLabel;
+    Label18: TLabel;
+    imgCheetah: TImage;
+    imgGiraffe: TImage;
+    imgZebra: TImage;
+    pnlBasket: TPanel;
+    Label4: TLabel;
+    imgBasket: TImage;
+    pnlSouthAfrica: TPanel;
+    imgSA: TImage;
+    imgAnimals: TImage;
+    Label9: TLabel;
+    Label6: TLabel;
+    pnlProducts: TPanel;
+    pnlServices: TPanel;
+    Label5: TLabel;
+    sgService: TStringGrid;
+    sgProduct: TStringGrid;
+    pnlTotal: TPanel;
+    Label12: TLabel;
+    lblBasketTotal: TLabel;
+    sgBasket: TStringGrid;
+    Label17: TLabel;
+    Label19: TLabel;
+    lblPurchase: TLabel;
+    lblDonate: TLabel;
+    Label22: TLabel;
+    procedure FormActivate(Sender: TObject);
+    procedure btnHome1UClick(Sender: TObject);
+    procedure btnHome2UClick(Sender: TObject);
+    procedure pnlBasketClick(Sender: TObject);
+    procedure btnContinueClick(Sender: TObject);
+    procedure pnlServicesClick(Sender: TObject);
+    procedure pnlDonateClick(Sender: TObject);
+    procedure pnlProductsClick(Sender: TObject);
+    procedure btnHomeDonateClick(Sender: TObject);
+    procedure btnHome3UClick(Sender: TObject);
+    procedure btnAddtoBClick(Sender: TObject);
+    procedure btnAddtoBSClick(Sender: TObject);
+    procedure btnIncreaseClick(Sender: TObject);
+    procedure btnDecreaseClick(Sender: TObject);
+    procedure btnRemoveClick(Sender: TObject);
+    procedure btnDonateClick(Sender: TObject);
+    procedure bmbHelpClick(Sender: TObject);
+    procedure bmbLogoutClick(Sender: TObject);
+    procedure bmbClick(Sender: TObject);
+    procedure btnADDDonationClick(Sender: TObject);
+    procedure btnPayClick(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure TaskDialogHyperlinkClicked(Sender: TObject);
+
+
+  private
+    objClient:TClient;
+    sInn, sP1, sP2, sRVenueU, sDate, sTime, scom1, scom2 :string;
+    iCountAnimalsarray :integer;
+   tBasket:textfile;
+   tTemp :textfile;
+   rTotal:real;
+   tFirst, tLast:TTime;
+   tMatch:TextFile;
+   arrAnimal: array of string ;
+   arrDonation :array of integer;
+
+   pnlHelp: TPanel;
+   imgStaffmember:TImage;
+   redDisplay:Trichedit ;
+   bmbDone:TBitBtn;
+   cmbAnimal:TComboBox;
+   sedtMoneyX:TSpinEdit;
+   pnlDonationX:Tpanel;
+   btnAdd:TButton;
+   lblDonateTotal:TLabel ;
+   btnPay:TButton ;
+   btnADDDonation:Tbutton;
+   btnClear:Tbutton;
+
+   rTotalDonation:real;
+   bOutofstock:boolean;
+   procedure Basket ;
+   procedure Increase(ID:string; iNum :integer);
+   procedure DeleteFrom(ID:string);
+   procedure Donate;
+   procedure Help;
+   procedure HideDonate ;
+   procedure ShowDonations;
+   procedure Transaction ;
+   Procedure clearArray;
+   procedure InstanUser(sUser:string);
+   procedure Showvideolink;
+   function OutofStock(sProduct:string; IStock:integer):boolean;
+   procedure FutureBookings;
+
+    { Private declarations }
+  public
+    iPlayerUser:integer ;
+
+    { Public declarations }
+  end;
+
+var
+  frmUser: TfrmUser;
+
+implementation
+uses  Admin, dmData, Login;
+
+{$R *.dfm}
+
+
+procedure TfrmUser.btnHome1UClick(Sender: TObject);
+
+begin
+
+tbsProducts.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.Basket;
+var
+sLine :string;
+ipos, icount, i:integer;
+ rPrice, rAmm:real;
+begin
+  /// Sets up string grid
+  ///   and reads the baskets values from
+  ///  the textfile
+ sgBasket.ColCount := 7 ;
+ sgBasket.ColWidths[0] := 1;
+ sgBasket.ColWidths[1] := 50;
+ sgBasket.ColWidths[2] := 1000;
+ sgBasket.ColWidths[3] := 50;
+ sgBasket.ColWidths[4] := 100 ;
+ sgBasket.ColWidths[5] := 100 ;
+ sgBasket.ColWidths[6] := 100 ;
+ sgBasket.Cells[1,0] := 'ID' ;
+ sgBasket.Cells[2,0] := 'Description' ;
+ sgBasket.Cells[3,0] := 'Price' ;
+ sgBasket.Cells[4,0] := 'Ammount' ;
+ sgBasket.Cells[5,0] := 'Date' ;
+ sgBasket.Cells[6,0] := 'Time' ;
+
+iCount := sgBasket.RowCount;
+for i := 1 to (icount+1) do
+begin
+sgBasket.Cells[1,i] := '' ;
+sgBasket.Cells[2,i] := '' ;
+sgBasket.Cells[3,i] := '' ;
+sgBasket.Cells[4,i] := '' ;
+sgBasket.Cells[5,i] := '' ;
+sgBasket.Cells[6,i] := '' ;
+end;
+  rTotal := 0;
+  icount:= 0;
+ reset(tBasket);
+ while not eof(tBasket) do
+ begin
+ inc(icount);
+ sgBasket.RowCount := icount+1;
+ readln(tBasket,sLine);
+
+ ipos := pos('#',sLine);
+ sgBasket.Cells[1,icount] := copy(sline,1,ipos-1);
+ delete(sline,1,ipos) ;
+
+ ipos := pos('#',sLine);
+ sgBasket.Cells[2,icount] := copy(sline,1,ipos-1);
+ delete(sline,1,ipos) ;
+
+ ipos := pos('#',sLine);
+ sgBasket.Cells[3,icount] := copy(sline,1,ipos-1);
+ rPrice := strtofloat(copy(sline,1,ipos-1));
+ delete(sline,1,ipos);
+
+ ipos := pos('#',sLine);
+ sgBasket.Cells[4,icount] := copy(sline,1,ipos-1);
+ rAmm := strtofloat(copy(sline,1,ipos-1));
+ delete(sline,1,ipos);
+ rTotal := rTotal + rPrice*rAmm ;
+
+ ipos := pos('#',sLine);
+ sgBasket.Cells[5,icount] := copy(sline,1,ipos-1);
+ delete(sline,1,ipos);
+
+ ipos := pos('#',sLine);
+ sgBasket.Cells[6,icount] := copy(sline,1,ipos-1);
+ delete(sline,1,ipos);
+ end;
+ lblBasketTotal.Caption := floattostrF(rTotal,FFcurrency,10,2) ;
+ lblDonate.Caption := floattostrF(rTotal*0.1,FFcurrency,10,2) ;
+ lblPurchase.Caption := floattostrF(rTotal*0.9,FFcurrency,10,2) ;
+
+end;
+
+
+
+procedure TfrmUser.bmbClick(Sender: TObject);
+begin
+// close Help window if open
+if Assigned(pnlHelp) then
+  begin
+    pnlHelp.Free;
+    pnlHelp := nil;
+  end;
+
+end;
+
+procedure TfrmUser.bmbHelpClick(Sender: TObject);
+begin
+///create help window
+help ;
+end;
+
+procedure TfrmUser.bmbLogoutClick(Sender: TObject);
+var
+tOut:Tdatetime ;
+tClientDD:textfile ;
+sfile:string;
+sUser:string;
+begin
+if Assigned(pnlHelp) then
+  begin
+    pnlHelp.Free;
+    pnlHelp := nil;
+  end;
+
+tbsDonate.Visible := False;
+tbsUser.Visible := True ;
+/// instantiate object to increase Client time
+///  data is then stored in the respective txt
+ {tLast := now ;
+tOut := tfirst- tLast  ;
+ShowMessage(timetostr(tOut));
+InstanUser(inttostr(iPlayerUser));
+objClient.increasetime(tOut) ;
+
+ sUser := inttostr(iPlayerUser);
+ sFile := sUser + '.txt' ;
+ //ShowMessage(sFile);
+ AssignFile(tClientDD,sFile);
+ rewrite(tClientDD);
+ Append(tClientDD);
+
+ Writeln(tClientDD, timetostr(objClient.getTime));
+ Writeln(tClientDD, Datetimetostr(objClient.getBeginDate));
+ Writeln(tClientDD, Datetimetostr(objClient.getLastLogin));
+CloseFile(tClientDD) ; }
+
+//ShowMessage('Bye ' + frmLogin.sCNamelogin + ' , hope to see you soon!') ;
+//End connection
+dmDataA.ADOConnectionM.Connected := False ;
+frmUser.Visible := False ;
+frmLogin.Visible := True ;
+frmUser.Close;
+end;
+
+
+
+procedure TfrmUser.btnADDDonationClick(Sender: TObject);
+var
+iAdd:integer;
+begin
+///Adds Donation to arrays
+///  where it is stored till the transaction is finished
+
+if not(cmbAnimal.ItemIndex = -1) then
+begin
+
+inc(iCountAnimalsarray);
+//ShowMessage(inttostr(iCountAnimalsarray));
+SetLength(arrAnimal,iCountAnimalsarray+1) ;
+SetLength(arrDonation,iCountAnimalsarray+1) ;
+iADD := sedtMoneyX.Value ;
+rTotalDonation := rTotalDonation + iADD ;
+lblDonateTotal.Caption :=  floattostrF(rTotalDonation,FFcurrency,10,2);
+arrAnimal[iCountAnimalsarray] := cmbAnimal.Items[cmbAnimal.ItemIndex] ;
+arrDonation[iCountAnimalsarray] :=  iAdd;
+//ShowMessage(arrAnimal[iCountAnimalsarray]);
+cmbAnimal.ItemIndex := -1 ;
+sedtMoneyX.Value := 1;
+ShowMessage('Amount added') ;
+showmessage('Add another Donations or Finish Payment')
+end
+else
+begin
+  ShowMessage('Select a animal') ;
+end;
+
+if iCountAnimalsarray > 0 then
+ begin
+   btnPay.Enabled := True ;
+ end;
+end;
+
+procedure TfrmUser.btnAddtoBClick(Sender: TObject);
+var
+sLine, sId:string;
+iRow, ipos:integer;
+bFound:boolean;
+begin
+//Adds products to Basket textfile
+bOutofstock := False;
+bFound := False;
+iRow := sgProduct.Selection.Top;
+reset(tBasket);
+sLine := '';
+
+ while not eof(tBasket) do
+ begin
+
+ readln(tBasket,sLine);
+ ipos := pos('#',sLine);
+ sID := copy(sLine,1,ipos-1);
+
+  if SID = sgProduct.Cells[1,iRow] then
+  begin
+   bFound := True;
+  end;
+
+ end;
+
+   sLine := '';
+if not(iRow = -1) then
+ begin
+ if bfound = True then
+  begin
+   increase(sgProduct.Cells[1,iRow],sedAmount.Value);
+  end
+  else
+  begin
+   if OutofStock(sgProduct.Cells[1,iRow], sedAmount.Value) = False then
+   begin
+    bOutofstock := False;
+    sline := sgProduct.Cells[1,iRow] + '#' + sgProduct.Cells[2,iRow] + ' ' +sgProduct.Cells[3,iRow] + '#' + sgProduct.Cells[4,iRow] + '#' + sedAmount.Text + '#';
+    Append(tBasket);
+    Writeln(tBasket,sline);
+    CloseFile(tBasket);
+   end
+   else
+   begin
+   bOutofstock := True;
+   ShowMessage('We apologise but we do not seem to have the stock available for your purchase.Please check back with us in a while' )
+   end;
+
+   end;
+
+
+
+  sedAmount.Value := 1 ;
+  //Bout of stock
+  if bOutofstock = False then
+   begin
+   ShowMessage('Added to Basket');
+   end;
+ end
+ else
+ begin
+ ShowMessage('Select a product');
+ end;
+
+
+
+end;
+
+procedure TfrmUser.btnAddtoBSClick(Sender: TObject);
+var
+sLine, sId:string;
+iRow, ipos:integer;
+bFound :boolean;
+begin
+//Adds services to Basket textfile
+iRow := sgService.Selection.Top;
+reset(tBasket) ;
+
+ while not eof(tBasket) do
+ begin
+ readln(tBasket,sLine);
+ ipos := pos('#',sLine);
+ sID := copy(sLine,1,ipos-1);
+
+  if SID = sgService.Cells[1,iRow] then
+  begin
+   bFound := True;
+  end;
+
+ end;
+
+ CloseFile(tBasket);
+
+sLine := '';
+
+ if not(iRow = -1) then
+ begin
+ if bFound = True then
+  begin
+  increase(sgService.Cells[1,iRow],sedPersons.Value)
+  end
+  else
+  begin
+  sline := sgService.Cells[1,iRow] + '#'+ sgService.Cells[2,iRow] + '#' + sgService.Cells[5,iRow] + '#' + sedPersons.Text + '#' + datetostr(dtpService.Date) + '#' + cmbTime.Text + '#' ;
+  Append(tBasket);
+  Writeln(tBasket,sline);
+  CloseFile(tBasket);
+  end;
+  sedPersons.Value := 1 ;
+  ShowMessage('Added to Basket');
+ end
+ else
+ begin
+   ShowMessage('Select a Service');
+ end;
+
+end;
+
+
+procedure TfrmUser.btnClearClick(Sender: TObject);
+begin
+///Dynamic button onclick
+/// Asks to Clear the payament and ofers the option to leave donations
+if MessageDlg('Are you sure you want to cancel the payment ?', mtWarning, [mbYes, mbNo], 0) = mrYes then
+  begin
+  ShowMessage('Payment was cancelled');
+  clearArray;
+  rTotalDonation := 0;
+  lblDonateTotal.Caption := 'R 0' ;
+  btnPay.Enabled := False ;
+
+   if MessageDlg('Do you want to leave Donations?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+    begin
+    //clearArray;
+    ShowMessage('Hope to see tou again soon ' + frmLogin.sCNamelogin + ' !') ;
+    pnlDonationX.Destroy;
+    tbsDonate.Visible := False;
+    tbsUser.Visible := True ;
+    btnHomeDonate.Enabled := True ;
+    pnlBasket.Enabled := True;
+    bmbLogout.Enabled := True ;
+    end;
+
+
+
+
+  end;
+
+end;
+
+procedure TfrmUser.btnContinueClick(Sender: TObject);
+begin
+ //From Basket Continue Takes you to the final donations page
+Donate ;
+ShowDonations;
+cmbA1.ItemIndex := -1;
+cmbA2.ItemIndex := -1 ;
+cmbA3.ItemIndex := -1 ;
+tbsBasket.Visible := False ;
+tbsDonate.Visible := True;
+
+end;
+
+procedure TfrmUser.btnDecreaseClick(Sender: TObject);
+var
+sID:string;
+iRow :integer;
+begin
+///Decrease Basket amount
+iRow := sgBasket.Selection.Top;
+sID := sgBasket.Cells[1,iRow];
+Increase(sId,-1) ;
+
+ShowMessage('Decreased');
+
+if (sgBasket.Cells[1,1] = '') then
+begin
+tbsBasket.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+end;
+
+procedure TfrmUser.btnDonateClick(Sender: TObject);
+var
+iposI, i, p:integer;
+sAnimal1, sAnimal2, sAnimal3:string;
+bProduct:boolean;
+sMessage:string;
+begin
+ ////Find values
+ ///Populates the database with the transaction
+
+
+////////////////////////////////////////////////////////////////////
+//Main
+frmLogin.ActivateDatabase;
+if (cmbA1.ItemIndex = -1) or (cmbA2.ItemIndex = -1) or (cmbA3.ItemIndex = -1)   then
+ begin
+   ShowMessage('Please select all three Animals') ;
+ end
+else
+begin
+
+if MessageDlg('Do you want to finish the transaction?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+begin
+//TblTransaction
+ /// Transaction is recorded
+dmDataA.tblTransaction.Last;
+dmDataA.tblTransaction.Insert;
+dmDataA.tblTransaction['DonateAnimal'] := rTotal*0.1;
+dmDataA.tblTransaction['Total'] := rTotal;
+dmDataA.tblTransaction['ClientID'] := iPlayerUser;
+dmDataA.tblTransaction['TransactionID'] := frmLogin.iTransaction ;
+dmDataA.tblTransaction.Post;
+
+//Donation
+/// Three Animals Donations is recorded
+// tblAnimalDonations
+dmDataA.tblAnimalDonations.Last;
+dmDataA.tblAnimalDonations.Insert;
+sAnimal1 := cmbA1.Items[cmbA1.ItemIndex] ;
+iposI := pos('#',sAnimal1);
+sAnimal1 := copy(sAnimal1,1,iposI-1);
+//ShowMessage(sAnimal1);
+dmDataA.tblAnimalDonations['ID'] :=  frmLogin.iAniamalDonateID;
+dmDataA.tblAnimalDonations['AnimalID'] :=  strtoint(sAnimal1);
+//ShowMessage('hi');
+dmDataA.tblAnimalDonations['Amount'] := 1/3*rTotal*0.1;
+dmDataA.tblAnimalDonations['TransactionID'] := frmLogin.iTransaction ;
+dmDataA.tblAnimalDonations.Post;
+
+
+ inc(frmLogin.iAniamalDonateID);
+
+dmDataA.tblAnimalDonations.Last;
+dmDataA.tblAnimalDonations.Insert;
+sAnimal2 := cmbA2.Items[cmbA1.ItemIndex] ;
+iposI := pos('#',sAnimal2);
+sAnimal2 :=copy(sAnimal2,1,iposI-1) ;
+dmDataA.tblAnimalDonations['ID'] :=  frmLogin.iAniamalDonateID;
+dmDataA.tblAnimalDonations['AnimalID'] :=  strtoint(sAnimal2);
+dmDataA.tblAnimalDonations['Amount'] := 1/3*rTotal*0.1;
+dmDataA.tblAnimalDonations['TransactionID'] := frmLogin.iTransaction ;
+dmDataA.tblAnimalDonations.Post;
+
+
+ inc(frmLogin.iAniamalDonateID);
+
+dmDataA.tblAnimalDonations.Last;
+dmDataA.tblAnimalDonations.Insert;
+sAnimal3 := cmbA3.Items[cmbA3.ItemIndex] ;
+iposI := pos('#',sAnimal3);
+sAnimal3 := copy(sAnimal3,1,iposI-1);
+dmDataA.tblAnimalDonations['ID'] :=  frmLogin.iAniamalDonateID;
+dmDataA.tblAnimalDonations['AnimalID'] := strtoint(sAnimal3);
+dmDataA.tblAnimalDonations['Amount'] := 1/3*rTotal*0.1;
+dmDataA.tblAnimalDonations['TransactionID'] := frmLogin.iTransaction ;
+dmDataA.tblAnimalDonations.Post;
+
+
+ inc(frmLogin.iAniamalDonateID);
+
+//PURCHASE
+ //Products  and Services
+//records the products and services that were bougth
+  for I := 1 to  sgBasket.RowCount-1 do
+  begin
+
+    if  sgBasket.Cells[1,i][1] = 'P' then
+    begin
+    dmDataA.tblPurchaserecord.Last;
+    dmDataA.tblPurchaserecord.Insert;
+    dmDataA.tblPurchaserecord['TransactionID'] := frmLogin.iTransaction ;
+    dmDataA.tblPurchaserecord['ProductID'] := sgBasket.Cells[1,i] ;
+    dmDataA.tblPurchaserecord['ServiceID'] :=  'S0' ;
+    dmDataA.tblPurchaserecord['ProductAmount'] := strtoint(sgBasket.Cells[4,i]);
+    dmDataA.tblPurchaserecord['IDNumPR'] :=   frmLogin.sPurchaseRecordID;
+    dmDataA.tblPurchaserecord.Post;
+    inc(frmLogin.iPurchaseRecord);
+    frmLogin.sPurchaseRecordID := 'A' + inttostr(frmLogin.iPurchaseRecord) ;
+
+    dmDataA.tblProducts.First ;
+    while not dmDataA.tblProducts.Eof do
+     begin
+      if dmDataA.tblProducts['ProductID'] = sgBasket.Cells[1,i] then
+         begin
+           dmDataA.tblProducts.Edit;
+           //Increase products sold and decreases stock
+           dmDataA.tblProducts['Sold'] := dmDataA.tblProducts['Sold'] + 1  ;
+           dmDataA.tblProducts['Stock'] := dmDataA.tblProducts['Stock'] - 1;
+           dmDataA.tblProducts.Post;
+         end;
+
+     dmDataA.tblProducts.Next;
+     end;
+
+
+    end
+    else
+    begin
+    dmDataA.tblPurchaserecord.Last;
+    dmDataA.tblPurchaserecord.Insert;
+    dmDataA.tblPurchaserecord['TransactionID'] := frmLogin.iTransaction ;
+    dmDataA.tblPurchaserecord['ProductID'] :=  'P0' ;
+    dmDataA.tblPurchaserecord['ServiceID'] :=  sgBasket.Cells[1,i] ;
+    dmDataA.tblPurchaserecord['ProductAmount'] := strtoint(sgBasket.Cells[4,i]);
+    dmDataA.tblPurchaserecord['IDNumPR'] :=   frmLogin.sPurchaseRecordID;
+    dmDataA.tblPurchaserecord.Post;
+    inc(frmLogin.iPurchaseRecord);
+    frmLogin.sPurchaseRecordID := 'A' + inttostr(frmLogin.iPurchaseRecord)  ;
+
+      dmDataA.tblService.First ;
+    while not dmDataA.tblService.Eof do
+     begin
+      if dmDataA.tblService['ServiceID'] = sgBasket.Cells[1,i] then
+         begin
+         ///Increase services sold
+           dmDataA.tblService.Edit;
+           dmDataA.tblService['Sold'] := dmDataA.tblService['Sold'] + 1  ;
+           dmDataA.tblService.Post;
+         end;
+
+     dmDataA.tblService.Next;
+     end;
+    end;
+  end;
+   inc(frmLogin.iTransaction);
+  //Sends Message to inform the client of the transaction
+sMessage:= 'Thankyou for shopping at SOA and helping Endangered Animals!';
+sMessage := sMessage + #10 + 'Total amount spent: ' + FloatToStrF(rTotal, FFcurrency,10,2);
+sMessage := sMessage + #10 + 'Total amount donated: ' + FloatToStrF(rTotal*0.1, FFcurrency,10,2);
+ if frmLogin.bMessagingACTIVE = True then
+          begin
+          frmLogin.OTPExecute(frmLogin.sUserPhone,sMessage) ;
+          end;
+///for future development
+///  to create a booking service txt stores data values
+FutureBookings;
+//////////////
+Rewrite(tBasket) ;
+Basket;
+
+
+cmbA1.ItemIndex := -1 ;
+cmbA2.ItemIndex := -1 ;
+cmbA3.ItemIndex := -1 ;
+ShowMessage('Transaction is completed');
+ShowMessage('Thankyou for shopping at SOA');
+
+tbsDonate.Visible := False;
+tbsUser.Visible := True ;
+end;
+end;
+end;
+
+procedure TfrmUser.btnHomeDonateClick(Sender: TObject);
+begin
+tbsDonate.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.clearArray;
+var
+i:integer;
+begin
+//ClearsArray
+ for i  := 1 to iCountAnimalsarray do
+  begin
+    arrAnimal[i] := '';
+    arrDonation[i] := 0 ;
+  end;
+ iCountAnimalsarray := 0;
+end;
+
+procedure TfrmUser.DeleteFrom(ID: string);
+var
+sline, sX, sIdentity, sAmmount, sTemp, sOut:string;
+ipos, iLine, icount, iAmmount:integer;
+
+begin
+//Deletes from Basket
+icount := 0;
+reset(tBasket);
+ rewrite(tTemp) ;
+ append(tTemp);
+while not eof(tBasket) do
+ begin
+ readln(tBasket,sLine);
+ ipos := pos('#',sLine);
+ sIdentity := copy(sline,1,ipos-1) ;
+   if not(sIdentity =Id) then
+   begin
+     Writeln(tTemp,sLine);
+   end;
+ end;
+ rewrite(tBasket);
+ append(tBasket);
+ reset(tTemp);
+ sLine := '';
+ while not eof(tTemp) do
+ begin
+  readln(tTemp,sline);
+  Writeln(tBasket,sline);
+ end;
+  Basket;
+end;
+
+procedure TfrmUser.Donate;
+var
+icount:integer;
+begin
+///Gets values from the databse for the Comboboxes.
+dmDataA.tblAnimals.First;
+while not dmDataA.tblAnimals.Eof do
+ begin
+ cmbA1.Items.Add(inttostr(dmDataA.tblAnimals['AnimalID']) + '#' + dmDataA.tblAnimals['Species'])  ;
+ cmbA2.Items.Add(inttostr(dmDataA.tblAnimals['AnimalID']) + '#' + dmDataA.tblAnimals['Species'])  ;
+ cmbA3.Items.Add(inttostr(dmDataA.tblAnimals['AnimalID']) + '#' + dmDataA.tblAnimals['Species'])  ;
+ dmDataA.tblAnimals.Next;
+ end;
+ lblFinal.Caption :=  floattostrF(rTotal*0.1,FFcurrency,10,2);
+end;
+
+procedure TfrmUser.btnHome2UClick(Sender: TObject);
+begin
+tbsService.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.btnHome3UClick(Sender: TObject);
+begin
+tbsBasket.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.btnIncreaseClick(Sender: TObject);
+var
+sID:string;
+iRow :integer;
+begin
+///Increase Basket Amount
+iRow := sgBasket.Selection.Top;
+sID := sgBasket.Cells[1,iRow];
+Increase(sId,1) ;
+if bOutofstock = False then
+ begin
+ ShowMessage('Increased');
+ end;
+  if (sgBasket.Cells[1,1] = '') then
+begin
+tbsBasket.Visible := False;
+tbsUser.Visible := True ;
+end;
+end;
+
+procedure TfrmUser.btnPayClick(Sender: TObject);
+begin
+Transaction ;
+btnHomeDonate.Enabled := True ;
+pnlBasket.Enabled := True ;
+bmbLogout.Enabled := True ;
+pnlDonationX.Destroy;
+tbsDonate.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+procedure TfrmUser.btnRemoveClick(Sender: TObject);
+var
+sID:string;
+iRow :integer;
+begin
+///Button removes from basket
+iRow := sgBasket.Selection.Top;
+sID := sgBasket.Cells[1,iRow];
+DeleteFrom(sId);
+
+ShowMessage('Removed');
+if (sgBasket.Cells[1,1] = '') then
+begin
+tbsBasket.Visible := False;
+tbsUser.Visible := True ;
+end;
+
+end;
+
+
+
+procedure TfrmUser.TaskDialogHyperlinkClicked(Sender: TObject);
+begin
+/// Uses a ShellApi
+///  Executes code to open hyperlink
+///   From sender TTaskdialogue the hyperlink is opened
+
+  if Sender is TTaskDialog then
+    with Sender as TTaskDialog do
+      ShellExecute(0, 'open', PChar(URL), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TfrmUser.FormActivate(Sender: TObject);
+begin
+///Sets Default values
+///Determines time spent with tFirst
+tFirst := now ;
+tbsUser.TabVisible := false;
+tbsProducts.TabVisible := false;
+tbsService.TabVisible := false;
+tbsBasket.TabVisible := false;
+tbsDonate.TabVisible := false;
+tbsUser.Visible := True ;
+ sedAmount.MinValue := 1 ;
+ sedAmount.MaxValue := 1000000;
+ sedPersons.MinValue := 1;
+ sedPersons.MaxValue := 1000000;
+
+AssignFile(tTemp,'Temp.txt') ;
+ AssignFile(tBasket,frmLogin.sUserPhone + '.txt');
+
+ if not FileExists(frmLogin.sUserPhone + '.txt') then
+ begin
+ rewrite(tBasket) ;
+ end;
+
+pnlNameNum.Caption := ' Welcome ' + frmLogin.sCNamelogin  + ' !' ;
+///Procedure runs Dialogue box with video link
+Showvideolink;
+end;
+
+
+procedure TfrmUser.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+tOut:Ttime ;
+tClientDD:textfile ;
+sfile:string;
+sUser:string;
+begin
+///Determines finish time
+///  Instaniate object and writes back to textfile
+{tLast := now ;
+tOut := tfirst- tLast  ;
+ShowMessage(timetostr(tout)) ;
+InstanUser(inttostr(iPlayerUser));
+ShowMessage(timetostr(objClient.getTime));
+objClient.increasetime(tOut) ;
+sUser := inttostr(iPlayerUser);
+sFile := sUser + '.txt' ;
+AssignFile(tClientDD,sFile);
+rewrite(tClientDD);
+Append(tClientDD);
+
+Writeln(tClientDD, timetostr(objClient.getTime));
+Writeln(tClientDD, Datetimetostr(objClient.getBeginDate));
+Writeln(tClientDD, Datetimetostr(objClient.getLastLogin));
+CloseFile(tClientDD) ;}
+dmDataA.ADOConnectionM.Connected := False ;
+ShowMessage('Bye ' + frmLogin.sCNamelogin + ' , hope to see you soon!') ;
+end;
+
+procedure TfrmUser.FutureBookings;
+var
+tFileOut:textFile ;
+sLine:string;
+I:integer;
+sIDBasket:string;
+begin
+//Stores the future bookings
+ sLine := '' ;
+AssignFile(tFileOut, 'Bookings.txt') ;
+if not(FileExists('Bookings.txt')) then
+ begin
+   rewrite(tFileOut);
+ end;
+    append(tFileOut);
+
+   for i := 1 to sgBasket.RowCount-1 do
+     begin
+       sIDBasket := sgBasket.Cells[1,i] ;
+     if sIDBasket[1] ='S' then
+      begin
+      sLine := sgBasket.Cells[1,i] +'#'  + sgBasket.Cells[2,i] +'#' + sgBasket.Cells[3,i]  + '#' + sgBasket.Cells[4,i] +'#' + sgBasket.Cells[5,i] +'#' + sgBasket.Cells[6,i] +'#' + #10 + sLine ;
+      end;
+     end;
+     writeln(tFileOut, sLine);
+     closefile(tFileOut);
+end;
+
+procedure TfrmUser.Help;
+
+begin
+///Creates help panel with phone number
+pnlHelp := TPanel.create(self) ;
+pnlHelp.Parent := self ;
+pnlHelp.Left := 200 ;
+pnlHelp.Top := 90;
+pnlHelp.Width := 650 ;
+pnlHelp.Height := 400 ;
+pnlHelp.Caption := 'Help' ;
+
+imgStaffmember := TImage.Create(self);
+imgStaffmember.Parent := pnlHelp ;
+imgStaffmember.Left := 0 ;
+imgStaffmember.Top := 0;
+imgStaffmember.Width := 450 ;
+imgStaffmember.Height := 400 ;
+imgStaffmember.Stretch := True ;
+imgStaffmember.Proportional := True ;
+imgStaffmember.Picture.LoadFromFile('zookeeper.jpg');
+
+redDisplay := TRichEdit.Create(self)  ;
+redDisplay.Parent := pnlHelp ;
+redDisplay.Left := 300 ;
+redDisplay.Top := 0;
+redDisplay.Width := 350 ;
+redDisplay.Height := 400 ;
+redDisplay.Text := ''  ;
+redDisplay.Font.Size := 15 ;
+redDisplay.Lines.Add('Hello!') ;
+redDisplay.Lines.Add('My name is Kevin I am here to help') ;
+redDisplay.Lines.Add('Dial this number and I will assist you') ;
+redDisplay.Lines.Add(' ') ;
+redDisplay.Lines.Add(' ') ;
+redDisplay.Lines.Add(' ') ;
+redDisplay.Lines.Add(' ') ;
+redDisplay.SelAttributes.Size := 40 ;
+redDisplay.Lines.Add('076-280-9433') ;
+
+bmbDone := TBitBtn.Create(self) ;
+bmbDone.Parent := pnlHelp ;
+bmbDone.Left := 495 ;
+bmbDone.Top := 345 ;
+bmbDone.Width := 150;
+bmbDone.Height := 50;
+bmbDone.Font.Size := 20 ;
+bmbDone.Kind :=  bkOk ;
+bmbDone.Caption := 'Done' ;
+bmbDone.OnClick := bmbClick
+end;
+
+
+procedure TfrmUser.HideDonate;
+begin
+//Hides components
+lblCaptionSelect.Visible := False ;
+lblAnimal1.Visible := False;
+lblAnimal2.Visible:= False;
+lblAnimal3.Visible := False;
+pnlPercP.Visible := False;
+btnDonate.Visible := false ;
+end;
+
+procedure TfrmUser.Increase(ID: string; iNum: integer);
+var
+sline, sX, sIdentity, sAmmount, sTemp, sOut, sEkstra:string;
+ipos, iLine, icount, iAmmount:integer;
+
+begin
+ ///Increases basket
+ bOutofstock := False;
+reset(tBasket);
+ rewrite(tTemp) ;
+ append(tTemp);
+while not eof(tBasket) do
+ begin
+ readln(tBasket,sLine);
+ sTemp := sline ;
+ sOut := '' ;
+ ipos := pos('#',sLine);
+ sIdentity := copy(sline,1,ipos-1) ;
+  sOut := copy(sline,1,ipos) ;
+ delete(sline,1,ipos) ;
+
+ ipos := pos('#',sLine);
+  sOut := sOut + copy(sline,1,ipos) ;
+ delete(sline,1,ipos) ;
+
+ ipos := pos('#',sLine);
+ sOut := sOut + copy(sline,1,ipos) ;
+ delete(sline,1,ipos);
+
+ ipos := pos('#',sLine);
+ sAmmount := copy(sline,1,ipos-1);
+ delete(sline,1,ipos);
+
+ sEkstra := '';
+ ipos := pos('#',sLine);
+ sEkstra := sEkstra + copy(sline,1,ipos-1);
+ delete(sline,1,ipos);
+
+ ipos := pos('#',sLine);
+ sEkstra := sEkstra + '#' + copy(sline,1,ipos-1) + '#';
+ delete(sline,1,ipos);
+ sline := sTemp;
+
+   if (sIdentity =Id) then
+   begin
+   iAmmount := strtoint(sAmmount);
+   if OutofStock(sIdentity, (iAmmount + iNum)) =  False then
+    begin
+    bOutofstock := False ;
+    inc(iAmmount,iNum);
+    end
+    else
+    begin
+    bOutofstock := True;
+    ShowMessage('We apologise but we do not seem to have to quantity available for your purchase.Please check back with us in a while' )
+    end;
+   sAmmount := inttostr(iAmmount);
+   sLine := sOut + sAmmount + '#' + sEkstra ;
+   end;
+
+
+   Writeln(tTemp,sLine);
+
+ end;
+if iAmmount = 0  then
+ begin
+ DeleteFrom(ID);
+ end
+ else
+ begin
+ rewrite(tBasket);
+ append(tBasket);
+ reset(tTemp);
+ sLine := '';
+ while not eof(tTemp) do
+ begin
+  readln(tTemp,sline);
+  Writeln(tBasket,sline);
+ end;
+
+ Basket;
+ end;
+
+end;
+
+procedure TfrmUser.InstanUser(sUser: string);
+var
+tTextClient:textfile ;
+sfile:string;
+tTimepassed:TdateTime;
+dStart, dLastLog:Tdate ;
+sOut:string;
+iPos, iID:integer;
+begin
+///Instantiate object with values from the textfile
+ sFile := sUser + '.txt' ;
+  if FileExists(sfile) then
+ begin
+ AssignFile(tTextClient, sFile) ;
+ reset(tTextClient);
+ readln(tTextClient,sOut) ;
+ tTimepassed := StrToDateTime(sout);
+ readln(tTextClient,sOut) ;
+ dStart := strtodate(sOut) ;
+ readln(tTextClient,sOut) ;
+ dLastLog := strtodate(sOut) ;
+ iId := strtoint(sUser) ;
+ objClient:= TClient.create(iID, tTimepassed, dStart, dLastLog) ;
+ end
+ else
+ begin
+   ShowMessage('File does not exist') ;
+ end;
+
+CloseFile(tTextClient) ;
+end;
+
+
+
+function TfrmUser.OutofStock(sProduct: string; IStock: integer): boolean;
+var
+iStockofproduct:integer;
+begin
+result := False ;
+ dmDataA.tblProducts.First;
+ while not dmDataA.tblProducts.Eof  do
+  begin
+   if dmDataA.tblProducts['ProductID'] = sProduct then
+    begin
+     iStockofproduct := dmDataA.tblProducts['Stock'];
+      if iStock > iStockofproduct then
+       begin
+         result := True ;
+       end;
+
+    end;
+
+  dmDataA.tblProducts.Next
+  end;
+end;
+
+procedure TfrmUser.pnlBasketClick(Sender: TObject);
+begin
+///Basket Button
+ basket;
+ if rTotal = 0 then
+  begin
+    ShowMessage('Basket is empty!') ;
+    ShowMessage('Go and fill it up with some products and services !') ;
+  end
+  else
+  begin
+  tbsUser.Visible := False;
+  tbsDonate.Visible := False ;
+  tbsProducts.Visible := False;
+  tbsService.Visible := False ;
+  tbsBasket.Visible := True;
+  end;
+end;
+
+procedure TfrmUser.pnlDonateClick(Sender: TObject);
+begin
+///Creates Dynamic Donate panel
+tbsUser.Visible := False;
+tbsDonate.Visible := True ;
+btnHomeDonate.Enabled := False ;
+pnlBasket.Enabled := False ;
+bmbLogout.Enabled := False ;
+HideDonate;
+ iCountAnimalsarray := 0 ;
+pnlDonationX := TPanel.create(self) ;
+pnlDonationX.Parent := self;
+pnlDonationX.Left := 225 ;
+pnlDonationX.Top := 90;
+pnlDonationX.Width := 650 ;
+pnlDonationX.Height := 400 ;
+pnlDonationX.Caption := '' ;
+pnlDonationX.Color := clBtnFace ;
+
+cmbAnimal := TComboBox.Create(self) ;
+cmbAnimal.Parent := pnlDonationX ;
+cmbAnimal.Left := 130 ;
+cmbAnimal.Top := 80 ;
+cmbAnimal.Width := 400;
+cmbAnimal.Height := 80;
+cmbAnimal.Font.Size := 28 ;
+cmbAnimal.TextHint := 'Endangered Animal' ;
+Donate ;
+
+
+sedtMoneyX := TSpinEdit.Create(self) ;
+sedtMoneyX.Parent := pnlDonationX ;
+sedtMoneyX.Left := 130 ;
+sedtMoneyX.Top := 150 ;
+sedtMoneyX.Width := 400;
+sedtMoneyX.Height := 80;
+sedtMoneyX.Font.Size := 28 ;
+sedtMoneyX.value := 1 ;
+sedAmount.MinValue := 1 ;
+sedAmount.Hint := 'Enter Amount' ;
+
+btnPay := TButton.Create(self) ;
+btnPay.Parent := pnlDonationX ;
+btnPay.Left := 230 ;
+btnPay.Top := 300 ;
+btnPay.Width := 200;
+btnPay.Height := 40;
+btnPay.font.Size := 18 ;
+btnPay.Enabled := False ;
+btnPay.Caption := 'Finish Payment' ;
+
+btnClear := TButton.Create(self) ;
+btnClear.Parent := pnlDonationX ;
+btnClear.Left := 495 ;
+btnClear.Top := 345 ;
+btnClear.Width := 150;
+btnClear.Height := 40;
+btnClear.font.Size := 18 ;
+btnClear.Caption := 'Clear' ;
+
+
+btnADDDonation := TButton.Create(self) ;
+btnADDDonation.Parent := pnlDonationX ;
+btnADDDonation.Left := 250 ;
+btnADDDonation.Top := 240 ;
+btnADDDonation.Width := 150;
+btnADDDonation.Height := 40;
+btnADDDonation.font.Size := 18 ;
+btnADDDonation.Caption := 'ADD' ;
+
+lblDonateTotal := TLabel.Create(self) ;
+lblDonateTotal.Parent := pnlDonationX ;
+lblDonateTotal.Font.Color := clGreen;
+lblDonateTotal.Left := 180 ;
+lblDonateTotal.Top := 10 ;
+lblDonateTotal.Width := 400;
+lblDonateTotal.Height := 40;
+lblDonateTotal.font.Size := 35 ;
+
+
+
+lblDonateTotal.Caption := 'R 0' ;
+
+btnADDDonation.OnClick := btnADDDonationClick ;
+btnPay.OnClick := btnPayClick ;
+btnClear.OnClick := btnClearClick;
+
+
+ dmDataA.tblAnimals.First;
+while not dmDataA.tblAnimals.Eof do
+ begin
+ cmbAnimal.Items.Add(inttostr(dmDataA.tblAnimals['AnimalID']) + '#' + dmDataA.tblAnimals['Species'])  ;
+ dmDataA.tblAnimals.Next;
+ end;
+
+ showmessage('Welcome to Donations');
+ /// Code Addapted and changed from
+ ///  http://delphiprogrammingdiary.blogspot.com/2019/04/ttaskdialog-custom-dialog-in-delphi.html?m=1
+ ///  Dialogue boxes
+ with TTaskDialog.Create(Self) do
+  begin
+    try
+      Caption := 'SOA';
+      Title := 'Donate';
+      Text := 'Select your Animal and add the amount to be donated. You can add multiple donations to multiple animals by clicking on add each time. When you are done select finish payment and then you are finished!';
+      MainIcon := tdiInformation;
+      CommonButtons := [tcbOk];
+      Execute;
+    finally
+      Free;
+    end;
+  end;
+
+end;
+
+procedure TfrmUser.pnlProductsClick(Sender: TObject);
+
+var
+sOutstr, sT1, sT2, sT3, sT4:string;
+icount, T1, i:integer;
+
+begin
+///Gives stringgrid default values and populates from the database
+sedAmount.Value := 1;
+sgProduct.ColCount := 5 ;
+ sgProduct.ColWidths[0] := 1;
+ sgProduct.ColWidths[1] := 100;
+ sgProduct.ColWidths[2] := 400;
+ sgProduct.ColWidths[3] := 1000 ;
+ sgProduct.ColWidths[4] := 100 ;
+
+ sgProduct.Cells[1,0] := 'ProductID';
+ sgProduct.Cells[2,0] := 'Type';
+ sgProduct.Cells[3,0] := 'Description';
+ sgProduct.Cells[4,0] := 'Price(R)';
+
+iCount := 0;
+dmDataA.tblProducts.First;
+while not dmDataA.tblProducts.Eof  do
+ begin
+ inc(icount) ;
+ sgProduct.RowCount := icount+1 ;
+
+ sgProduct.Cells[1,icount] := dmDataA.tblProducts['ProductID'];
+ sgProduct.Cells[2,icount] := dmDataA.tblProducts['Type'];
+ sgProduct.Cells[3,icount] := dmDataA.tblProducts['Description'];
+ sgProduct.Cells[4,icount] := inttostr(dmDataA.tblProducts['Price']);
+ dmDataA.tblProducts.Next;
+ end;
+
+
+tbsUser.Visible := False;
+tbsProducts.Visible := True ;
+end;
+
+procedure TfrmUser.pnlServicesClick(Sender: TObject);
+var
+sOutstr:string;
+icount:integer;
+begin
+///Instantiate Services default values
+///  Crete stringgrid
+dtpService.MinDate := Today +1 ;
+cmbTime.Items.Add('8:00-9:00');
+cmbTime.Items.Add('9:00-10:00');
+cmbTime.Items.Add('10:00-11:00');
+cmbTime.Items.Add('11:00-12:00');
+cmbTime.Items.Add('12:00-13:00');
+cmbTime.Items.Add('14:00-15:00');
+cmbTime.Items.Add('16:00-17:00');
+cmbTime.Items.Add('17:00-18:00');
+cmbTime.ItemIndex := 1 ;
+sedPersons.Value := 1;
+ sgService.ColCount := 6 ;
+ sgService.ColWidths[0] := 1;
+ sgService.ColWidths[1] := 100;
+ sgService.ColWidths[2] := 1000;
+ sgService.ColWidths[3] := 100;
+ sgService.ColWidths[4] := 200 ;
+ sgService.ColWidths[5] := 300 ;
+
+ sgService.Cells[1,0] := 'ServiceID' ;
+ sgService.Cells[2,0] := 'Description';
+ sgService.Cells[3,0] := 'Location';
+ sgService.Cells[4,0] := 'Province';
+ sgService.Cells[5,0] := 'Price p.p(R)';
+
+
+iCount := 0;
+dmDataA.tblService.First;
+while not dmDataA.tblService.Eof  do
+ begin
+ inc(icount);
+ sgService.RowCount := icount+1;
+ sgService.Cells[1,icount] :=  dmDataA.tblService['ServiceID'] ;
+ sgService.Cells[2,icount] :=  dmDataA.tblService['Description'];
+ sgService.Cells[3,icount] :=  dmDataA.tblService['Location'];
+ sgService.Cells[4,icount] := dmDataA.tblService['Province'];
+ sgService.Cells[5,icount] := inttostr(dmDataA.tblService['Price']);
+
+
+ dmDataA.tblService.Next;
+ end;
+
+
+
+tbsUser.Visible := False;
+tbsService.Visible := True ;
+end;
+
+procedure TfrmUser.ShowDonations;
+begin
+///Show donation components
+ lblCaptionSelect.Visible := True ;
+lblAnimal1.Visible := True;
+lblAnimal2.Visible := True;
+lblAnimal3.Visible := True;
+pnlPercP.Visible := True;
+btnDonate.Visible := True ;
+end;
+
+
+
+procedure TfrmUser.Showvideolink;
+begin
+  ///Shows dialogue with a youtube link to an National Geographic video
+ /// Code Addapted and changed from
+///  http://delphiprogrammingdiary.blogspot.com/2019/04/ttaskdialog-custom-dialog-in-delphi.html?m=1
+  with TTaskDialog.Create(Self) do
+  begin
+    try
+      Caption := 'SOA';
+      Title := 'We are SOA.';
+      Text := 'Save our animals today! '+#13#10+
+              'Watch this video to understand why we need your help'+#13#10+
+              '<a href="https://www.youtube.com/watch?v=cvFVhOVkarw">www.youtube.com</a>';
+              //creates a hyperlink on click
+      OnHyperlinkClicked := TaskDialogHyperlinkClicked;
+      Flags := [tfEnableHyperlinks];
+      CustomMainIcon := Application.Icon;
+      CommonButtons := [tcbClose];
+      Execute;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmUser.Transaction ;
+var
+sA, sIDA:string;
+ipos, i:integer;
+sMessage:string;
+begin
+///Adds data to dtabase from the donation
+///  The client donates money to one or many animals and it is added to the database
+dmDataA.tblTransaction.Last;
+dmDataA.tblTransaction.Insert;
+dmDataA.tblTransaction['DonateAnimal'] :=rTotalDonation ;
+dmDataA.tblTransaction['Total'] := rTotalDonation;
+dmDataA.tblTransaction['ClientID'] := iPlayerUser;
+dmDataA.tblTransaction['TransactionID'] := frmLogin.iTransaction ;
+dmDataA.tblTransaction.Post;
+inc(frmLogin.iTransaction);
+
+for i := 1 to iCountAnimalsarray do
+begin
+
+dmDataA.tblAnimalDonations.Last;
+dmDataA.tblAnimalDonations.Insert;
+sA := arrAnimal[i] ;
+ipos := pos('#',sA);
+sIDA := copy(sA,1,ipos-1);
+dmDataA.tblAnimalDonations['ID'] :=  frmLogin.iAniamalDonateID;
+dmDataA.tblAnimalDonations['AnimalID'] :=  strtoint(sIDA);
+dmDataA.tblAnimalDonations['Amount'] := arrDonation[i];
+dmDataA.tblAnimalDonations['TransactionID'] := frmLogin.iTransaction ;
+dmDataA.tblAnimalDonations.Post;
+ inc(frmLogin.iAniamalDonateID);
+end;
+rTotalDonation := 0 ;
+ ShowMessage('Payment recieved!') ;
+sMessage:= 'Thankyou for shopping at SOA and helping Endangered Animals!';
+sMessage := sMessage + #10 + 'Total amount spent: ' + FloatToStrF(rTotalDonation, FFcurrency,10,2);
+sMessage := sMessage + #10 + 'Total amount donated: ' + FloatToStrF(rTotalDonation, FFcurrency,10,2);
+   if frmLogin.bMessagingACTIVE = True then
+          begin
+          frmLogin.OTPExecute(frmLogin.sUserPhone,sMessage) ;
+          end;
+end;
+
+
+end.

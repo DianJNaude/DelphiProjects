@@ -1,0 +1,54 @@
+unit Admin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Samples.Spin,
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.Menus, Vcl.ComCtrls, Vcl.Buttons;
+
+type
+  TfrmAdmin = class(TForm)
+    imgA1: TImage;
+    pnlAddScoreA: TPanel;
+    lblUserA: TLabel;
+    lblOponenetA: TLabel;
+    sedOponentA: TSpinEdit;
+    sedUserA: TSpinEdit;
+    btnScoringA: TButton;
+    pnlAddRemove: TPanel;
+    btnRemove: TButton;
+    btnAdd: TButton;
+    lblAdmin: TLabel;
+    lblPlayer1: TLabel;
+    lblPlayer2: TLabel;
+    SpinEdit1: TSpinEdit;
+    SpinEdit2: TSpinEdit;
+    rgpEdit: TRadioGroup;
+    btnEdit: TButton;
+    RedOutput: TRichEdit;
+    menQuerries: TMainMenu;
+    btnLeaderBoard: TMenuItem;
+    btnLeader: TMenuItem;
+    btnOldest: TMenuItem;
+    btnYoungest: TMenuItem;
+    btnSearch: TMenuItem;
+    btnRefresh: TMenuItem;
+    btnAverage: TMenuItem;
+    lblScoreInput: TLabel;
+    lblQuerriesA: TLabel;
+    bmbLogoutAdmin: TBitBtn;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAdmin: TfrmAdmin;
+
+implementation
+
+{$R *.dfm}
+
+end.

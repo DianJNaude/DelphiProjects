@@ -1,0 +1,39 @@
+unit dmData;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, Data.Win.ADODB;
+
+type
+  TdmDataA = class(TDataModule)
+    ADOConnectionM: TADOConnection;
+    DataSource1: TDataSource;
+    tblAnimals: TADOTable;
+    tblProducts: TADOTable;
+    tblService: TADOTable;
+    tblPurchaserecord: TADOTable;
+    tblTransaction: TADOTable;
+    tblClient: TADOTable;
+    DataSource2: TDataSource;
+    DataSource3: TDataSource;
+    DataSource4: TDataSource;
+    DataSource5: TDataSource;
+    DataSource6: TDataSource;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  dmDataA: TdmDataA;
+
+implementation
+uses User, Admin, Login;
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

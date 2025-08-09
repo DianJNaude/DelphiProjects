@@ -1,0 +1,450 @@
+unit Login;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, jpeg,
+  Vcl.ComCtrls, Vcl.Buttons, Math;
+
+type
+  TfrmLogin = class(TForm)
+    PageControlLogin: TPageControl;
+    tbsLogin: TTabSheet;
+    tbsAddPlayer: TTabSheet;
+    imgLogin: TImage;
+    btnLogin: TButton;
+    edtPass: TEdit;
+    edtUser: TEdit;
+    pnlAddPlayer: TPanel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    btnAdd: TButton;
+    edtNameL: TEdit;
+    EdtLastNameL: TEdit;
+    edtPointsL: TEdit;
+    edtPhoneL: TEdit;
+    edtEmailL: TEdit;
+    edtIDL: TEdit;
+    Image3: TImage;
+    btnSignUp: TButton;
+    btnForgot: TButton;
+    btnBack: TButton;
+    Image1: TImage;
+    procedure btnLoginClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnChangeADminClick(Sender: TObject);
+    procedure btnSignUpClick(Sender: TObject);
+    procedure bmbBackClick(Sender: TObject);
+    procedure btnBackClick(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure btnForgotClick(Sender: TObject);
+   // procedure Button1Click(Sender: TObject);
+  private
+
+    { Private declarations }
+  public
+
+  tFileUP, tAdmin:textFile ;
+  iAdmin:integer ;
+  sAdmin:string;
+  arrUsername, arrPassword:array[1..30] of string;
+  arrPANumA :array[1..30] of Integer ;
+     iCounterarray:integer ;
+       Function PlayerNotoRank(iPlayerNum:integer ) : integer ;    //line 390
+
+
+    { Public declarations }
+  end;
+
+var
+  frmLogin: TfrmLogin;
+
+implementation
+uses User, Admin, dmData;
+
+{$R *.dfm}
+
+procedure TfrmLogin.bmbBackClick(Sender: TObject);
+begin
+tbsAddPlayer.Visible := false;
+tbsLogin.Visible := true;
+end;
+
+procedure TfrmLogin.btnAddClick(Sender: TObject);
+var
+sNameL, sLNameL,sRpointsL, sPhoneL, sIDL, sEmailL :string;
+sLine, sBuild, sNo:string;
+sUsername, sPassG:string;
+tFileUP:textFile ;
+i,q:integer;
+
+begin
+ sNameL := edtNameL.Text;
+ sLNameL := EdtLastNameL.Text;
+ sRpointsL := edtPointsL.Text;
+ sPhoneL := edtPhoneL.Text;
+ sEmailL := edtEmailL.Text;
+ sIDL := edtIDL.Text;
+ frmAdmin.ADDPlayer(sNameL, sLNameL,sRpointsL, sPhoneL, sIDL, sEmailL);
+
+end;
+
+procedure TfrmLogin.btnBackClick(Sender: TObject);
+begin
+tbsAddPlayer.Visible := false ;
+tbsLogin.Visible := True;
+end;
+
+procedure TfrmLogin.btnChangeADminClick(Sender: TObject);
+begin
+ShowMessage('Ben, You have 11 matches left');
+end;
+
+procedure TfrmLogin.btnForgotClick(Sender: TObject);
+var
+i:integer;
+sPhoneAdmin:string;
+
+begin
+
+dmDataA.tblPlayersM.First;
+while not dmDataA.tblPlayersM.Eof do
+ begin
+
+  if dmDataA.tblPlayersM['PlayerNo'] = iAdmin then
+  begin
+    sPhoneAdmin :=  dmDataA.tblPlayersM['Phone'] ;
+  end;
+   dmDataA.tblPlayersM.Next;
+ end;
+
+ShowMessage('Contact the Admin at: ' + sPhoneAdmin);
+
+dmDataA.tblVenueM.First;
+while not dmDataA.tblVenueM.Eof do
+  begin
+    if dmDataA.tblVenueM['Venue'] = 'Geordan Park' then
+     begin
+       dmDataA.tblVenueM.Edit;
+       dmDataA.tblVenueM['Number_of_courts'] := 1 ;
+       dmDataA.tblVenueM.Post;
+     end;
+
+  dmDataA.tblVenueM.Next;
+  end;
+end;
+
+procedure TfrmLogin.btnLoginClick(Sender: TObject);
+var
+sInUser, sInpass:string;
+ p, q, i, d, e, f, iTotal, dAdd, iRank:integer ;
+bCheck, bAllScore :boolean;
+arrNameSur:array[1..30] of string ;
+sMyname, sTemp:string ;
+begin
+ //Admin
+
+  //Identify Admin
+ if FileExists('Admin.txt') then
+ begin
+  AssignFile(tAdmin,'Admin.txt');
+  Reset(tAdmin);
+  Readln(tAdmin,iAdmin);
+
+  for f := 1 to iCounterarray do
+    begin
+     sTemp := arrUsername[f][1] + arrUsername[f][2] ;
+     if iAdmin = strtoint(sTemp) then
+     begin
+     dAdd := f ;
+     sAdmin := arrUsername[dAdd] ;
+     sAdmin := sAdmin + 'A' ;
+     end;
+    end;
+
+ end
+ else
+ begin
+   ShowMessage('File:Admin.txt not found');
+ end;
+ CloseFile(tAdmin);
+
+
+
+
+
+
+
+//Activate
+dmDataA.ADOConnectionM.Connected := true;
+frmAdmin.DBGriddDisplayAdmin.Enabled := False;
+frmUser.DBGridDisplayUsers.Enabled := False ;
+iTotal := 0;
+bAllScore := True;
+sInUser := edtUser.Text;
+sInpass := edtPass.Text;
+
+ if (sInUser = '') or (sInpass = '') then
+ begin
+
+
+    if sInUser = '' then
+    begin
+      ShowMessage('Enter username');
+      edtUser.SetFocus;
+    end;
+
+    if sInpass = '' then
+    begin
+      ShowMessage('Enter Password');
+      edtPass.SetFocus;
+    end;
+
+    if (sInUser = '') and  (sInpass = '') then
+  begin
+  edtUser.SetFocus;
+  end;
+
+ end
+ else
+begin
+
+bCheck := False;
+for p := 1 to iCounterarray do
+ begin
+   if (sInUser = arrUsername[p]) and not (sInUser = sAdmin) then
+  begin
+  bCheck := True;
+   frmUser.iPlayerUser := StrToInt(arrUsername[p][1] +arrUsername[p][2]) ;
+  if sInpass = arrPassword[p] then
+   begin
+
+   dmDataA.tblMatchesM.First;
+    while not dmDataA.tblMatchesM.Eof do
+     begin
+       if dmDataA.tblMatchesM['Score A'] = null then
+       begin
+         bAllScore := False;
+       end;
+
+     dmDataA.tblMatchesM.Next
+     end;
+
+    for q := dmDataA.tblPlayersM.RecordCount-1 downto 1 do
+     begin
+     iTotal := iTotal + q ;
+     end;
+
+   if (iTotal = dmDataA.tblMatchesM.RecordCount) and(btnSignUp.Enabled = False ) and (bAllScore = True) then
+    begin
+    iRank := PlayerNotoRank(frmUser.iPlayerUser);
+    ShowMessage('The tournament is done! You came ' + inttostr(iRank) + ' out of ' + inttostr(iCounterarray));
+
+
+    end
+    else
+    begin
+
+
+     edtUser.clear;
+     edtPass.clear ;
+
+    frmLogin.Visible := False ;
+     frmUser.Visible := True ;
+     frmUser.tbsUser.Visible := true;
+     frmUser.DBGridDisplayUsers.DataSource := dmDataA.DataSourceMP;
+
+    end;
+
+
+   end
+   else
+   begin
+     ShowMessage('The password is incorrect');
+   end;
+
+  end;
+ end;
+
+
+  
+   if  sAdmin= sInUser then
+  begin
+  bCheck := True;
+  if  arrPassword[dAdd] = sInpass then
+   begin
+   edtUser.clear;
+   edtPass.clear ;
+   frmUser.iPlayerUser := 0 ;
+   frmLogin.Visible := False ;
+   frmAdmin.Visible := True ;
+   frmAdmin.tbsAdmin.Visible := True;
+   frmAdmin.DBGriddDisplayAdmin.DataSource := dmDataA.DataSourceMP;
+
+   end
+   else
+   begin
+     ShowMessage('The password is incorrect');
+   end;
+
+
+  end;
+
+  if bCheck = False then
+  begin
+    ShowMessage('The username does not exist');
+  end;
+end;
+
+end;
+
+
+procedure TfrmLogin.btnSignUpClick(Sender: TObject);
+begin
+tbsLogin.Visible := False;
+tbsAddPlayer.Visible := true;
+end;
+
+
+
+procedure TfrmLogin.FormActivate(Sender: TObject);
+var
+tFile:TextFile;
+sPass, sUser:string ;
+i, ipos:integer ;
+sLine, sOutcome:string;
+
+begin
+FormatSettings.ShortDateFormat := 'dd/mm/yyyy' ;
+
+dmDataA.ADOConnectionM.ConnectionString := 'Provider=Microsoft.ACE.OLEDB.12.0;User ID=Admin;Data Source=NauDia1000.accdb;Mode=ReadWrite;' ;
+dmDataA.ADOConnectionM.Connected := true;
+dmDataA.tblPlayersM.Active := true;
+dmDataA.tblMatchesM.Active := true;
+dmDataA.tblVenueM.Active := true;
+
+
+imgLogin.Stretch := true;
+imgLogin.Proportional := true;
+tbsLogin.TabVisible := False;
+tbsAddPlayer.TabVisible := FAlse ;
+tbsLogin.Visible := true;
+
+//Entries
+
+
+
+  AssignFile(tFile,'Entries.txt');
+
+  if FileExists('Entries.txt') then
+  begin
+   Reset(tFile);
+   Readln(tFile,sLine);
+   if sLine = '0' then
+   begin
+     btnSignUp.Enabled := False ;
+     frmAdmin.btnCloseEntries.Enabled := False ;
+   end
+   else
+   begin
+    frmAdmin.btnOpenEntries.Enabled := False ;
+   end;
+
+   CloseFile(tFile);
+  end
+  else
+  begin
+  Exit
+  end;
+
+
+
+
+
+
+
+
+ //Password array and Username array
+    if FileExists('UsernamePass.txt') then
+ begin
+
+ iCounterarray:= 0;
+ AssignFile(tFileUP,'UsernamePass.txt');
+ Reset(tFileUP);
+ while not eof(tFileUP) do
+ begin
+ inc(iCounterArray) ;
+ Readln(tFileUP, sOutcome);
+
+  ipos := pos('#',sOutcome);
+  sUser  := copy(sOutcome,1,ipos-1);
+  Delete(sOutcome,1,ipos);
+
+  ipos := pos('#',sOutcome);
+   sPass:= copy(sOutcome,1,ipos-1);
+  Delete(sOutcome,1,ipos);
+  arrUsername[iCounterArray] := sUser;
+  arrPassword[iCounterArray] := sPass;
+
+
+ end;
+ CloseFile(tFileUP);
+ end
+ else
+ begin
+  ShowMessage('File:UsernamePass.txt not found');
+ end;
+
+    //Identify Admin
+ if FileExists('Admin.txt') then
+ begin
+  AssignFile(tAdmin,'Admin.txt');
+  Reset(tAdmin);
+  Readln(tAdmin,iAdmin);
+
+ end
+ else
+ begin
+   ShowMessage('File:Admin.txt not found');
+ end;
+ CloseFile(tAdmin);
+
+end;
+
+
+
+
+function TfrmLogin.PlayerNotoRank(iPlayerNum: integer): integer;
+var
+i:integer;
+begin
+i:= 0;
+
+ frmUser.GeneratePoints(arrPANumA,frmAdmin.arrScoreA);
+ frmAdmin.SortingArray(arrPANumA,frmAdmin.arrScoreA);
+
+  for i := 1 to dmDataA.tblPlayersM.RecordCount do
+   begin
+     if arrPANumA[i] = iPlayerNum then
+     begin
+       Result := i ;
+     end;
+
+   end;
+
+
+
+
+
+
+ end;
+
+
+
+
+end.

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2022/05/17 09:34:38.000.837,=C:\Users\NauDia25.IT\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2022/09/13 10:30:39.000.491,=C:\Users\NauDia25.IT\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2022/09/13 10:31:13.000.142,K:\PAT2022_NaudeDian\Task6\GUI\Login.pas=C:\Users\NauDia25.IT\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2022/09/13 10:31:13.000.142,K:\PAT2022_NaudeDian\Task6\GUI\Login.dfm=C:\Users\NauDia25.IT\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2022/09/13 10:31:45.000.503,K:\PAT2022_NaudeDian\Task6\GUI\NauDia1000.dproj=C:\Users\NauDia25.IT\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2022/09/13 10:32:03.000.728,=K:\PAT2022_NaudeDian\Task6\GUI\Unit2.pas</Transaction>
+    <Transaction>2022/09/13 10:32:21.000.828,K:\PAT2022_NaudeDian\Task6\GUI\Admin.dfm=K:\PAT2022_NaudeDian\Task6\GUI\Unit2.dfm</Transaction>
+    <Transaction>2022/09/13 10:32:21.000.828,K:\PAT2022_NaudeDian\Task6\GUI\Admin.pas=K:\PAT2022_NaudeDian\Task6\GUI\Unit2.pas</Transaction>
+    <Transaction>2022/09/13 10:32:35.000.023,=K:\PAT2022_NaudeDian\Task6\GUI\Unit3.pas</Transaction>
+    <Transaction>2022/09/13 10:33:05.000.910,K:\PAT2022_NaudeDian\Task6\GUI\User.dfm=K:\PAT2022_NaudeDian\Task6\GUI\Unit3.dfm</Transaction>
+    <Transaction>2022/09/13 10:33:05.000.910,K:\PAT2022_NaudeDian\Task6\GUI\User.pas=K:\PAT2022_NaudeDian\Task6\GUI\Unit3.pas</Transaction>
+    <Transaction>2022/09/13 10:33:56.000.189,=K:\PAT2022_NaudeDian\Task6\GUI\Unit1.pas</Transaction>
+    <Transaction>2022/09/13 10:34:43.000.569,K:\PAT2022_NaudeDian\Task6\GUI\dmData.dfm=K:\PAT2022_NaudeDian\Task6\GUI\Unit1.dfm</Transaction>
+    <Transaction>2022/09/13 10:34:43.000.569,K:\PAT2022_NaudeDian\Task6\GUI\dmData.pas=K:\PAT2022_NaudeDian\Task6\GUI\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,68 @@
+unit Login;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, jpeg;
+
+type
+  TfrmLogin = class(TForm)
+    imgLogin: TImage;
+    edtUser: TEdit;
+    edtPass: TEdit;
+    btnLogin: TButton;
+    btnChangeADmin: TButton;
+    procedure btnLoginClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnChangeADminClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmLogin: TfrmLogin;
+
+implementation
+uses User, Admin, dmData;
+
+{$R *.dfm}
+
+procedure TfrmLogin.btnChangeADminClick(Sender: TObject);
+begin
+ShowMessage('Enter your username and password');
+end;
+
+procedure TfrmLogin.btnLoginClick(Sender: TObject);
+var
+sAdminPass, sUserpass, sPass :string;
+begin
+sAdminPass := '0';
+sUserpass := '1' ;
+ sPass := edtPass.Text ;
+if sPass = sUserpass then
+ begin
+  frmLogin.Hide;
+  frmUser.Show;
+ end;
+
+ if sPass = sAdminPass then
+ begin
+  frmLogin.Hide;
+  frmAdmin.Show;
+ end;
+
+
+
+end;
+
+procedure TfrmLogin.FormActivate(Sender: TObject);
+begin
+imgLogin.Picture.LoadFromFile('Tennis.jpg');
+imgLogin.Stretch := true;
+imgLogin.Proportional := true;
+end;
+
+end.

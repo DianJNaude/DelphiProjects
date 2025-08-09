@@ -1,0 +1,48 @@
+object frmLogin: TfrmLogin
+  Left = 0
+  Top = 0
+  Caption = 'frmLogin'
+  ClientHeight = 508
+  ClientWidth = 777
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnActivate = FormActivate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object imgLogin: TImage
+    Left = 8
+    Top = 8
+    Width = 745
+    Height = 492
+  end
+  object edtUser: TEdit
+    Left = 296
+    Top = 72
+    Width = 161
+    Height = 37
+    TabOrder = 0
+    Text = 'Username'
+  end
+  object edtPass: TEdit
+    Left = 296
+    Top = 115
+    Width = 145
+    Height = 46
+    TabOrder = 1
+    Text = 'Password'
+  end
+  object btnLogin: TButton
+    Left = 296
+    Top = 430
+    Width = 137
+    Height = 51
+    Caption = 'Login'
+    TabOrder = 2
+    OnClick = btnLoginClick
+  end
+end

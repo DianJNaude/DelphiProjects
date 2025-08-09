@@ -1,0 +1,1760 @@
+unit Admin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Samples.Spin,
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.Menus, Vcl.ComCtrls, Vcl.Buttons, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, Vcl.WinXPickers, DateUtils, Math;
+
+type
+  TfrmAdmin = class(TForm)
+    lblQuerriesA: TLabel;
+    bmbLogoutAdmin: TBitBtn;
+    PageControlAdmin: TPageControl;
+    tbsAdmin: TTabSheet;
+    tbsScoreA: TTabSheet;
+    tbsMatchA: TTabSheet;
+    tbsQuerriesA: TTabSheet;
+    imgA1: TImage;
+    pnlAddScoreA: TPanel;
+    lblUserA: TLabel;
+    lblOponenetA: TLabel;
+    lblPlayer1: TLabel;
+    lblPlayer2: TLabel;
+    sedOponentA: TSpinEdit;
+    sedUserA: TSpinEdit;
+    btnScoringA: TButton;
+    sedPlayerNO1: TSpinEdit;
+    sedPlayerNo2: TSpinEdit;
+    pnlScheduleMatchA: TPanel;
+    lblDaterimeA: TLabel;
+    lblVenueA: TLabel;
+    lblOppNoA: TLabel;
+    lblPlayerB: TLabel;
+    sedPlayerAX: TSpinEdit;
+    BtnScheduleA: TButton;
+    sedPlayerBX: TSpinEdit;
+    lblSMADmin: TLabel;
+    pnlTables: TPanel;
+    btnMatchA: TButton;
+    btnPlayersA: TButton;
+    btnVenueA: TButton;
+    DBGriddDisplayAdmin: TDBGrid;
+    RedOutput: TRichEdit;
+    btnScoreTab: TButton;
+    btnMatchTab: TButton;
+    btnQuerriesTab: TButton;
+    imgBackround: TImage;
+    lblScoreInput: TLabel;
+    pnlQuerriesA: TPanel;
+    btnClear: TButton;
+    btnHome3: TButton;
+    btnHome2: TButton;
+    btnHome1: TButton;
+    Image1: TImage;
+    Image2: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    rgpQuerries: TRadioGroup;
+    lblQuerries: TLabel;
+    Label1: TLabel;
+    Panel2: TPanel;
+    rgpEdit: TRadioGroup;
+    sedPlayerNoE: TSpinEdit;
+    lblEditNO: TLabel;
+    Label3: TLabel;
+    Panel1: TPanel;
+    lblAdmin: TLabel;
+    pnlAddPlayer: TPanel;
+    btnAdd: TButton;
+    edtName: TEdit;
+    EdtLastName: TEdit;
+    edtPoints: TEdit;
+    edtPhone: TEdit;
+    edtEmail: TEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    edtID: TEdit;
+    Label9: TLabel;
+    btnRemove: TButton;
+    Label2: TLabel;
+    btnCloseEntries: TButton;
+    btnPass: TButton;
+    btnOpenEntries: TButton;
+    cmbVenue: TComboBox;
+    dtpMatchA: TDateTimePicker;
+    btnPopulate: TButton;
+    btnDelete: TButton;
+    btnRec: TButton;
+    btnDuplicates: TButton;
+    btnScore: TButton;
+    btnDate: TButton;
+    btnTime: TButton;
+    sedTime: TSpinEdit;
+    Label10: TLabel;
+    Label11: TLabel;
+    btnNext: TButton;
+    btnPrev: TButton;
+    btnLast: TButton;
+    btnFirst: TButton;
+    Panel3: TPanel;
+    Label12: TLabel;
+    btnChangeADmin: TButton;
+    btnCanMatchX: TButton;
+    pnlNameNumA: TPanel;
+    Panel4: TPanel;
+    pnlControl: TPanel;
+    btnControl: TButton;
+    btnBack: TButton;
+    btnReset: TButton;
+    procedure bmbLogoutAdminClick(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure BtnScheduleAClick(Sender: TObject);
+    procedure btnLeaderBoardClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnMatchTabClick(Sender: TObject);
+    procedure btnScoreTabClick(Sender: TObject);
+    procedure btnQuerriesTabClick(Sender: TObject);
+    procedure btnHome1Click(Sender: TObject);
+    procedure btnHome2Click(Sender: TObject);
+    procedure btnHome3Click(Sender: TObject);
+    procedure btnMatchAClick(Sender: TObject);
+    procedure btnPlayersAClick(Sender: TObject);
+    procedure btnVenueAClick(Sender: TObject);
+    procedure btnPassClick(Sender: TObject);
+    procedure btnPopulateClick(Sender: TObject);
+    procedure btnRemoveClick(Sender: TObject);
+    procedure btnOpenEntriesClick(Sender: TObject);
+    procedure btnCloseEntriesClick(Sender: TObject);
+    procedure btnScoringAClick(Sender: TObject);
+    procedure rgpQuerriesClick(Sender: TObject);
+    procedure rgpEditClick(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
+    procedure btnChangeADminClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure btnRecClick(Sender: TObject);
+    procedure btnDuplicatesClick(Sender: TObject);
+    procedure btnScoreClick(Sender: TObject);
+    procedure btnDateClick(Sender: TObject);
+    procedure btnTimeClick(Sender: TObject);
+    procedure sedUserAChange(Sender: TObject);
+    procedure sedOponentAChange(Sender: TObject);
+    procedure btnNextClick(Sender: TObject);
+    procedure btnPrevClick(Sender: TObject);
+    procedure btnLastClick(Sender: TObject);
+    procedure btnFirstClick(Sender: TObject);
+    procedure btnCanMatchXClick(Sender: TObject);
+    procedure btnControlClick(Sender: TObject);
+    procedure btnBackClick(Sender: TObject);
+    procedure btnResetClick(Sender: TObject);
+  private
+  procedure AddScore(iPlayerA, iPlayerB:integer; iScoreA, iScoreB:byte) ;  // line 370
+  function IDtoAge(sID:string):integer;   //1250
+
+
+
+
+    { Private declarations }
+  public
+  arrScoreA :array[1..30] of integer;
+  procedure ADDPlayer(sName, sLName,sRpoints, sPhone, sID, sEmail :string); // line 180
+  procedure RemovePlayer(iP1Remove:Integer); // line 1320
+  procedure SortingArray(var arrPlNum, arrScoreP:array of integer) ; //1660
+  function NotoNameSur(iPNum:integer) : string ; //line 1350
+    { Public declarations }
+
+
+  end;
+var
+  frmAdmin: TfrmAdmin;
+
+implementation
+uses User, Login, dmData;
+
+{$R *.dfm}
+
+
+
+procedure TfrmAdmin.ADDPlayer(sName, sLName, sRpoints, sPhone, sID,
+  sEmail: string);
+  var
+i, iPos, iCom, iSpace:integer;
+bFound, bTest:boolean;
+sUserName, sPassA, sLine:string;
+sBuild:string;
+iPLNo:integer;
+tFileUp :textFile;
+sDateF, sDay, sYear, sMonth:string;
+sNo :string;
+begin
+
+  bTest := False;
+  bFound := True ;
+
+   bTest := False ;
+   if sName = '' then
+   begin
+    bTest := True;
+    bFound := False ;
+   end;
+ if (bTest = True) then
+    begin
+      ShowMessage('Enter your name');
+    end;
+
+
+   bTest := False ;
+  if sLName = '' then
+   begin
+    bTest := True;
+    bFound := False ;
+   end;
+ if (bTest = True) then
+    begin
+      ShowMessage('Enter your last name');
+    end;
+
+   bTest := False ;
+   if  (sRpoints = '') then
+   begin
+     bTest := True;
+    bFound := False ;
+   end;
+ for i := 1 to Length(sRpoints) do
+ begin
+   if not(sRpoints[i] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] ) or (Length(sRpoints) >5) or (Length(sRpoints)<1)  then
+   begin
+    bTest := True;
+    bFound := False ;
+   end;
+ end;
+if (bTest = True) then
+    begin
+    ShowMessage('Given ranking points is not valid');
+    end;
+
+       bTest := False ;
+       if (sPhone = '') then
+   begin
+    bTest := True;
+    bFound := False ;
+   end;
+ for i := 1 to Length(sPhone) do
+ begin
+   if not(sPhone[i] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] )or (sPhone = '') or ((Length(sPhone) > 11)) or ((Length(sPhone) < 10)) then
+   begin
+    bTest := True;
+    bFound := False ;
+   end;
+ end;
+ if (bTest = True) then
+    begin
+      ShowMessage('Given phone number is not valid');
+    end;
+
+       bTest := False ;
+     if  (sID = '') then
+   begin
+    bTest := True;
+    bFound := False ;
+   end;
+  for i := 1 to Length(sID) do
+ begin
+   if not(sID[i] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] ) or  not(Length(sId) = 13) or (sID = '') then
+   begin
+    bTest := True;
+    bFound := False ;
+   end
+   else
+   begin
+   sDateF := copy(sId,1,6);
+    sYear := copy(sDateF,1,2);
+    delete(sDateF,1,2) ;
+
+   sMonth := copy(sDateF,1,2);
+   delete(sDateF,1,2) ;
+
+   sDay := copy(sDateF,1,2);
+   delete(sDateF,1,2) ;
+
+   if strtoint(sDaY) > 31 then
+    begin
+      bTest := True;
+    bFound := False ;
+    end;
+
+     if strtoint(sMonth) > 12 then
+    begin
+      bTest := True;
+    bFound := False ;
+    end;
+
+
+
+   end;
+
+
+
+ end;
+ if (bTest = True) then
+    begin
+    ShowMessage('Given ID is not valid');
+    end;
+  iSpace := pos(' ',sEmail);
+  ipos := pos('@',sEmail);
+  iCom := pos('.',sEmail);
+  bTest := False ;
+  if (iPos = 0) or (iCom = 0) or (iPos> iCom) or (sEmail = '') or not(iSpace = 0) then
+  begin
+  bTest := True;
+  bFound := False ;
+  end;
+ if (bTest = True) then
+    begin
+    ShowMessage('Given Email is not valid')
+    end ;
+if True then
+
+if Bfound = True then
+ begin
+ if MessageDlg('Add '+ sName + ' now?',mtInformation, [mbYes, mbNo], 0, mbYes) = mrYes then
+  begin
+   sBuild := '-' ;
+   Insert(sBuild,sPhone,4);
+   Insert(sBuild,sPhone,8);
+
+   dmDataA.tblPlayersM.Append;
+   dmDataA.tblPlayersM['first_name'] := sName;
+   dmDataA.tblPlayersM['last_name'] := sLName;
+   dmDataA.tblPlayersM['Ranking_Points'] := strtoint(sRpoints);
+   dmDataA.tblPlayersM['Phone'] := sPhone;
+   dmDataA.tblPlayersM['Email'] := sEmail;
+   dmDataA.tblPlayersM['ID'] := sID;
+   dmDataA.tblPlayersM.Post;
+   ShowMessage('Data has been recieved and stored in the database');
+
+   sNo := '' ;
+   dmDataA.tblPlayersM.Last ;
+   sNO := inttostr(dmDataA.tblPlayersM['PlayerNo']) ;
+   if sNo = sNo[1] then
+      begin
+        sNo := '0' + sNo ;
+      end;
+   sUserName := sNo + copy(dmDataA.tblPlayersM['first_name'],1,3)  + copy(dmDataA.tblPlayersM['last_name'],1,3);
+   sPassA := copy(dmDataA.tblPlayersM['first_name'],1,1) + copy(dmDataA.tblPlayersM['last_name'],1,1) + inttostr(RandomRange(1,9999));
+   sLine := sUserName + '#' + sPassA + '#' ;
+   AssignFile(tFileUP,'UsernamePass.txt');
+   Append(tFileUP);
+   Writeln(tFileUP, sLine);
+   CloseFile(tFileUP);
+
+   ShowMessage('This is your new username:  ' + sUserName);
+   ShowMessage('This is your new password: ' + sPassA );
+   inc(frmLogin.iCounterArray) ;
+   frmLogin.arrUsername[frmLogin.iCounterArray] := sUserName;
+   frmLogin.arrPassword[frmLogin.iCounterArray] := sPassA;
+  // ShowMessage(frmLogin.arrUsername[frmLogin.iCounterArray]);
+   //showmMessage
+
+  end;
+ end;
+
+
+
+
+end;
+
+procedure TfrmAdmin.AddScore(iPlayerA, iPlayerB: integer; iScoreA,
+  iScoreB: byte);
+var
+i:integer;
+bFound:boolean;
+begin
+dmDataA.tblMatchesM.Open ;
+dmDataA.tblMatchesM.First;
+ bFound := False;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+
+     if (dmDataA.tblMatchesM['PlayerA'] = iPlayerA) and (dmDataA.tblMatchesM['PlayerB'] = iPlayerB) then
+     begin
+     //ShowMessage('Hi');
+       dmDataA.tblMatchesM.Edit;
+       dmDataA.tblMatchesM['Score A'] := iScoreA ;
+       dmDataA.tblMatchesM['Score B'] := iScoreB ;
+       dmDataA.tblMatchesM.Post;
+       ShowMessage('Score added');
+       bFound := True;
+     end;
+
+     if (dmDataA.tblMatchesM['PlayerA'] = iPlayerB) and (dmDataA.tblMatchesM['PlayerB'] = iPlayerA) then
+     begin
+     //ShowMessage('Hi');
+       dmDataA.tblMatchesM.Edit;
+       dmDataA.tblMatchesM['Score B'] := iScoreA ;
+       dmDataA.tblMatchesM['Score A'] := iScoreB ;
+       dmDataA.tblMatchesM.Post;
+       ShowMessage('Score added');
+       bFound := true;
+     end;
+
+  dmDataA.tblMatchesM.Next;
+ end;
+
+
+
+
+ if bFound = False then
+ begin
+   ShowMessage('Match has not been Scheduled yet!');
+   ShowMessage('Schedule Match and then add Score');
+ end;
+end;
+
+procedure TfrmAdmin.bmbLogoutAdminClick(Sender: TObject);
+var
+sLine:string;
+tfile:textFile;
+begin
+AssignFile(tFile,'Entries.txt');
+
+  if FileExists('Entries.txt') then
+  begin
+   Reset(tFile);
+   Readln(tFile,sLine);
+   if sLine = '0' then
+   begin
+     frmLogin.btnSignUp.Enabled := False ;
+     frmAdmin.btnCloseEntries.Enabled := False ;
+   end
+   else
+   begin
+    frmAdmin.btnOpenEntries.Enabled := False ;
+   end;
+
+   CloseFile(tFile);
+  end
+  else
+  begin
+  Exit
+  end;
+
+
+sedOponentA.Text := '0';
+sedUserA.Text := '9';
+sedPlayerNO1.Text := '1';
+sedPlayerNo2.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerNoE.Text := '1' ;
+sedTime.Text := '8';
+
+edtName.Clear;
+EdtLastName.Clear;
+edtPoints.Clear;
+edtPhone.Clear;
+edtID.Clear;
+edtEmail.Clear;
+
+RedOutput.Clear;
+dmDataA.ADOConnectionM.Connected := False ;
+frmAdmin.Visible := False ;
+frmLogin.Visible := True;
+
+
+end;
+
+procedure TfrmAdmin.btnAddClick(Sender: TObject);
+var
+sNameA, sLNameA,sRpointsA, sPhoneA, sIDA,  sEmailA:string;
+
+
+begin
+ sNameA := edtName.Text;
+ sLNameA := EdtLastName.Text;
+ sRpointsA := edtPoints.Text;
+ sPhoneA := edtPhone.Text;
+ sEmailA := edtEmail.Text;
+ sIDA := edtID.Text;
+
+ ADDPlayer(sNameA, sLNameA,sRpointsA, sPhoneA, sIDA, sEmailA);
+  end;
+
+
+
+procedure TfrmAdmin.btnBackClick(Sender: TObject);
+begin
+pnlControl.Show;
+btnControl.Show;
+end;
+
+procedure TfrmAdmin.btnChangeADminClick(Sender: TObject);
+var
+iNewAdmin:integer;
+tAdmin:textFile;
+sLineA:string;
+tfile:textFile;
+begin
+iNewAdmin := strtoint(InputBox('Enter new Admin number', 'Number', inttostr(frmLogin.iAdmin)));
+
+if NotoNameSur(iNewAdmin) = '' then
+begin
+  ShowMessage('Player does not exist');
+end
+else
+begin
+
+if not(iNewAdmin = frmLogin.iAdmin) then
+begin
+
+if FileExists('Admin.txt') then
+ begin
+  AssignFile(tAdmin,'Admin.txt');
+  rewrite(tAdmin);
+  Writeln(tAdmin,iNewAdmin);
+  //ShowMessage(sAdmin);
+ end
+ else
+ begin
+   ShowMessage('File:Admin.txt not found');
+ end;
+ CloseFile(tAdmin);
+
+ AssignFile(tFile,'Entries.txt');
+
+  if FileExists('Entries.txt') then
+  begin
+   Reset(tFile);
+   Readln(tFile,sLineA);
+   if sLineA = '0' then
+   begin
+     frmLogin.btnSignUp.Enabled := False ;
+     frmAdmin.btnCloseEntries.Enabled := False ;
+   end
+   else
+   begin
+    frmAdmin.btnOpenEntries.Enabled := False ;
+   end;
+
+   CloseFile(tFile);
+  end
+  else
+  begin
+  Exit
+  end;
+
+
+sedOponentA.Text := '0';
+sedUserA.Text := '9';
+sedPlayerNO1.Text := '1';
+sedPlayerNo2.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerNoE.Text := '1' ;
+sedTime.Text := '8';
+
+RedOutput.Clear;
+dmDataA.ADOConnectionM.Connected := False ;
+frmAdmin.Visible := False ;
+frmLogin.Visible := True;
+
+
+
+
+end;
+end;
+end;
+
+procedure TfrmAdmin.btnClearClick(Sender: TObject);
+begin
+RedOutput.Clear;
+ RedOutput.Paragraph.TabCount := 2;
+ RedOutput.Paragraph.Tab[0] := 240 ;
+ RedOutput.Paragraph.Tab[1] := 450 ;
+end;
+
+procedure TfrmAdmin.btnCloseEntriesClick(Sender: TObject);
+var
+tFile:TextFile;
+begin
+//Closes player entries
+frmLogin.btnSignUp.Enabled := False ;
+btnOpenEntries.Enabled := True; ;
+btnCloseEntries.Enabled := False;
+
+  AssignFile(tFile,'Entries.txt');
+
+  if FileExists('Entries.txt') then
+  begin
+   Rewrite(tFile);
+   Append(tFile);
+   Writeln(tFile,'0');
+  end
+  else
+  begin
+  Exit
+  end;
+  CloseFile(tFile);
+end;
+
+
+procedure TfrmAdmin.btnControlClick(Sender: TObject);
+begin
+ShowMessage('Following buttons are for artifically populating the data');
+if MessageDlg('It is advised that only the IT specialist makes use of these buttons.Do you want to continue',mtWarning, [mbYes, mbNo], 0, mbYes) = mrYes then
+   begin
+     pnlControl.Hide;
+     btnControl.Hide;
+   end;
+end;
+
+procedure TfrmAdmin.btnDateClick(Sender: TObject);
+var
+tpDate:TDate;
+begin
+tpDate := strtodate('01/11/2022');
+dmDataA.tblMatchesM.First ;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+  tPDate := IncDay(tPDate,1);
+  dmDataA.tblMatchesM.Edit;
+  dmDataA.tblMatchesM['Date'] :=  tPDate;
+  dmDataA.tblMatchesM.Post;
+  dmDataA.tblMatchesM.Next;
+
+ end;
+end;
+
+procedure TfrmAdmin.btnDeleteClick(Sender: TObject);
+begin
+dmDataA.tblMatchesM.Delete;
+ end;
+
+
+procedure TfrmAdmin.btnHome3Click(Sender: TObject);
+begin
+tbsQuerriesA.Visible := False;
+tbsAdmin.Visible := True ;
+sedOponentA.Text := '0';
+sedUserA.Text := '9';
+sedPlayerNO1.Text := '1';
+sedPlayerNo2.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerNoE.Text := '1' ;
+sedTime.Text := '8';
+
+edtName.Clear;
+EdtLastName.Clear;
+edtPoints.Clear;
+edtPhone.Clear;
+edtID.Clear;
+edtEmail.Clear;
+
+RedOutput.Clear;
+end;
+
+procedure TfrmAdmin.btnLastClick(Sender: TObject);
+begin
+if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMM  then
+ begin
+   dmDataA.tblMatchesM.Last;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMP  then
+ begin
+   dmDataA.tblPlayersM.Last ;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMV  then
+ begin
+   dmDataA.tblVenueM.Last;
+ end;
+end;
+
+procedure TfrmAdmin.btnLeaderBoardClick(Sender: TObject);
+begin
+RedOutput.Lines.Add('Top 3 players:') ;
+RedOutput.Lines.Add('1.Benjamin') ;
+RedOutput.Lines.Add('2.Denever') ;
+RedOutput.Lines.Add('3.Kobus') ;
+end;
+
+procedure TfrmAdmin.btnMatchAClick(Sender: TObject);
+begin
+
+DBGriddDisplayAdmin.DataSource := dmDataA.DataSourceMM ;
+end;
+
+procedure TfrmAdmin.btnMatchTabClick(Sender: TObject);
+var
+i:integer;
+begin
+  tbsAdmin.Visible := False;
+  tbsMatchA.Visible := True ;
+
+  sedTime.Text := '8' ;
+
+
+  dmDataA.tblVenueM.First ;
+  for i := 1 to dmDataA.tblVenueM.RecordCount do
+  begin
+    cmbVenue.Items[i-1] := dmDataA.tblVenueM['Venue'];
+    dmDataA.tblVenueM.Next;
+  end;
+  cmbVenue.ItemIndex := 0;
+
+
+
+
+end;
+
+procedure TfrmAdmin.btnNextClick(Sender: TObject);
+begin
+if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMM  then
+ begin
+   dmDataA.tblMatchesM.Next ;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMP  then
+ begin
+   dmDataA.tblPlayersM.Next ;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMV  then
+ begin
+   dmDataA.tblVenueM.Next;
+ end;
+
+end;
+
+procedure TfrmAdmin.btnOpenEntriesClick(Sender: TObject);
+var
+tFile:TextFile;
+begin
+//Open player entries
+frmLogin.btnSignUp.Enabled := True;
+btnOpenEntries.Enabled := False ;
+btnCloseEntries.Enabled := True;
+  AssignFile(tFile,'Entries.txt');
+
+  if FileExists('Entries.txt') then
+  begin
+   Rewrite(tFile);
+   Append(tFile);
+   Writeln(tFile,'1');
+  end
+  else
+  begin
+  Exit
+  end;
+  CloseFile(tFile);
+  cmbVenue.ItemIndex := 1;
+end;
+
+
+procedure TfrmAdmin.btnPassClick(Sender: TObject);
+var
+iPlayerPass, z, iPNo:integer;
+bFound:boolean;
+
+begin
+//Finds the given users password
+bFound := False;
+if sedPlayerNoE.Text = '' then
+begin
+ ShowMessage('Fill in Player number!');
+end
+else
+begin
+ iPlayerPass := strtoint(sedPlayerNoE.Text) ;
+  for z := 1 to frmLogin.iCounterarray do
+  begin
+  iPNo := strtoint(frmLogin.arrUsername[z][1]+frmLogin.arrUsername[z][2]) ;
+  //ShowMessage(inttostr(iPNo));
+  if iPNo = iPlayerPass then
+   begin
+   bFound := True;
+   RedOutput.Lines.Add('PlayerNo: ' + inttostr(iPlayerPass)) ;
+   RedOutput.Lines.Add('The username is: ' + frmLogin.arrUsername[z]);
+   RedOutput.Lines.Add('The password is: ' + frmLogin.arrPassword[z]) ;
+   end;
+  end;
+
+  if bFound = False then
+  begin
+    RedOutput.Lines.Add('Player does not exist');
+  end;
+end;
+
+end;
+
+procedure TfrmAdmin.btnQuerriesTabClick(Sender: TObject);
+begin
+ tbsAdmin.Visible := False;
+ tbsQuerriesA.Visible := True ;
+end;
+
+procedure TfrmAdmin.btnRemoveClick(Sender: TObject);
+var
+iP1RemoveA:integer;
+begin
+iP1RemoveA := strtoint(InputBox('Remove player', 'Enter playerNo', '1'));
+//Functions removes player
+RemovePlayer(iP1RemoveA);
+end;
+
+procedure TfrmAdmin.btnResetClick(Sender: TObject);
+var
+i,q:integer;
+begin
+if MessageDlg('Are you sure you want to reset the database and delete all players?',mtWarning, [mbYes, mbNo], 0, mbYes) = mrYes then
+ begin
+   dmDataA.tblMatchesM.First;
+  for q := 1 to dmDataA.tblMatchesM.RecordCount do
+   begin
+     dmDataA.tblMatchesM.Delete;
+     dmDataA.tblMatchesM.Next ;
+   end;
+
+  dmDataA.tblPlayersM.First;
+  for i := 1 to dmDataA.tblPlayersM.RecordCount do
+   begin
+     dmDataA.tblPlayersM.Delete;
+     dmDataA.tblPlayersM.Next;
+   end;
+
+
+ end;
+
+end;
+
+procedure TfrmAdmin.BtnScheduleAClick(Sender: TObject);
+var
+iP1, iP2, i: integer ;
+sVenueA, sOutA:string;
+DateMA:TDate;
+sTimeA:string;
+tMatch:TextFile ;
+bGo :Boolean;
+sPA1, sPA2:string;
+ bCheck :Boolean;
+begin
+    sPA1 :='' ;
+    sPA2 := '' ;
+   sVenueA := inttostr(cmbVenue.ItemIndex+1) ;
+    DateMA := dtpMatchA.Date;
+    bCheck := True ;
+     if sedPlayerAX.Text = '' then
+  begin
+   ShowMessage('Fill in Player number!');
+   bCheck := False ;
+  end
+  else
+  begin
+  iP1:= strtoint(sedPlayerAX.Text) ;
+  sPA1 := NotoNameSur(iP1);
+  end;
+
+   if sedPlayerBX.Text = '' then
+  begin
+   ShowMessage('Fill in Player number!');
+   bCheck := False ;
+  end
+  else
+  begin
+  iP2:= strtoint(sedPlayerBX.Text) ;
+  sPA2 := NotoNameSur(iP2);
+  end;
+
+   if sedTime.Text = '' then
+  begin
+   ShowMessage('Fill in Time!');
+   bCheck := False ;
+  end;
+
+      if sPA1 = '' then
+  begin
+    ShowMessage('Player ' + inttostr(iP1) + ' does not exist');
+     bCheck := False ;
+  end;
+
+   if sPA2 = '' then
+  begin
+    ShowMessage('Player ' + inttostr(iP2) + ' does not exist');
+     bCheck := False ;
+  end;
+
+   if cmbVenue.ItemIndex < 0 then
+    begin
+       ShowMessage('Venue does not exist');
+        bCheck := False ;
+    end;
+
+    if (sedPlayerAX.Text = sedPlayerBX.Text) then
+    begin
+      ShowMessage('Player 1 and Player 2 can not be the same player!');
+       bCheck := False ;
+    end;
+
+ if bCheck = True then
+begin
+
+
+    sTimeA := sedTime.Text + ':00' ;
+
+bGo := True;
+dmDataA.tblMatchesM.First;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+ if  ((dmDataA.tblMatchesM['PlayerA'] = iP2 ) or  (dmDataA.tblMatchesM['PlayerB'] = iP2 )) and  ((dmDataA.tblMatchesM['PlayerA'] = iP1 ) or  (dmDataA.tblMatchesM['PlayerB'] = iP1 )) then
+  begin
+   ShowMessage('This match has already been scheduled in the database');
+   bGo := False;
+  end;
+
+ dmDataA.tblMatchesM.Next
+ end;
+
+ if bGo = True then
+ begin
+  sOutA :=';'+ Inttostr(iP1) + ';' + inttostr(iP2) +';' + sVenueA + ';' + datetostr(DateMA) + ';' + sTimeA + ';' + '0' +';' + '0' + ';' ;
+  AssignFile(tMatch,'Matches.txt');
+   if FileExists('Matches.txt') then
+     begin
+     ShowMessage('Match has been sent to players for conformation');
+     Append(tMatch);
+     Writeln(tMatch,sOutA);
+     CloseFile(tMatch);
+
+     end
+     else
+     Begin
+      exit
+      End;
+ end;
+end;
+
+
+
+
+
+end;
+
+procedure TfrmAdmin.btnScoreClick(Sender: TObject);
+var
+i:integer;
+begin
+
+dmDataA.tblMatchesM.First ;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+  i := RandomRange(0,10);
+  dmDataA.tblMatchesM.Edit;
+  dmDataA.tblMatchesM['Score A'] := i ;
+  dmDataA.tblMatchesM['Score B'] := 9-i ;
+  dmDataA.tblMatchesM.Post;
+  dmDataA.tblMatchesM.Next;
+
+ end;
+
+end;
+
+procedure TfrmAdmin.btnScoreTabClick(Sender: TObject);
+begin
+ tbsAdmin.Visible := False;
+ tbsScoreA.Visible := True ;
+
+ sedPlayerNO1.MaxValue := 100;
+ sedPlayerNO1.MinValue := 1 ;
+ sedPlayerNO2.MaxValue := 100;
+ sedPlayerNO2.MinValue := 1 ;
+
+end;
+
+procedure TfrmAdmin.btnScoringAClick(Sender: TObject);
+var
+iPlayerAA, iPlayerBA :integer;
+iScoreAA, iScoreBA:byte;
+iSP1, iSP2:integer;
+sSPA1, sSPA2:string;
+bCheck :boolean ;
+begin
+     sSPA1 := 'h' ;
+     sSPA2 := 'h' ;
+     bCheck := True;
+ if sedPlayerNO1.Text = '' then
+  begin
+   ShowMessage('Fill in Player number!');
+   bCheck := False ;
+  end
+  else
+  begin
+  iSP1:= strtoint(sedPlayerNO1.Text) ;
+  sSPA1 := NotoNameSur(iSP1);
+  end;
+
+   if sedPlayerNo2.Text = '' then
+  begin
+   ShowMessage('Fill in Player number!');
+   bCheck := False ;
+  end
+  else
+  begin
+  iSP2 := strtoint(sedPlayerNo2.Text);
+  sSPA2 := NotoNameSur(iSP2);
+  end;
+
+   if sedUserA.Text = '' then
+  begin
+   ShowMessage('Enter Score!');
+   bCheck := False ;
+  end;
+
+  if sedOponentA.Text = '' then
+  begin
+   ShowMessage('Enter Score!');
+   bCheck := False ;
+  end;
+
+  if sSPA1 = '' then
+  begin
+  ShowMessage('Player ' + inttostr(iSP1) + ' does not exist');
+  bCheck := False ;
+  end;
+  if sSPA2 = '' then
+  begin
+  ShowMessage('Player ' + inttostr(iSP2) + ' does not exist');
+  bCheck := False ;
+  end;
+  if sedPlayerNO1.Text =sedPlayerNo2.Text then
+  begin
+  ShowMessage('Sorry, you can not play against yourself!');
+  bCheck := False ;
+  end;
+
+ if bCheck = True then
+
+ begin
+
+ iSP1:= strtoint(sedPlayerNO1.Text) ;
+ iSP2 := strtoint(sedPlayerNo2.Text);
+ sSPA1 := NotoNameSur(iSP1);
+ sSPA2 := NotoNameSur(iSP2);
+ iPlayerAA := strtoint(sedPlayerNO1.Text) ;
+ iPlayerBA := strtoint(sedPlayerNo2.Text) ;
+ iScoreAA := strtoint(sedUserA.Text) ;
+ iScoreBA := strtoint(sedOponentA.Text);
+ //Function adss score to the database
+ AddScore(iPlayerAA, iPlayerBA, iScoreAA, iScoreBA);
+ end;
+end;
+
+procedure TfrmAdmin.btnTimeClick(Sender: TObject);
+var
+i:integer;
+begin
+
+dmDataA.tblMatchesM.First ;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+  i := RandomRange(8,19);
+  dmDataA.tblMatchesM.Edit;
+  dmDataA.tblMatchesM['Time'] := inttostr(i) + ':00' ;
+  dmDataA.tblMatchesM.Post;
+  dmDataA.tblMatchesM.Next;
+
+ end;
+
+end;
+
+procedure TfrmAdmin.btnVenueAClick(Sender: TObject);
+begin
+
+DBGriddDisplayAdmin.DataSource := dmDataA.DataSourceMV ;
+end;
+
+procedure TfrmAdmin.btnCanMatchXClick(Sender: TObject);
+var
+iMatNum:integer ;
+begin
+ iMatNum := strtoint(inputbox('Enter match number', 'Match Number:' ,'1')) ;
+ dmDataA.tblMatchesM.First;
+ while not dmDataA.tblMatchesM.Eof  do
+ begin
+  if dmDataA.tblMatchesM['MatchNo'] = iMatNum then
+    begin
+      dmDataA.tblMatchesM.Delete;
+      ShowMessage('Match cancelled');
+    end;
+ dmDataA.tblMatchesM.Next
+ end;
+
+end;
+
+procedure TfrmAdmin.btnRecClick(Sender: TObject);
+var
+ITime:integer;
+tpTime:tTime;
+tPDate :TDate ;
+begin
+ShowMessage(inttostr(dmDataA.tblMatchesM.RecordCount));
+end;
+
+procedure TfrmAdmin.btnDuplicatesClick(Sender: TObject);
+var
+arrCoulomA, arrCoulombB : array[1..300] of integer;
+i,x, iCount:integer;
+bFound:boolean;
+begin
+ x:= dmDataA.tblMatchesM.RecordCount;
+ iCount:= 0;
+dmDataA.tblMatchesM.First;
+ while not dmDataA.tblMatchesM.Eof do
+  begin
+   inc(iCount);
+   arrCoulomA[iCount] := dmDataA.tblMatchesM['PlayerA'];
+   arrCoulombB[iCount] := dmDataA.tblMatchesM['PlayerB'];
+   dmDataA.tblMatchesM.Next;
+  end;
+
+
+
+    bFound := False;
+  for i := 1 to x do
+  begin
+   iCount:= 0;
+  dmDataA.tblMatchesM.First;
+   while not dmDataA.tblMatchesM.Eof do
+   begin
+   bFound := False;
+   if ((arrCoulomA[i] = dmDataA.tblMatchesM['PlayerA']) or  (arrCoulomA[i] = dmDataA.tblMatchesM['PlayerB'])) and ((arrCoulombB[i] = dmDataA.tblMatchesM['PlayerA']) or (arrCoulombB[i] = dmDataA.tblMatchesM['PlayerB'])) then
+    begin
+    //ShowMessage('Hi');
+    inc(iCount);
+     if iCount >= 2 then
+     begin
+     dmDataA.tblMatchesM.Delete;
+     bFound := True;
+     end
+    end;
+
+     if bFound = False then
+     begin
+      dmDataA.tblMatchesM.Next;
+     end;
+
+  end;
+ end;
+
+end;
+
+procedure TfrmAdmin.btnFirstClick(Sender: TObject);
+begin
+if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMM  then
+ begin
+   dmDataA.tblMatchesM.First;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMP  then
+ begin
+   dmDataA.tblPlayersM.First;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMV  then
+ begin
+   dmDataA.tblVenueM.First;
+ end;
+end;
+
+procedure TfrmAdmin.btnPopulateClick(Sender: TObject);
+var
+arrCoulomA, arrCoulombB, arrNum : array[1..300] of integer;
+i,x, iCount, q, p, d, n, iTime:integer;
+
+tpDate:Tdate;
+tpTime:Ttime;
+begin
+tpDate := strtodate('01/01/2023');
+dmDataA.tblPlayersM.First;
+q:= 0;
+ while not dmDataA.tblPlayersM.Eof do
+ begin
+   inc(q);
+   arrNum[q] := dmDataA.tblPlayersM['PlayerNo'] ;
+   dmDataA.tblPlayersM.Next;
+ end;
+
+ x:= dmDataA.tblMatchesM.RecordCount;
+ iCount:= 0;
+ n  := 0;
+for d := 1 to dmDataA.tblPlayersM.RecordCount-1 do
+ begin
+
+   for q := d+1 to dmDataA.tblPlayersM.RecordCount do
+   begin
+     inc(n);
+     arrCoulomA[n] := arrNum[d]   ;
+     arrCoulombB[n] :=  arrNum[q]   ;
+   end;
+
+ end;
+
+  for i := 1 to n do
+  begin
+     iCount := 0;
+  dmDataA.tblMatchesM.First;
+   while not dmDataA.tblMatchesM.Eof do
+   begin
+
+   if ((arrCoulomA[i] = dmDataA.tblMatchesM['PlayerA']) or  (arrCoulomA[i] = dmDataA.tblMatchesM['PlayerB'])) and ((arrCoulombB[i] = dmDataA.tblMatchesM['PlayerA']) or (arrCoulombB[i] = dmDataA.tblMatchesM['PlayerB'])) then
+    begin
+    //ShowMessage('Hi');
+    inc(iCount);
+    end;
+   dmDataA.tblMatchesM.Next;
+  end;
+
+  if iCount = 0 then
+     begin
+
+      tPDate := IncDay(tPDate,1);
+        //ShowMessage('Player Added');
+      iTime := RandomRange(10,18);
+      tPTime := StrToTime(inttostr(iTime));
+      dmDataA.tblMatchesM.Append;
+      dmDataA.tblMatchesM['PlayerA'] := arrCoulomA[i] ;
+      dmDataA.tblMatchesM['PlayerB'] :=  arrCoulombB[i] ;
+      dmDataA.tblMatchesM['VenueNo'] := RandomRange(1,10) ;
+      dmDataA.tblMatchesM['Time'] := timetostr(tPTime) ;
+      dmDataA.tblMatchesM['Date'] :=  tPDate;
+      dmDataA.tblMatchesM.Post;
+
+     end
+ end;
+
+
+
+
+
+end;
+
+procedure TfrmAdmin.btnPrevClick(Sender: TObject);
+begin
+if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMM  then
+ begin
+   dmDataA.tblMatchesM.Prior;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMP  then
+ begin
+   dmDataA.tblPlayersM.Prior ;
+ end;
+
+ if DBGriddDisplayAdmin.DataSource = dmDataA.DataSourceMV  then
+ begin
+   dmDataA.tblVenueM.Prior;
+ end;
+end;
+
+procedure TfrmAdmin.btnHome2Click(Sender: TObject);
+begin
+ tbsMatchA.Visible := False;
+ tbsAdmin.Visible := True ;
+ sedOponentA.Text := '0';
+sedUserA.Text := '9';
+sedPlayerNO1.Text := '1';
+sedPlayerNo2.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerNoE.Text := '1' ;
+sedTime.Text := '8';
+end;
+
+procedure TfrmAdmin.btnHome1Click(Sender: TObject);
+begin
+ tbsScoreA.Visible := False;
+ tbsAdmin.Visible := True ;
+ sedOponentA.Text := '0';
+sedUserA.Text := '9';
+sedPlayerNO1.Text := '1';
+sedPlayerNo2.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerNoE.Text := '1' ;
+sedTime.Text := '8';
+end;
+
+procedure TfrmAdmin.FormActivate(Sender: TObject);
+begin
+ sedOponentA.Text := '0';
+sedUserA.Text := '9';
+sedPlayerNO1.Text := '1';
+sedPlayerNo2.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerAX.Text := '1';
+sedPlayerNoE.Text := '1' ;
+sedTime.Text := '8';
+
+
+
+
+tbsAdmin.TabVisible := false;
+tbsScoreA.TabVisible := false;
+tbsMatchA.TabVisible := false;
+tbsQuerriesA.TabVisible := false;
+tbsAdmin.Visible := True ;
+
+
+
+
+pnlNameNumA.Caption := ' Welcome (' + inttostr(frmLogin.iAdmin) + ')' + ' Admin:' + frmAdmin.NotoNameSur(frmLogin.iAdmin) ;
+
+
+
+end;
+
+function TfrmAdmin.IDtoAge(sID: string): integer;
+var
+sDateF, sMonth, sDay, sYear, SDateN:string;
+dDateofB :TDate ;
+iOut:integer;
+begin
+  SDateN := '' ;
+  sYear := '';
+  sMonth := '';
+  sDay := '' ;
+  sDateF := copy(sId,1,6);
+
+
+  sYear := copy(sDateF,1,2);
+  delete(sDateF,1,2) ;
+  if strtoint(sYear[1]) < 3 then
+  begin
+   sYear := '20' + sYear
+  end
+  else
+  begin
+    sYear := '19' + sYear
+  end;
+
+ sMonth := copy(sDateF,1,2);
+ delete(sDateF,1,2) ;
+
+ sDay := copy(sDateF,1,2);
+ delete(sDateF,1,2) ;
+
+ SDateN := sDay + '/' + sMonth + '/' + sYear ;
+ dDateofB := strtoDate(SDateN);
+
+ iOut :=  DaysBetween(today,dDateofB);
+ iOut := iOut div 365;
+ Result := iOut ;
+
+
+end;
+
+function TfrmAdmin.NotoNameSur(iPNum: integer): string;
+begin
+  dmDataA.tblPlayersM.First ;
+  while not dmDataA.tblPlayersM.Eof do
+  begin
+   if dmDataA.tblPlayersM['PlayerNO'] = iPNum then
+   begin
+   result := dmDataA.tblPlayersM['first_name'] + ' ' + dmDataA.tblPlayersM['last_name'];
+   end;
+  dmDataA.tblPlayersM.Next;
+  end;
+end;
+
+procedure TfrmAdmin.btnPlayersAClick(Sender: TObject);
+begin
+
+DBGriddDisplayAdmin.DataSource := dmDataA.DataSourceMP ;
+
+end;
+
+procedure TfrmAdmin.RemovePlayer(iP1Remove: Integer);
+var
+i, a:Integer;
+sRemove:string ;
+sNameSur:string;
+bIdentify:boolean ;
+begin
+
+ for a := 1 to frmLogin.iCounterarray do
+ begin
+  if strtoint(frmLogin.arrUsername[a][1] + frmLogin.arrUsername[a][2]) = iP1Remove then
+  begin
+
+  sRemove := frmLogin.arrUsername[a] + '#' + frmLogin.arrPassword[a] +'#' ;
+  //ShowMessage('sRemove ' + sRemove);
+  end;
+ end;
+    //tblMatches
+
+  sNameSur := NotoNameSur(iP1Remove);
+if iP1Remove = frmLogin.iAdmin then
+begin
+  ShowMessage('You can not remove yourself because you are the Admin!');
+  RedOutput.Lines.Add('If you want to withdraw from the tournament:') ;
+  RedOutput.Lines.Add('1 Change the Admin');
+  RedOutput.Lines.Add('2 Log into your user account')  ;
+  RedOutput.Lines.Add('3 Go to Queries') ;
+  RedOutput.Lines.Add('4 click on withdraw from the tournament')   ;
+end
+else
+begin
+if sNameSur = '' then
+begin
+    ShowMessage('Player does not exist');
+end
+else
+begin
+if frmUser.iPlayerUser = iP1Remove then
+ begin
+  sNameSur := 'yourself' ;
+ end;
+
+if MessageDlg('Remove '+ sNameSur + ' now?',mtWarning, [mbYes, mbNo], 0, mbYes) = mrYes then
+begin
+
+ dmDataA.tblMatchesM.First;
+while not dmDataA.tblMatchesM.Eof do
+ begin
+
+   if (iP1Remove = dmDataA.tblMatchesM['PlayerA']) or (iP1Remove = dmDataA.tblMatchesM['PlayerB']) then
+   begin
+   frmUser.RemoveLineFromFile(frmLogin.tFileUP,sRemove);
+   dmDataA.tblMatchesM.Delete;
+   //dmDataA.tblMatchesM.Post;
+   //ShowMessage('Match removed');
+   end
+   else
+   begin
+    dmDataA.tblMatchesM.Next
+   end;
+
+
+ end;
+
+  i := 0;
+  //tblPlayers
+
+bIdentify := False;
+dmDataA.tblPlayersM.First;
+while not dmDataA.tblPlayersM.Eof and (bIdentify = False) do
+ begin
+
+   if dmDataA.tblPlayersM['PlayerNo'] = iP1Remove then
+   begin
+   bIdentify := True;
+   frmUser.RemoveLineFromFile(frmLogin.tFileUP,sRemove);
+   dmDataA.tblPlayersM.Delete;
+   //dmDataA.tblPlayersM.Post;
+   ShowMessage('Player removed');
+   dec(frmLogin.iCounterarray,1) ;
+
+   end
+   else
+   begin
+    dmDataA.tblPlayersM.Next
+   end;
+ end;
+end;
+end;
+end;
+end;
+
+
+procedure TfrmAdmin.rgpEditClick(Sender: TObject);
+var
+sPhoneE, sEmailE, sBuild:string;
+iPlayerE, i, q, iposE, iComE, iSpace:integer;
+bCheck:boolean;
+ z, iPNoA:integer;
+bFound:boolean;
+bIdentify:boolean;
+
+begin
+
+ iPlayerE := strtoint(sedPlayerNoE.Text) ;
+ bFound := False;
+  for z := 1 to frmLogin.iCounterarray do
+  begin
+  iPNoA := strtoint(frmLogin.arrUsername[z][1]+frmLogin.arrUsername[z][2]) ;
+  if iPNoA = iPlayerE then
+   begin
+   bFound := True;
+   end;
+  end;
+
+  if bFound = False then
+  begin
+    RedOutput.Lines.Add('Player does not exist');
+  end
+  else
+  begin
+
+
+
+ iPlayerE := strtoint(sedPlayerNoE.Text) ;
+  bCheck := True;
+ if rgpEdit.ItemIndex = 0 then
+  begin
+  sPhoneE := InputBox('Enter new phone number', 'Phone:', 'XXX XXX XXXX');
+
+
+   for i := 1 to Length(sPhoneE) do
+  begin
+   if not(sPhoneE[i] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] ) or  (Length(sPhoneE)>13) or  (Length(sPhoneE)<10) then
+   begin
+   bCheck := False;
+   end;
+  end ;
+
+  if bCheck = False then
+   begin
+     ShowMessage('Given phone number is not valid');
+   end
+   else
+   begin
+    dmDataA.tblPlayersM.First;
+    bIdentify := False ;
+   while not dmDataA.tblPlayersM.Eof and(bIdentify = False) do
+     begin
+
+      if dmDataA.tblPlayersM['PlayerNo'] = iPlayerE then
+     begin
+     bIdentify := True;
+      sBuild := '-' ;
+      Insert(sBuild,sPhoneE,4);
+      Insert(sBuild,sPhoneE,8);
+
+      dmDataA.tblPlayersM.Edit;
+      dmDataA.tblPlayersM['Phone'] := sPhoneE ;
+      dmDataA.tblPlayersM.Post;
+        ShowMessage('Phone number changed successfully');
+        rgpEdit.ItemIndex := -1 ;
+     end;
+
+     dmDataA.tblPlayersM.Next
+    end;
+
+ end;
+
+ end;
+ q:= 0;
+ if rgpEdit.ItemIndex = 1 then
+ begin
+ sEmailE := InputBox('Enter new email', 'Email:', 'XXXXXXXXXXXXX') ;
+  iposE := pos('@',sEmailE);
+  iComE := pos('.',sEmailE);
+  iSpace := pos(' ',sEmailE);
+
+  if (iposE = 0) or (iComE = 0) or not(iSpace = 0) or (iposE> iComE) then
+  begin
+  ShowMessage('Given Email is not valid')
+  end
+  else
+  begin
+   dmDataA.tblPlayersM.First;
+   bIdentify := False;
+   while not dmDataA.tblPlayersM.Eof and(bIdentify = false) do
+     begin
+
+      if dmDataA.tblPlayersM['PlayerNo'] = iPlayerE then
+     begin
+      bIdentify := true;
+      dmDataA.tblPlayersM.Edit;
+      dmDataA.tblPlayersM['Email'] := sEmailE ;
+      dmDataA.tblPlayersM.Post;
+      ShowMessage('Email changed successfully');
+      rgpEdit.ItemIndex := -1 ;
+     end;
+
+     dmDataA.tblPlayersM.Next
+    end;
+  end;
+
+
+ end;
+
+ end;
+ rgpEdit.ItemIndex := -1 ;
+end;
+
+procedure TfrmAdmin.rgpQuerriesClick(Sender: TObject);
+var
+rAverage :real ;
+iIndex, iPlayer, i, iScore, iOldest, iTemp, iAge, iYoungest, p, iPX, q, z, c:integer;
+arrNameSur:array[1..30] of string;
+
+
+begin
+ //Intialising
+ RedOutput.Paragraph.TabCount := 2;
+ RedOutput.Paragraph.Tab[0] := 240 ;
+ RedOutput.Paragraph.Tab[1] := 450 ;
+ iIndex := rgpQuerries.ItemIndex;
+ iScore := 0;
+ iPlayer := 0;
+ iAge := 0;
+ iOldest := 0;
+
+
+ //0
+ if iIndex = 0 then
+  begin
+    dmDataA.tblPlayersM.First;
+    RedOutput.Lines.Add('Player' + #9 + 'Points');
+   for p := 1 to dmDataA.tblPlayersM.RecordCount do
+     begin
+      arrNameSur[p] :=  dmDataA.tblPlayersM['first_name']  + ' ' + dmDataA.tblPlayersM['last_name'] ;
+      dmDataA.tblPlayersM.Next;
+     end;
+
+  frmUser.GeneratePoints(frmLogin.arrPANumA,arrScoreA);
+  //Array sorts data from highest to lowest
+  SortingArray(frmLogin.arrPANumA,arrScoreA);
+  for i := 1 to frmLogin.iCounterarray do
+   begin
+   RedOutput.Lines.Add(inttostr(i) + '. ' + frmAdmin.NotoNameSur(frmLogin.arrPANumA[i]) + ':' + #9 + inttostr(arrScoreA[i]))  ;
+   end;
+   rgpQuerries.ItemIndex := -1 ;
+
+  end;
+
+
+ ///Oldest
+  iIndex := rgpQuerries.ItemIndex;
+  iPX := 0;
+
+ if iIndex = 1 then
+  begin
+  dmDataA.tblPlayersM.First;
+   while not dmDataA.tblPlayersM.Eof do
+   begin
+   inc(q);
+    iAge := IDtoAge(dmDataA.tblPlayersM['ID']) ;
+   if iOldest < iAge      then
+    begin
+    iOldest := iAge ;
+    iPX := dmDataA.tblPlayersM['PlayerNo'] ;
+    end;
+
+   dmDataA.tblPlayersM.Next
+   end;
+  RedOutput.Lines.Add('The oldest player is ' + inttostr(iOldest) + ' Years old' );
+  RedOutput.Lines.Add(NotoNameSur(iPX));
+  rgpQuerries.ItemIndex := -1 ;
+  end;
+
+   ///Youngest
+   ///
+ iScore := 0;
+ iPlayer := 0;
+ iAge := 0;
+ q:= 0;
+ iPX := 0;
+ iYoungest := 1000000;
+ iIndex := rgpQuerries.ItemIndex;
+
+ if iIndex = 2 then
+ begin
+  dmDataA.tblPlayersM.First;
+  while not dmDataA.tblPlayersM.Eof do
+  begin
+  inc(q);
+  iAge := IDtoAge(dmDataA.tblPlayersM['ID']) ;
+   if iYoungest > iAge      then
+   begin
+    iYoungest:= iAge ;
+    iPX := dmDataA.tblPlayersM['PlayerNo'] ;
+    //ShowMessage(inttostr(iYoungest));
+   end;
+
+  dmDataA.tblPlayersM.Next
+  end;
+ RedOutput.Lines.Add('The youngest player is ' + inttostr(iYoungest) + ' Years old' );
+ RedOutput.Lines.Add(NotoNameSur(iPX));
+ rgpQuerries.ItemIndex := -1 ;
+ end;
+
+   //Average age
+
+ if iIndex = 3 then
+  begin
+  dmDataA.tblPlayersM.First;
+  while not dmDataA.tblPlayersM.Eof do
+   begin
+    iAge := IDtoAge(dmDataA.tblPlayersM['ID']) ;
+    rAverage := rAverage + iAge ;
+    dmDataA.tblPlayersM.Next
+   end;
+   rAverage := rAverage/dmDataA.tblPlayersM.RecordCount;
+   RedOutput.Lines.Add('The Average age is ' + floattostrF(rAverage,ffFixed,10,0) + ' Years old' );
+   RedOutput.Lines.Add(NotoNameSur(iPX));
+   rgpQuerries.ItemIndex := -1 ;
+  end;
+ end;
+
+
+
+
+
+
+
+procedure TfrmAdmin.sedOponentAChange(Sender: TObject);
+begin
+if not (sedUserA.Text = '') and not(sedOponentA.Text = '') then
+begin
+
+sedUserA.Text :=inttostr( 9 - strtoint(sedOponentA.Text )) ;
+end;
+end;
+
+procedure TfrmAdmin.sedUserAChange(Sender: TObject);
+begin
+if not (sedUserA.Text = '') and not(sedOponentA.Text = '') then
+begin
+
+sedOponentA.Text :=inttostr( 9 - strtoint(sedUserA.Text )) ;
+end;
+end;
+
+procedure TfrmAdmin.SortingArray(var arrPlNum, arrScoreP: array of integer);
+var
+i, q, iTemp, iTemp2:integer;
+
+begin
+   for i := 0 to dmDataA.tblPlayersM.RecordCount-1 do
+   begin
+       for q := i+1 to (dmDataA.tblPlayersM.RecordCount-2) do
+       begin
+         if arrScoreP[i]< arrScoreP[q] then
+          begin
+            iTemp := arrScoreP[i] ;
+            arrScoreP[i] := arrScoreP[q] ;
+            arrScoreP[q] := iTemp ;
+
+            iTemp2 :=  arrPlNum[i];
+            arrPlNum[i] :=  arrPlNum[q] ;
+             arrPlNum[q] := iTemp2;
+          end;
+
+       end;
+
+   end;
+
+
+end;
+
+end.

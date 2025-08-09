@@ -1,0 +1,484 @@
+unit frmGame4_DNu;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.jpeg,
+  Vcl.ExtCtrls, Vcl.Buttons, Vcl.ComCtrls, Math, Vcl.Imaging.pngimage ;
+
+type
+  TfrmGame4 = class(TForm)
+    bmbHome: TBitBtn;
+    pgcGame3: TPageControl;
+    tbsBegin: TTabSheet;
+    tbsPlay: TTabSheet;
+    bmbRetry: TBitBtn;
+    btnNext: TButton;
+    BtnNextA: TButton;
+    imgGrassB3: TImage;
+    imgGrassB1: TImage;
+    imgGrassA2: TImage;
+    imgGrassA1: TImage;
+    imgBob: TImage;
+    lblScenarioA1: TLabel;
+    lblScenarioA2: TLabel;
+    lblScenarioA3: TLabel;
+    imgLion1: TImage;
+    imgBobA1: TImage;
+    imgLionA1: TImage;
+    edtInput: TEdit;
+    lblQuestion1: TLabel;
+    btnGo1: TButton;
+    imgGrassA3: TImage;
+    imgGrassB2: TImage;
+    btnClose: TButton;
+    imgSteak: TImage;
+    tmr1: TTimer;
+    tmr2: TTimer;
+    imgLionA2: TImage;
+    rgpDifficultyA: TRadioGroup;
+    btnBack: TButton;
+    btnLevel2: TButton;
+    pnlLetsGoB: TPanel;
+    imgTreeB2: TImage;
+    imgTreeB1: TImage;
+    procedure bmbHomeClick(Sender: TObject);
+    procedure BtnNextAClick(Sender: TObject);
+    procedure btnNextClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure tmr1Timer(Sender: TObject);
+    procedure btnGo1Click(Sender: TObject);
+    procedure bmbRetryClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure tmr2Timer(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnBackClick(Sender: TObject);
+    procedure btnLevel2Click(Sender: TObject);
+  private
+    { Private declarations }
+   sWord, sInput:string ;
+    iScore, icounter:integer;
+    bTester :boolean;
+
+    iCounterTimer:integer;
+     iAmountletters:integer;
+
+  public
+    { Public declarations }
+  end;
+
+var
+  frmGame4: TfrmGame4;
+
+implementation
+uses
+frmMain_DNu ;
+type
+swordA = string ;
+
+const
+Alphabet = 'abcdefghijklmnopqrstuvwxyz' ;
+
+
+function Wordgiven(iAmmountwords:integer):swordA;
+
+var
+i :integer;
+sWord:string;
+r1 :integer ;
+Alphabet : string;
+begin
+
+Alphabet := 'abcdefghijklmnopqrstuvwxyz' ;
+
+for i := 1 to iAmmountwords do
+    begin
+     r1 := random(26) +1 ;
+     sWord := sWord + Alphabet[r1] ;
+
+    end;
+
+    Wordgiven := sWord;
+end;
+
+
+{$R *.dfm}
+
+procedure TfrmGame4.bmbRetryClick(Sender: TObject);
+begin
+//Reset
+bTester := false ;
+btnNext.Enabled := true ;
+btnGo1.Enabled := false ;
+icounter := 0 ;
+iScore := 0;
+btnNext.Caption := 'Start';
+btnLevel2.Enabled := false ;
+bmbRetry.Enabled := false ;
+end;
+
+procedure TfrmGame4.bmbHomeClick(Sender: TObject);
+begin
+
+ //initialising values
+btnNext.Enabled := true ;
+btnGo1.Enabled := false ;
+icounter := 0 ;
+iScore := 0;
+BtnNext.Caption := 'Start' ;
+rgpDifficultyA.ItemIndex := -1 ;
+
+
+frmMain.Show;
+frmGame4.Hide;
+
+end;
+
+procedure TfrmGame4.btnBackClick(Sender: TObject);
+begin
+btnNext.Enabled := true ;
+btnGo1.Enabled := false ;
+icounter := 0 ;
+iScore := 0;
+BtnNext.Caption := 'Start' ;
+rgpDifficultyA.ItemIndex := -1 ;
+ tbsPlay.Hide;
+tbsBegin.Show;
+
+bTester := false ;
+
+
+end;
+
+procedure TfrmGame4.btnGo1Click(Sender: TObject);
+begin
+ //initialise
+iCounterTimer := 1 ;
+ imgSteak.Top := 253 ;
+imgSteak.Left := 330;
+
+
+
+ sInput := edtInput.Text;
+ if not(sInput= '') then
+ begin
+
+
+  //test input value
+
+ if sInput = sWord then
+ begin
+ showmessage('Correct!');
+ inc(iScore);
+ inc(icounter);
+ tmr2.Enabled := true;
+
+ end
+ else
+ begin
+  showmessage ( 'incorrect') ;
+   Inc(icounter);
+ end;
+
+ edtInput.Clear;
+
+
+
+ btnGo1.Enabled := false ;
+ btnNext.Enabled := true ;
+ end
+ else
+ begin
+  ShowMessage('Enter your answer');
+  edtInput.SetFocus;
+
+ end;
+
+
+
+end;
+
+procedure TfrmGame4.btnLevel2Click(Sender: TObject);
+begin
+iAmountletters := 6 ;
+
+btnNext.Enabled := true ;
+btnGo1.Enabled := false ;
+icounter := 0 ;
+iScore := 0;
+btnNext.Caption := 'Start';
+btnLevel2.Hide;
+btnLevel2.Enabled := false;
+bTester := true ;
+
+end;
+
+procedure TfrmGame4.btnNextClick(Sender: TObject);
+
+begin
+
+  btnNext.Caption := 'Next' ;
+ //There are 5 questions
+ if icounter = 5 then
+ begin
+ btnGo1.Enabled := false;
+
+  //score
+  showmessage('You got ' + IntToStr(iScore) + ' out of ' + inttostr(icounter) + ' questions correct');
+
+  if iScore > 2 then
+  begin
+   //More than 50%
+   if  (rgpDifficultyA.ItemIndex = 0 ) and (bTester = false) then
+   begin
+
+   ShowMessage('You may go to level 2!');
+   ShowMessage('Click on level 2 to go to the next level or click on retry to play again ' );
+   btnNext.Enabled := false ;
+   btnLevel2.Enabled  := true ;
+   bmbRetry.Enabled := true ;
+   end;
+
+
+   if  (rgpDifficultyA.ItemIndex = 1 ) then
+   begin
+
+   ShowMessage('Well done you did great!');
+   ShowMessage('Click on retry and play again or go and play another game' );
+   btnNext.Enabled := false ;
+   bmbRetry.Enabled := true ;
+
+   end;
+
+   if bTester = true then
+   begin
+    ShowMessage('Well done you did great!');
+   ShowMessage('Click on retry and play again or go and play another game' );
+   btnNext.Enabled := false ;
+   bmbRetry.Enabled := true ;
+   end;
+
+
+
+
+
+ end
+ else
+ begin
+ //less than 50%
+ ShowMessage('You unfortunately failed');
+ ShowMessage('Try again and get a better score');
+ btnNext.Enabled := false;
+ btnGo1.Enabled := false ;
+ bmbRetry.Enabled := true ;
+
+
+ end;
+
+
+
+ end
+ else //else of if all 5 questions are not answered
+ begin
+
+
+
+  sWord := '' ;
+
+  sWord := Wordgiven(iAmountletters) ;
+
+
+
+ lblQuestion1.Caption := sWord;
+ Tmr1.Enabled := True ;
+
+ //Enabling buttons
+ btnGo1.Enabled := true ;
+ btnNext.Enabled := false ;
+
+ end;
+
+ edtInput.SetFocus;
+
+
+
+end;
+
+procedure TfrmGame4.btnCloseClick(Sender: TObject);
+begin
+Application.Terminate;
+end;
+
+procedure TfrmGame4.BtnNextAClick(Sender: TObject);
+
+begin
+//intialising
+bTester := false ;
+
+ if not(rgpDifficultyA.ItemIndex = -1 )then
+ begin
+
+if (rgpDifficultyA.ItemIndex = 0 )then
+ begin
+
+ iAmountletters := 3 ;
+  btnLevel2.Show;
+  tmr1.Interval := 1000 ;
+
+ end;
+
+
+ if (rgpDifficultyA.ItemIndex = 1 )then
+ begin
+
+ iAmountletters := 6 ;
+ btnLevel2.Hide;
+ tmr1.Interval := 1500;
+ end;
+
+//Intitialising values and objects
+btnLevel2.Enabled := false ;
+bmbRetry .Enabled := false ;
+btnGo1.Enabled  := false;
+ btnNext.Enabled := true;
+  BtnNext.Caption := 'Start' ;
+
+
+  //next tabsheet if rgp has a value
+ tbsPlay.Show;
+tbsBegin.Hide;
+
+
+end
+else
+begin
+  ShowMessage('Choose difficulty');
+end;
+
+
+
+
+
+end;
+
+procedure TfrmGame4.FormActivate(Sender: TObject);
+begin
+tbsPlay.TabVisible := false;
+tbsBegin.TabVisible := false;
+
+tmr1.Enabled := false ;
+tmr2.Enabled := false;
+//Name
+pnlLetsGoB.Caption := 'Lets go ' + frmMain.sName + '!!!'  ;
+
+ tbsBegin.Show;
+ //initialise
+lblQuestion1.Font.Size := 30;
+icounter := 0 ;
+iScore := 0 ;
+
+//initialise
+imgSteak.Top := 253 ;
+imgSteak.Left := 330;
+ imgSteak.Hide;
+ //initialise
+imgLionA2.Visible := false;
+iCounterTimer := 1;
+
+
+end;
+
+procedure TfrmGame4.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+Application.Terminate;
+end;
+
+procedure TfrmGame4.tmr2Timer(Sender: TObject);
+
+
+begin
+
+//imgSteak.Picture.LoadFromFile('K:\PAT2021_NaudeDian\Fase 2\Media\Game4\steak.jpg');
+
+imgSteak.Picture.LoadFromFile('C:\Users\Jan\Documents\Dian\Delphi\Files\PAT2021_NaudeDian\Fase 2\Media\Game4\steak.jpg');
+
+ 
+
+
+
+//imgBobA1.Picture.LoadFromFile('K:\PAT2021_NaudeDian\Fase 2\Media\Game4\BobGiving.jpg');
+
+imgBobA1.Picture.LoadFromFile('C:\Users\Jan\Documents\Dian\Delphi\Files\PAT2021_NaudeDian\Fase 2\Media\Game4\BobGiving.jpg');
+
+// imgSteak.Picture.LoadFromFile('K:\PAT2021_NaudeDian\Fase 2\Media\Game4\steak.jpg');
+
+imgSteak.Picture.LoadFromFile('C:\Users\Jan\Documents\Dian\Delphi\Files\PAT2021_NaudeDian\Fase 2\Media\Game4\steak.jpg');
+
+
+
+
+imgSteak.Show;
+
+if (imgSteak.Left < 410) then
+begin
+
+imgSteak.Left := imgSteak.Left +10 ;
+
+end;
+
+
+if imgSteak.Top <285 then
+begin
+
+imgSteak.Top := imgSteak.Top +10 ;
+
+end;
+
+
+if (imgSteak.Left > 400) and (imgSteak.Top >285 )then
+begin
+  imgLionA1.visible := false;
+  imgLionA2.visible := true;
+   inc(iCounterTimer) ;
+
+
+
+
+end;
+
+ //default values
+if iCounterTimer = 10 then
+begin
+
+   imgSteak.Hide;
+   imgLionA1.Show;
+   imgLionA2.Hide;
+  imgBobA1.Picture.LoadFromFile('C:\Users\Jan\Documents\Dian\Delphi\Files\PAT2021_NaudeDian\Fase 2\Media\Game4\Bobstanding.jpg');
+   //imgBobA1.Picture.LoadFromFile('K:\PAT2021_NaudeDian\Fase 2\Media\Game4\Bobstanding.jpg');
+   tmr2.Enabled := false ;
+
+
+
+end;
+
+
+
+
+end;
+
+procedure TfrmGame4.tmr1Timer(Sender: TObject);
+begin
+
+
+ lblQuestion1.Caption := sWord ;
+ lblQuestion1.caption := ''  ;
+ tmr1.Enabled := false ;
+
+
+
+
+
+end;
+
+end.

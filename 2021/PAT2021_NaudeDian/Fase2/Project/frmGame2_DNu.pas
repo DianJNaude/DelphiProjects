@@ -1,0 +1,638 @@
+unit frmGame2_DNu;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Math,
+  Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.Imaging.pngimage;
+
+type
+  TfrmGame2 = class(TForm)
+    bmbHome: TBitBtn;
+    pgcGame1: TPageControl;
+    tbsBegin: TTabSheet;
+    tbsPlay: TTabSheet;
+    bmbRetryB1: TBitBtn;
+    btnNextB1: TButton;
+    btnNextA1: TButton;
+    imgGrassB2: TImage;
+    imgGrassB1: TImage;
+    imgGrassA2: TImage;
+    imgGrassA1: TImage;
+    imgTreeB1: TImage;
+    lblScenarioA1: TLabel;
+    lblScenarioA2: TLabel;
+    lblScenarioA3: TLabel;
+    imgBobA1: TImage;
+    imgJerryA1: TImage;
+    imgGrassA3: TImage;
+    imgBobB1: TImage;
+    imgJerryB1: TImage;
+    imgGrassB3: TImage;
+    edtInputAnswerB1: TEdit;
+    lblOutputB1: TLabel;
+    lblQuestionB1: TLabel;
+    rgpInput: TRadioGroup;
+    BtnGoB1: TButton;
+    btnClose: TButton;
+    tmrB1: TTimer;
+    imgbobaxe: TImage;
+    imgLeavesB1: TImage;
+    tmrB2: TTimer;
+    imgJerrybendingB1: TImage;
+    rgpDifficulty: TRadioGroup;
+    btnBackB1: TButton;
+    btnLevel2B1: TButton;
+    pnlLetsGoB: TPanel;
+    procedure bmbHomeClick(Sender: TObject);
+    procedure btnNextB1Click(Sender: TObject);
+    procedure btnNextA1Click(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure BtnGoB1Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure bmbRetryB1Click(Sender: TObject);
+    procedure tmrB1Timer(Sender: TObject);
+    procedure tmrB2Timer(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnBackB1Click(Sender: TObject);
+    procedure btnLevel2B1Click(Sender: TObject);
+  private
+    { Private declarations }
+
+   iAmountsumB, iCorrectAns : integer ;
+
+ //Input for function
+ iGivenLevel, iInputNum:integer;
+
+ rMathAns:real;
+ icountertimer:integer ;
+ itmrA2Counter:integer;
+
+
+  public
+    { Public declarations }
+  end;
+
+var
+  frmGame2: TfrmGame2;
+type
+OutputA = array[1..10]of real;
+
+implementation
+uses
+frmMain_DNu;
+
+{$R *.dfm}
+  //Function MathA
+  // Is used to see if the user wants to Multiply, add, subtract or divide
+ function MathA (iA:integer; iLevel:Integer): OutputA;
+ var
+
+  //iA refers to radiogroup off math subject
+
+   X: OutputA;
+ begin
+
+
+ begin
+ if iLevel = 1 then
+ begin
+ //Addings
+ if iA = 0 then
+  begin
+  x[1] := RandomRange(0,10)  ;
+  x[2] := RandomRange(0,10)  ;
+  x[3] :=  x[1]+x[2];
+  end;
+
+  if iA = 1 then
+  begin
+  //subtraction
+
+   x[2] := RandomRange(1,10)  ;
+   x[3] := RandomRange(1,10)  ;
+   x[1] :=  x[3] + x[2];
+  end;
+
+
+ // MathA:=x;
+
+ end;
+
+ if iLevel= 2 then
+ begin
+  if iA = 0 then
+  begin
+ //Adddings
+  x[1] := RandomRange(10,100)  ;
+  x[2] := RandomRange(10,100)  ;
+  x[3] := x[1] + x[2] ;
+  end;
+
+
+ if iA = 1 then
+  begin
+  //subtraction
+
+   x[2] := RandomRange(10,100)  ;
+   x[3] := RandomRange(10,100)  ;
+    x[1]:=x[3]+x[2];
+  end;
+
+
+
+
+end; //iA 0 or 1
+
+ if (iA = 2) or (iA = 3) then
+ begin
+ if iLevel = 1 then
+ begin
+ if iA = 2 then
+ begin
+ //Multiplication
+  x[1] := RandomRange(1,10)  ;
+  x[2] := RandomRange(1,10)  ;
+  x[3] := x[1] * x[2] ;
+ end;
+  //Dividing
+  if iA =3 then
+  begin
+
+  x[2] := RandomRange(1,10)  ;
+  x[3] := RandomRange(1,10)  ;
+  x[1] := x[2] * x[3] ;
+  end;
+
+  end;
+
+ if iLevel= 2 then
+ begin
+ if iA = 2 then
+ begin
+
+   //Multiplication
+  x[1] := RandomRange(10,100)  ;
+  x[2] := RandomRange(1,10)  ;
+  x[3] := x[1] * x[2] ;
+
+ end;
+
+
+  //Dividing
+  if iA =3 then
+  begin
+
+  x[2] := RandomRange(1,10)  ;
+  x[3] := RandomRange(10,100)  ;
+  x[1] := x[2] * x[3] ;
+
+  end;
+
+
+ end;
+
+ end;
+
+ end;
+
+ MathA := x ;
+ end;
+
+
+procedure TfrmGame2.bmbHomeClick(Sender: TObject);
+begin
+ iAmountsumB := 0 ;
+iCorrectAns := 0 ;
+
+
+rgpInput.ItemIndex := -1 ;
+rgpDifficulty.ItemIndex := -1 ;
+ imgTreeB1.Show;
+tbsPlay.Hide;
+
+tbsBegin.Show;
+
+
+
+
+//  Reset values
+
+iAmountsumB := 0 ;
+iCorrectAns := 0 ;
+
+lblOutputB1.Caption := '' ;
+
+
+frmMain.Show;
+frmGame2.Hide;
+
+end;
+
+procedure TfrmGame2.btnLevel2B1Click(Sender: TObject);
+begin
+ btnNextB1.Caption := 'Next' ;
+iAmountsumB := 0 ;
+iCorrectAns := 0 ;
+
+iGivenLevel := 2 ;
+imgTreeB1.Show;
+
+btnNextB1.Enabled := true ;
+btnLevel2B1.Enabled:= false;
+edtInputAnswerB1.Clear;
+btnNextB1.Caption := 'Start' ;
+BtnGoB1.Enabled:= false;
+
+
+
+end;
+
+procedure TfrmGame2.bmbRetryB1Click(Sender: TObject);
+begin
+btnNextB1.Caption := 'Next' ;
+iAmountsumB := 0 ;
+iCorrectAns := 0 ;
+
+imgTreeB1.Show;
+
+btnNextB1.Enabled := true ;
+end;
+
+procedure TfrmGame2.btnBackB1Click(Sender: TObject);
+begin
+iAmountsumB := 0 ;
+iCorrectAns := 0 ;
+
+
+rgpInput.ItemIndex := -1 ;
+rgpDifficulty.ItemIndex := -1 ;
+ imgTreeB1.Show;
+ lblOutputB1.Caption := '' ;
+ edtInputAnswerB1.Clear;
+
+
+
+tbsPlay.Hide;
+tbsBegin.Show;
+
+
+
+
+
+
+
+
+end;
+
+procedure TfrmGame2.BtnGoB1Click(Sender: TObject);
+  var
+Outputarray : OutputA;
+iMathAnsInput : integer;
+begin
+//Validation
+
+ btnNextB1.Enabled := true;
+  if not(edtInputAnswerB1.Text= '') then
+begin
+
+iMathAnsInput := strtoint(edtInputAnswerB1.Text);
+Outputarray := MathA(iInputNum,iGivenLevel);
+
+
+
+ //Test Input of user
+if rMathAns = iMathAnsInput then
+begin
+  inc(iCorrectAns) ;
+  ShowMessage('Correct!');
+  inc( iAmountsumB) ;
+  tmrB1.Enabled := true ;
+  icountertimer := 0;
+  lblOutputB1.Caption := '' ;
+end
+else
+begin
+ ShowMessage('Incorrect');
+ Inc(iAmountsumB);
+end;
+btnNextB1.Enabled := true;
+BtnGoB1.Enabled := false ;
+end
+else
+begin
+  ShowMessage('Enter your answer');
+  edtInputAnswerB1.SetFocus;
+end;
+
+end;
+
+procedure TfrmGame2.btnNextB1Click(Sender: TObject);
+var
+Outputarray : OutputA;
+sSign:string ;
+
+begin
+BtnGoB1.Enabled := true;
+edtInputAnswerB1.SetFocus;
+
+btnNextB1.Caption  := 'Next' ;
+ //All questions are answered
+if iAmountsumB = 5 then
+begin
+
+imgTreeB1.Hide;
+
+
+ShowMessage('You got ' + IntToStr(iCorrectAns) + ' out of ' + IntToStr(iAmountsumB) + ' correct');
+
+
+if iCorrectAns >2 then
+begin
+//passed
+    //Level1
+    if iGivenLevel = 1 then
+    begin
+    ShowMessage('You advance to the next level!');
+    ShowMessage('Click on Level2  to go to the Next level or Retry to play again');
+    btnLevel2B1.Show;
+    btnLevel2B1.Enabled := true ;
+     bmbRetryB1.Enabled := true;
+    end;
+    //Level2
+    if iGivenLevel = 2 then
+    begin
+    bmbRetryB1.Enabled := true;
+    ShowMessage('Well done!!You did amazing.')  ;
+    ShowMessage('Click on retry and play again or click on back and choose a different math subject');
+    end;
+
+
+
+end
+else
+begin
+//failed
+ ShowMessage('You unfortunately failed.But its ok! Try again and improve your score!');
+ bmbRetryB1.Enabled := true;
+
+end;
+
+
+end // Did not do all 5 questions yet
+else
+begin
+
+ //add
+ edtInputAnswerB1.Clear;
+ if iInputNum = 0 then
+ begin
+  sSign := '+' ;
+ end;
+
+ //subtract
+ if iInputNum = 1 then
+ begin
+  sSign := '-' ;
+ end;
+
+ //Multiply
+ if iInputNum = 2 then
+ begin
+  sSign := 'x'   ;
+ end;
+
+ //Divide
+ if iInputNum = 3 then
+ begin
+  sSign := '÷'    ;
+ end;
+
+
+//Start
+
+//Input num is rgpiNPUT.Itemindex value
+
+//The third index of the array is always the answer
+//Index one of the array and two is always the sum value
+//If it is dividing- index two of the array is the divider
+Outputarray := MathA(iInputNum,iGivenLevel);
+
+lblOutputB1.Caption := floattostr(Outputarray[1]) + ' ' + sSign + ' ' + floattostr(Outputarray[2]);
+
+rMathAns := Outputarray[3];
+
+
+
+end;
+
+  btnNextB1.Enabled := false ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+end;
+
+procedure TfrmGame2.btnNextA1Click(Sender: TObject);
+begin
+if not(rgpInput.ItemIndex = -1) and not(rgpDifficulty.ItemIndex = -1) then
+begin
+imgBobB1.Show;
+btnLevel2B1.Enabled := false;
+
+ //rgp value
+ iInputNum := rgpInput.ItemIndex ;
+
+ if rgpDifficulty.ItemIndex = 0 then
+begin
+//Easy
+iGivenLevel := 1 ;
+btnLevel2B1.Enabled := false ;
+tbsBegin.Hide;
+tbsPlay.Show;
+
+//FormB  starting intialise
+BtnGoB1.Enabled := false ;
+bmbRetryB1.Enabled := false;
+btnNextB1.Enabled := true ;
+end  ;
+
+if rgpDifficulty.ItemIndex= 1 then
+begin
+ //Hard
+ iGivenLevel := 2 ;
+  tbsBegin.Hide ;
+  tbsPlay.show;
+btnLevel2B1.Enabled := false ;
+btnLevel2B1.Hide;
+
+//FormB  starting intialise
+BtnGoB1.Enabled := false ;
+bmbRetryB1.Enabled := false;
+btnNextB1.Enabled := true ;
+btnNextB1.Caption := 'Start' ;
+
+end;
+
+
+
+
+end
+else
+begin
+if rgpInput.ItemIndex =-1 then
+begin
+
+showmessage('Choose your Math subject ');
+
+end;
+
+
+if rgpDifficulty.ItemIndex = -1 then
+begin
+  ShowMessage('Choose difficulty');
+end;
+
+
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+end;
+
+procedure TfrmGame2.btnCloseClick(Sender: TObject);
+begin
+Application.Terminate;
+end;
+
+
+
+
+procedure TfrmGame2.FormActivate(Sender: TObject);
+begin
+tbsPlay.TabVisible := false;
+tbsBegin.TabVisible := false;
+
+btnLevel2B1.Enabled := false;
+
+imgbobaxe.Hide;
+
+tmrB1.Enabled := false ;
+icountertimer := 0 ;
+tmrB2.Enabled := false ;
+
+imgLeavesB1.Hide;
+imgJerrybendingB1.Hide;
+imgJerryB1.Show;
+itmrA2Counter := 0 ;
+
+pnlLetsGoB.Caption := 'Lets go ' + frmMain.sName + '!!!'  ;
+tbsBegin.show;
+
+//sName
+
+
+
+end;
+
+procedure TfrmGame2.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+   Application.Terminate;
+end;
+
+procedure TfrmGame2.tmrB1Timer(Sender: TObject);
+
+
+
+begin
+
+inc(icountertimer);
+
+
+
+
+if icountertimer mod 2 = 0 then
+begin
+
+imgBobB1.Hide;
+imgbobaxe.show ;
+end
+else
+begin
+
+imgbobaxe.Hide;
+imgBobB1.Show;
+
+end;
+
+
+
+
+
+if icountertimer = 10 then
+begin
+imgbobaxe.Hide;
+imgBobB1.Show;
+
+imgLeavesB1.Show;
+tmrB1.Enabled := false;
+tmrB2.Enabled  := true ;
+
+
+
+
+end;
+
+
+end;
+
+procedure TfrmGame2.tmrB2Timer(Sender: TObject);
+
+begin
+Inc(itmrA2Counter);
+imgJerryB1.Hide;
+imgJerrybendingB1.Show ;
+
+if itmrA2Counter = 3 then
+begin
+ imgJerrybendingB1.Hide  ;
+ imgJerryB1.Show;
+ imgLeavesB1.Hide;
+ itmrA2Counter := 0;
+ tmrB2.Enabled :=false;
+
+end;
+
+
+
+
+end;
+
+
+
+
+
+
+end.
+
+
+

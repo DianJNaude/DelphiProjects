@@ -1,0 +1,425 @@
+unit frmGame3_DNu;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
+  Vcl.Imaging.jpeg, Vcl.ExtCtrls, Math, comObj, Vcl.Imaging.pngimage; //Text to speech
+
+type
+  TfrmGame3 = class(TForm)
+    bmbHome: TBitBtn;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    btnNext: TButton;
+    bmbRetry1: TBitBtn;
+    btnNextA1: TButton;
+    imgGrassA4: TImage;
+    imgGrassA3: TImage;
+    imgGrassB3: TImage;
+    imgGrassB2: TImage;
+    imgGrassB1: TImage;
+    imgBob: TImage;
+    imgApeA: TImage;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    edtInput: TEdit;
+    imgGrassA2: TImage;
+    imgGrassA1: TImage;
+    Label4: TLabel;
+    btnPaysound1: TButton;
+    btnGo1: TButton;
+    Button8: TButton;
+    imgBobB1: TImage;
+    ImgBobgivingB1: TImage;
+    imgApewalkingB1: TImage;
+    imgApeB1: TImage;
+    imgBannanaB1: TImage;
+    tmrB1: TTimer;
+    btnLevelB1: TButton;
+    rgpDifficultyA1: TRadioGroup;
+    btnBackB1: TButton;
+    procedure bmbHomeClick(Sender: TObject);
+    procedure btnNextA1Click(Sender: TObject);
+    procedure btnNextClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnPaysound1Click(Sender: TObject);
+    procedure btnGo1Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tmrB1Timer(Sender: TObject);
+    procedure btnLevelB1Click(Sender: TObject);
+    procedure bmbRetry1Click(Sender: TObject);
+    procedure btnBackB1Click(Sender: TObject);
+  private
+    { Private declarations }
+    sLine, sWord :string ;
+    myFile :textfile ;
+    iRandom :integer ;
+    iamounttry, iCorrect  :integer;
+     itmrCounter:integer;
+     sLocationTxT : string;
+
+
+  public
+    { Public declarations }
+  end;
+
+var
+  frmGame3: TfrmGame3;
+
+implementation
+uses
+frmMain_DNu ;
+
+{$R *.dfm}
+
+procedure TfrmGame3.bmbHomeClick(Sender: TObject);
+begin
+
+iCorrect := 0;
+iamounttry := 0;
+btnNextA1.Caption := 'Start' ;
+rgpDifficultyA1.ItemIndex := -1 ;
+
+
+frmMain.Show;
+frmGame3.Hide;
+end;
+
+procedure TfrmGame3.btnNextClick(Sender: TObject);
+begin
+if not(rgpDifficultyA1.ItemIndex = -1)then
+begin
+bmbRetry1.Enabled := false;
+btnNextA1.Enabled := true ;
+TabSheet2.Show;
+TabSheet1.Hide;
+btnPaysound1.Enabled := false;
+btnGo1.Enabled := False ;
+btnNextA1.Enabled := true ;
+//rgp file
+
+if rgpDifficultyA1.ItemIndex = 0 then
+begin
+sLocationTxT := 'Spelling1.txt' ;
+ btnLevelB1.show;
+ btnLevelB1.Enabled := false;
+end;
+if rgpDifficultyA1.ItemIndex = 1 then
+begin
+ sLocationTxT := 'Spelling2.txt' ;
+ btnLevelB1.Hide;
+end;
+end
+else
+begin
+  ShowMessage('Choose difficulty');
+end;
+
+end;
+
+procedure TfrmGame3.Button2Click(Sender: TObject);
+begin
+frmMain.Show;
+frmGame3.Hide;
+end;
+
+procedure TfrmGame3.btnNextA1Click(Sender: TObject);
+var
+iCounttxt :integer;
+begin
+//TabSheet3.Show;
+
+//
+btnNextA1.Caption := 'Next' ;
+
+
+
+ if iAmounttry = 5  then
+ //5Questions answered
+ begin
+ showmessage('You got ' + IntToStr(iCorrect) + ' out of ' + inttostr(iamounttry) + ' questions correct');
+ if iCorrect>2 then
+ begin
+
+  ShowMessage('You may go to level 2 !');
+  ShowMessage('Click on Level 2 or click on retry and play level 1 again');
+  btnLevelB1.Enabled := true;
+  bmbRetry1.Enabled := true;
+
+ end
+ else
+ begin
+
+ ShowMessage('You unfortunately failed');
+ ShowMessage('Try again and get a better score');
+
+ end;
+
+
+
+
+
+ end
+ else
+ begin
+
+
+inc(iAmounttry);
+btnGo1.Enabled := true ;
+btnPaysound1.Enabled  := true ;
+
+iCounttxt := 0 ;
+ iRandom := RandomRange(1,31);
+
+
+
+if FileExists(sLocationTxT)= true then
+begin
+//file exists
+ //ShowMessage('File found');
+  //step1
+  AssignFile(myfile,sLocationTxT);
+  Reset(myFile);
+
+  while not EOF (Myfile) do
+  begin
+   Readln(myFile,sLine);
+    inc(iCounttxt) ;
+    if iRandom = iCounttxt then
+    begin
+
+
+    sWord := sLine  ;
+    //ShowMessage(sWord);
+    end;
+
+
+
+  end;
+
+//else file not exist
+end
+else
+begin
+  ShowMessage('File not found');
+end;
+
+
+btnNextA1.Enabled := false ;
+
+
+end;
+end;
+
+procedure TfrmGame3.btnPaysound1Click(Sender: TObject);
+var
+ovRead :oleVariant ;
+begin
+//error floating division by Zero
+ Set8087CW(Default8087CW or $3F);
+SetSSEExceptionMask(exAllArithmeticExceptions);
+
+ovRead := CreateOleObject('SAPI.SPVoice')  ;
+ovRead.speak(sWord) ;
+end;
+
+
+
+
+
+
+procedure TfrmGame3.bmbRetry1Click(Sender: TObject);
+begin
+btnGo1.Enabled := false ;
+btnPaysound1.Enabled := false ;
+
+imgApewalkingB1.Hide ;
+ImgBobgivingB1.Hide;
+imgBannanaB1.hide ;
+imgBobB1.Show;
+imgBannanaB1.Left := 412;
+imgBannanaB1.Top := 200;
+tmrB1.Enabled  := false;
+
+btnNextA1.Caption := 'Start' ;
+
+
+
+
+
+
+
+
+
+iCorrect := 0;
+iamounttry := 0;
+btnNextA1.Caption := 'Start' ;
+end;
+
+procedure TfrmGame3.btnBackB1Click(Sender: TObject);
+begin
+btnGo1.Enabled := false ;
+btnPaysound1.Enabled := false ;
+
+imgApewalkingB1.Hide ;
+ImgBobgivingB1.Hide;
+imgBannanaB1.hide ;
+imgBobB1.Show;
+imgBannanaB1.Left := 412;
+imgBannanaB1.Top := 200;
+tmrB1.Enabled  := false;
+
+
+
+iCorrect := 0;
+iamounttry := 0;
+btnNextA1.Caption := 'Start' ;
+rgpDifficultyA1.ItemIndex := -1 ;
+
+
+
+TabSheet1.show;
+tabsheet2.Hide;
+
+end;
+
+procedure TfrmGame3.btnGo1Click(Sender: TObject);
+var
+sInputword :string ;
+begin
+btnNextA1.Enabled  := true;
+
+
+
+
+sInputword := edtInput.Text;
+
+if sWord = sInputword then
+begin
+ShowMessage('Correct!');
+inc(iCorrect);
+tmrB1.Enabled := true ;
+itmrCounter := 0;
+
+end
+else
+begin
+ ShowMessage('Incorrect');
+ ShowMessage(sWord);
+
+end;
+ edtInput.Clear;
+
+ btnGo1.Enabled := false ;
+
+end;
+
+procedure TfrmGame3.btnLevelB1Click(Sender: TObject);
+begin
+
+btnGo1.Enabled := false ;
+btnPaysound1.Enabled := false;
+
+imgApewalkingB1.Hide ;
+ImgBobgivingB1.Hide;
+imgBannanaB1.hide ;
+imgBobB1.Show;
+imgBannanaB1.Left := 412;
+imgBannanaB1.Top := 200;
+tmrB1.Enabled  := false;
+
+btnNextA1.Caption := 'Start' ;
+
+itmrCounter := 0;
+TabSheet1.Show;
+
+
+iCorrect := 0;
+iamounttry := 0;
+sLocationTxT := 'Spelling2.txt' ;
+end;
+
+procedure TfrmGame3.Button8Click(Sender: TObject);
+begin
+Application.Terminate;
+end;
+
+procedure TfrmGame3.FormActivate(Sender: TObject);
+begin
+
+
+ TabSheet1.Show;
+imgApewalkingB1.Hide ;
+ImgBobgivingB1.Hide;
+imgBannanaB1.hide ;
+imgBobB1.Show;
+imgBannanaB1.Left := 412;
+imgBannanaB1.Top := 200;
+tmrB1.Enabled  := false;
+
+btnNextA1.Caption := 'Start' ;
+
+itmrCounter := 0;
+TabSheet1.Show;
+end;
+
+procedure TfrmGame3.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+Application.Terminate;
+end;
+
+procedure TfrmGame3.tmrB1Timer(Sender: TObject);
+
+begin
+  imgBobB1.hide;
+
+  ImgBobgivingB1.Show;
+  imgBannanaB1.Show;
+
+  if not(imgBannanaB1.top > 224) then
+  begin
+    imgBannanaB1.Top := imgBannanaB1.Top + 3;
+  end;
+
+  if not(imgBannanaB1.Left > 483) then
+  begin
+    imgBannanaB1.left := imgBannanaB1.left + 3;
+  end;
+
+
+
+if(imgBannanaB1.Left > 483) and (imgBannanaB1.top > 224) then
+begin
+
+imgApeB1.Hide ;
+imgApewalkingB1.Show ;
+
+if itmrCounter = 10 then
+begin
+imgApewalkingB1.Hide;
+ imgApeB1.Show;
+ imgBannanaB1.Hide ;
+  ImgBobgivingB1.Hide ;
+ imgBobB1.Show;
+ imgBannanaB1.Left := 412;
+imgBannanaB1.Top := 200;
+
+ tmrB1.Enabled := false ;
+
+
+end;
+
+ inc(itmrCounter) ;
+
+end;
+
+
+end;
+
+end.

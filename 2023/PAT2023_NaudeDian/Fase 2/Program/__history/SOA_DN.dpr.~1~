@@ -1,0 +1,20 @@
+program SOA_DN;
+
+uses
+  Vcl.Forms,
+  Login in 'Login.pas' {frmLogin},
+  Admin in 'Admin.pas' {frmAdmin},
+  User in 'User.pas' {frmUser},
+  dmData in 'dmData.pas' {dmDataA: TDataModule};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmLogin, frmLogin);
+  Application.CreateForm(TfrmAdmin, frmAdmin);
+  Application.CreateForm(TfrmUser, frmUser);
+  Application.CreateForm(TdmDataA, dmDataA);
+  Application.Run;
+end.

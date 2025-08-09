@@ -1,0 +1,14 @@
+program Bobs_Zoo_DNp;
+
+uses
+  Vcl.Forms,
+  frmEntry_DNu in 'frmEntry_DNu.pas' {Form1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

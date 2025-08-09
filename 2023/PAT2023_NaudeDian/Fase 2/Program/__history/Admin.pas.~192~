@@ -1,0 +1,1632 @@
+unit Admin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Samples.Spin,
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.Menus, Vcl.ComCtrls, Vcl.Buttons, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, Vcl.WinXPickers, DateUtils, Math,
+  Vcl.Imaging.pngimage, TClientX_U;
+
+type
+  TfrmAdmin = class(TForm)
+    lblQuerriesA: TLabel;
+    bmbLogoutAdmin: TBitBtn;
+    PageControlAdmin: TPageControl;
+    tbsAdmin: TTabSheet;
+    tbsData: TTabSheet;
+    tbsEditing: TTabSheet;
+    tbsQuerries: TTabSheet;
+    btnData: TButton;
+    btnQuerries: TButton;
+    btnEditing: TButton;
+    btnHome3: TButton;
+    btnHome2: TButton;
+    btnHome1: TButton;
+    pnlNameNumA: TPanel;
+    dbgQuerries: TDBGrid;
+    rgpPS: TRadioGroup;
+    pnlProduct: TPanel;
+    lblDesT: TLabel;
+    lblSoldT: TLabel;
+    lblPriceT: TLabel;
+    lblStockT: TLabel;
+    edtMoneyRP: TEdit;
+    sedStockP: TSpinEdit;
+    sedSoldP: TSpinEdit;
+    redDESP: TRichEdit;
+    pnlService: TPanel;
+    lblDesS: TLabel;
+    lblSoldS: TLabel;
+    lblPrS: TLabel;
+    btnAddDataS: TButton;
+    edtPriceRS: TEdit;
+    sedSoldS: TSpinEdit;
+    redDesService: TRichEdit;
+    lblLocS: TLabel;
+    edtLocation: TEdit;
+    btnADDDP: TButton;
+    chkEditP: TCheckBox;
+    chkADDP: TCheckBox;
+    pnlAnimals: TPanel;
+    lblSpecieT: TLabel;
+    lblPopT: TLabel;
+    lblAliveT: TLabel;
+    edtSpecies: TEdit;
+    sedAlive: TSpinEdit;
+    chkPositive: TCheckBox;
+    chkNegative: TCheckBox;
+    btnAddA: TButton;
+    chkEditA: TCheckBox;
+    chkAddA: TCheckBox;
+    rgpClientQ: TRadioGroup;
+    redData: TRichEdit;
+    pnlData: TPanel;
+    edtID: TEdit;
+    lblID: TLabel;
+    btnGen: TButton;
+    rgpType: TRadioGroup;
+    Label4: TLabel;
+    btnDelete: TButton;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    pnlADMIN: TPanel;
+    imgElephant1: TImage;
+    imgElephant2: TImage;
+    imgElephant3: TImage;
+    lblAdmin: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    cmbChoice: TComboBox;
+    pnlHide: TPanel;
+    imgPanda: TImage;
+    lblProvS: TLabel;
+    cmbProvince: TComboBox;
+    lblTypeT: TLabel;
+    edtType: TEdit;
+    btnResign: TButton;
+    cmbServiceProducts: TComboBox;
+    chkAddservice: TCheckBox;
+    chkEditService: TCheckBox;
+    rgpAnimalQuerries: TRadioGroup;
+    procedure bmbLogoutAdminClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnQuerriesClick(Sender: TObject);
+    procedure btnDataClick(Sender: TObject);
+    procedure btnEditingClick(Sender: TObject);
+    procedure btnHome1Click(Sender: TObject);
+    procedure btnHome3Click(Sender: TObject);
+    procedure cmbChoiceChange(Sender: TObject);
+    procedure rgpAnimalXClick(Sender: TObject);
+    procedure rgpPSClick(Sender: TObject);
+    procedure cmbServiceProductsChange(Sender: TObject);
+    procedure rgpClientQClick(Sender: TObject);
+    procedure btnAddAClick(Sender: TObject);
+    procedure chkPositiveClick(Sender: TObject);
+    procedure chkNegativeClick(Sender: TObject);
+    procedure btnADDDPClick(Sender: TObject);
+    procedure btnAddDataSClick(Sender: TObject);
+    procedure chkADDServiceClick(Sender: TObject);
+    procedure chkEditPClick(Sender: TObject);
+    procedure chkADDPClick(Sender: TObject);
+    procedure chkEditServiceClick(Sender: TObject);
+    procedure chkAddAClick(Sender: TObject);
+    procedure chkEditAClick(Sender: TObject);
+    procedure btnGenClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure rgpTypeClick(Sender: TObject);
+    procedure btnHome2Click(Sender: TObject);
+    procedure btnResignClick(Sender: TObject);
+  private
+  objClient:TClient;
+  bBegin:boolean;
+   a, p, d, c:tDateTime;
+  procedure ChangeAdmin(sIDAdmin:string);
+  procedure HideALLEdit;
+  procedure ShowAllEdit;
+
+
+    { Private declarations }
+  public
+  arrScoreA :array[1..30] of integer;
+  sID:string ;
+  procedure ClearAll;
+   procedure ValidateID;
+   procedure Instansiate(sP:string);
+   Function validateAnimal(sAnimal:string): boolean ;
+   function SpecieExist(sSpecie :string): boolean;
+   function IDExist(sIDV:string):boolean;
+   function ClientIDExist(sIDQ:string):boolean;
+    { Public declarations }
+
+
+  end;
+var
+  frmAdmin: TfrmAdmin;
+
+
+
+implementation
+uses User, Login, dmData ;
+
+
+
+
+{$R *.dfm}
+
+
+
+procedure TfrmAdmin.bmbLogoutAdminClick(Sender: TObject);
+
+begin
+///Logout
+dmDataA.ADOConnectionM.Connected := False ;
+frmAdmin.Visible := False ;
+frmLogin.Visible := True ;
+end;
+
+procedure TfrmAdmin.btnHome3Click(Sender: TObject);
+begin
+//Home button
+rgpPS.ItemIndex := -1;
+rgpAnimalQuerries.ItemIndex := -1 ;
+rgpClientQ.ItemIndex := -1;
+cmbChoice.ItemIndex := -1;
+tbsQuerries.Visible := False;
+tbsAdmin.Visible := True ;
+end;
+
+procedure TfrmAdmin.btnQuerriesClick(Sender: TObject);
+begin
+///Querry button
+ frmLogin.ActivateDatabase;
+ cmbServiceProducts.TextHint := 'Product/service' ;
+  tbsAdmin.Visible := False;
+  tbsQuerries.Visible := True ;
+end;
+
+
+
+procedure TfrmAdmin.btnResignClick(Sender: TObject);
+var
+sNewAdmin:string;
+sMessage:string;
+begin
+///Resign as Admin and give it over
+///  to another user
+/// Code Addapted and changed from
+///  http://delphiprogrammingdiary.blogspot.com/2019/04/ttaskdialog-custom-dialog-in-delphi.html?m=1
+ with TTaskDialog.Create(self) do
+  begin
+    try
+      Title := 'Resign as Admin';
+      Caption := 'Resign';
+      Text := 'Re you sure?';
+      CommonButtons := [];
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := 'Resign as the admin';
+        ModalResult := mrYes;
+        CommandLinkHint := 'Surrender responsibilities over to someone else';
+      end;
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := 'Stay the Admin';
+        ModalResult := mrNo;
+        CommandLinkHint := 'Keep respnsibilities';
+      end;
+      MainIcon := tdiInformation;
+      Flags := [tfUseCommandLinks];
+      if Execute then
+        if ModalResult = mrYes then
+        begin
+          sNewAdmin := InputBox('Enter the phone number of the new Admin', 'phone', '0823434040');
+         frmLogin.formatADDPhone(sNewAdmin) ;
+         if frmLogin.Phonevalidate(sNewAdmin) = True then
+         begin
+         ChangeAdmin(inttostr(frmUser.iPlayerUser)) ;
+         ShowMessage('Admin has been changed.');
+         sMessage := 'You are now the new Admin at SOA South Africa !' ;
+         if frmLogin.bMessagingACTIVE = True then
+          begin
+          frmLogin.OTPExecute(sNewAdmin,sMessage) ;
+          end;
+         dmDataA.ADOConnectionM.Connected := False ;
+         frmAdmin.Visible := False ;
+         frmLogin.Visible := True ;
+         end
+         else
+         begin
+         ShowMessage('Phone number is not a registered client') ;
+         end;
+
+        end;
+    finally
+      Free;
+    end
+  end;
+end;
+
+procedure TfrmAdmin.ChangeAdmin(sIDAdmin: string);
+var
+tFile:TextFile ;
+begin
+///Code changes the identity of the Admin
+ AssignFile(tFile, 'Admin.txt') ;
+ rewrite(tFile);
+ append(tFile);
+ Writeln(tFile, sIDAdmin);
+ CloseFile(tFile) ;
+end;
+
+procedure TfrmAdmin.chkAddAClick(Sender: TObject);
+begin
+///Prepares to Add new Animal
+ if chkEditA.Checked = True then
+ begin
+  chkEditA.Checked := False ;
+ end;
+ edtSpecies.TextHint := 'e.g. Lion' ;
+  ShowAllEdit;
+  sedAlive.MinValue := 1 ;
+end;
+
+procedure TfrmAdmin.chkADDPClick(Sender: TObject);
+begin
+///Prepares to add new product
+ if chkEditP.Checked = true then
+ begin
+  chkEditP.Checked := False ;
+ end;
+
+     edtType.TextHint := 'Hat';
+     redDESP.Hint := 'Orange Fillas' ;
+     sedStockP.MinValue := 0 ;
+     sedStockP.Value := 0;
+     edtMoneyRP.TextHint := '500' ;
+     sedSoldP.MinValue := 0 ;
+     sedSoldP.Value := 0 ;
+     ShowAllEdit;
+
+end;
+
+
+
+procedure TfrmAdmin.chkADDServiceClick(Sender: TObject);
+begin
+///prepares to add new service
+if chkEDITservice.Checked = true then
+ begin
+  chkEDITservice.Checked := False ;
+ end;
+
+     redDesService.Hint := 'A safari through the Kruger' ;
+    edtLocation.TextHint := '12 Mambana road Nelspruit' ;
+    cmbProvince.TextHint := 'Mpumalanga';
+    edtPriceRS.TextHint := '1200';
+    sedSoldS.MinValue := 0 ;
+    sedSoldS.Value := 0 ;
+    ShowAllEdit;
+end;
+
+procedure TfrmAdmin.chkEditAClick(Sender: TObject);
+var
+sTemp:string;
+i, ierror:integer;
+rX:real;
+begin
+///Prepares to Edit an Animal
+stemp := '' ;
+ if chkAddA.Checked = true then
+ begin
+  chkAddA.Checked := False ;
+ end;
+
+
+if chkEditA.Checked = True then
+ begin
+ sID := inputbox('Enter the ID number', 'ID:', '0') ;
+  validateID ;
+ end;
+
+ if bBegin = False then
+  begin
+  chkEditA.Checked := False ;
+  end
+  else
+  begin
+    ShowAllEdit;
+    edtSpecies.TextHint := 'EDIT' ;
+    sedAlive.MinValue := 0 ;
+    sedAlive.Value := 0 ;
+  end;
+
+end;
+
+procedure TfrmAdmin.chkEditPClick(Sender: TObject);
+var
+sTemp:string;
+i, ierror:integer;
+rX:real;
+begin
+///Prepars to edit a Product
+bBegin := False ;
+ if chkAddP.Checked = true then
+ begin
+  chkAddP.Checked := False ;
+ end;
+
+if chkEditP.Checked = True then
+ begin
+ sID := inputbox('Enter the ID number', 'ID:', 'P0') ;
+  validateID ;
+ end;
+
+  if bBegin = True then
+   begin
+     edtType.TextHint := 'EDIT';
+     redDESP.Hint := 'EDIT' ;
+     sedStockP.MinValue := -1 ;
+     sedStockP.Value := -1;
+     edtMoneyRP.TextHint := 'EDIT' ;
+     sedSoldP.MinValue := -1 ;
+     sedSoldP.Value := -1 ;
+     ShowAllEdit;
+   end;
+
+end;
+
+
+
+procedure TfrmAdmin.chkEditServiceClick(Sender: TObject);
+var
+sTemp:string;
+i, ierror:integer;
+rX:real;
+begin
+///prepares to Edit a Service
+bBegin := False ;
+stemp := '' ;
+ if chkADDService.Checked = true then
+ begin
+  chkADDService.Checked := False ;
+ end;
+
+
+if chkEDITservice.Checked = True then
+ begin
+ sID := inputbox('Enter the ID number', 'ID:', 'S0') ;
+  validateID ;
+ end;
+
+ if bBegin = True then
+  begin
+    redDesService.Hint := 'EDIT' ;
+    edtLocation.TextHint := 'EDIT' ;
+    edtLocation.TextHint := 'EDIT' ;
+    cmbProvince.TextHint := 'EDIT';
+    edtPriceRS.TextHint := 'EDIT';
+    sedSoldS.MinValue := -1 ;
+    sedSoldS.Value := -1 ;
+    ShowAllEdit;
+  end;
+
+end;
+
+procedure TfrmAdmin.chkNegativeClick(Sender: TObject);
+begin
+///if the on is checcked the other should be unchecked
+ if chkPositive.Checked = true then
+ begin
+  chkPositive.Checked := False ;
+ end;
+end;
+
+procedure TfrmAdmin.chkPositiveClick(Sender: TObject);
+begin
+///if the on is checcked the other should be unchecked
+ if chkNegative.Checked = true then
+ begin
+  chkNegative.Checked := False ;
+ end;
+end;
+
+procedure TfrmAdmin.ClearAll;
+begin
+///Clears all
+chkEditP.Checked := False ;
+chkEditA.Checked := False ;
+chkEDITservice.Checked := False ;
+
+chkADDP.Checked := False ;
+chkAddA.Checked := False ;
+chkADDService.Checked := False ;
+
+edtMoneyRP.Clear;
+edtPriceRS.Clear;
+edtLocation.Clear;
+edtSpecies.Clear;
+edtType.Clear;
+
+redDESP.Clear;
+redDesService.Clear;
+
+sedStockP.Value := 0 ;
+sedSoldP.Value := 0 ;
+sedSoldS.Value := 0 ;
+sedAlive.Value := 0 ;
+
+chkPositive.Checked := False ;
+chkNegative.Checked := False;
+sID := '' ;
+
+cmbProvince.ItemIndex := -1;
+
+end;
+
+function TfrmAdmin.ClientIDExist(sIDQ: string): boolean;
+begin
+      dmDataA.tblClient.First;
+   while not dmDataA.tblClient.Eof do
+    begin
+      if inttostr(dmDataA.tblClient['ClientID']) = sIDQ then
+       begin
+        result := True ;
+        bBegin := True;
+       end;
+    dmDataA.tblClient.Next
+    end;
+end;
+
+procedure TfrmAdmin.cmbChoiceChange(Sender: TObject);
+begin
+///Clears all
+/// and changes what you view
+chkEditP.Checked := False;
+chkADDP.Checked := False;
+chkAddA.Checked := False;
+chkEditA.Checked := False;
+chkAddservice.Checked := False ;
+chkEditService.Checked := False;
+if cmbChoice.ItemIndex = 0 then
+ begin
+   pnlHide.Visible := False ;
+   pnlProduct.Visible := False ;
+   pnlService.Visible := False ;
+   pnlAnimals.Visible := True ;
+   HideALLEdit;
+   ShowMessage('Add or Edit Animals') ;
+ end;
+
+ if cmbChoice.ItemIndex = 1 then
+ begin
+   pnlHide.Visible := False ;
+   pnlAnimals.Visible := False ;
+   pnlProduct.Visible := False ;
+   pnlService.Visible := True ;
+   HideALLEdit;
+   ShowMessage('Add or Edit Services') ;
+ end;
+
+ if cmbChoice.ItemIndex = 2 then
+ begin
+   pnlHide.Visible := False ;
+   pnlProduct.Visible := True;
+   pnlAnimals.Visible := False ;
+   pnlService.Visible := False ;
+   HideALLEdit;
+   ShowMessage('Add or Edit Products') ;
+ end;
+
+end;
+
+procedure TfrmAdmin.cmbServiceProductsChange(Sender: TObject);
+begin
+///Visbility
+if cmbServiceProducts.ItemIndex= 0 then
+ begin
+  rgpPS.Caption := 'Products' ;
+  rgpPS.ItemIndex := -1 ;
+ end;
+
+ if cmbServiceProducts.ItemIndex= 1 then
+ begin
+   rgpPS.Caption := 'Service' ;
+   rgpPS.ItemIndex := -1 ;
+ end;
+
+end;
+
+
+procedure TfrmAdmin.btnEditingClick(Sender: TObject);
+begin
+///Initialise
+ tbsAdmin.Visible := False;
+ tbsEditing.Visible := True ;
+ sedStockP.MaxValue := 1000000;
+ sedSoldP.MaxValue := 1000000;
+ sedSoldS.MaxValue := 1000000;
+ sedAlive.MaxValue := 1000000;
+  HideALLEdit;
+ pnlAnimals.Visible := False ;
+ pnlProduct.Visible := False ;
+ pnlService.Visible := False ;
+ pnlHide.Visible := True ;
+ ShowMessage('Welcome to Editing here you can change or add new items to the database')  ;
+end;
+
+procedure TfrmAdmin.btnGenClick(Sender: TObject);
+var
+tTextClient:textfile ;
+sInID:string;
+rMinute:real;
+dStart, dLastLog:Tdate ;
+sOut:string;
+iPos, iID:integer;
+sIDCCC:string;
+
+begin
+///Code connects to object to draw a summary of a client
+frmLogin.ActivateDatabase;
+sIDCCC :=  edtID.Text;
+if ClientIDExist(sIDCCC) = True then
+begin
+if bBegin = True then
+ begin
+ redData.Clear;
+ sInID := edtID.Text;
+ Instansiate(sInID)  ;
+ //ShowMessage(objClient.getName);
+ //ShowMessage(objClient.getSurname);
+ redData.Text := objClient.ToString;
+ end;
+end;
+
+
+end;
+
+procedure TfrmAdmin.btnAddAClick(Sender: TObject);
+var
+sSpecies, sMoney, sOut:string;
+iAlive, iError:integer;
+rMoney:real;
+bGrowth, bExucute:boolean;
+bChange:boolean;
+
+begin
+///Code to add a new Animal
+frmLogin.ActivateDatabase;
+ bChange := False;
+ bExucute := True;
+ if (chkAddA.Checked = False) and (chkEditA.Checked = False) then
+  begin
+   ShowMessage('Please select a box');
+   bExucute := false ;
+  end;
+if chkAddA.Checked = True then
+begin
+  sSpecies := edtSpecies.Text ;
+  if SpecieExist(sSpecies) = True then
+   begin
+     ShowMessage('This specie is already on our list');
+     bExucute := False;
+   end;
+
+
+
+ if (chkPositive.Checked = False) and (chkNegative.Checked = False) then
+  begin
+   ShowMessage('Please select a box');
+   bExucute := false ;
+  end;
+
+  if edtSpecies.Text = '' then
+   begin
+     ShowMessage('Enter specie');
+    bExucute := false ;
+    edtSpecies.SetFocus;
+   end;
+
+
+ if chkPositive.Checked = True then
+  begin
+    bGrowth := True ;
+  end;
+
+
+
+
+  if bExucute = True then
+   begin
+   sSpecies := edtSpecies.Text;
+   iAlive := sedAlive.Value;
+   sOut := 'insert into tblAnimals (AnimalID, Species, Alive, PopulationGrowthPositive)';
+   sOut := sOut +    'Values (' + inttostr(frmLogin.iIDAnimal)+ ', ' +  QuotedStr(sSpecies) + ', ' +  inttostr(iAlive) + ', ' + BoolToStr(bGrowth)+ ')' ;
+
+    dmDataA.qrStore.Close;
+    dmDataA.qrStore.SQL.Clear;
+    dmDataA.qrStore.SQL.Add(sOut) ;
+    dmDataA.qrStore.ExecSQL;
+    inc(frmLogin.iIDAnimal);
+    ShowMessage('Table updated') ;
+    ClearAll;
+    HideALLEdit;
+
+   end;
+ end;
+
+  ///Edit Animal Data and validate
+ if chkEditA.Checked = True then
+begin
+bExucute := True ;
+ if not(edtSpecies.Text = '') then
+  begin
+  sSpecies := edtSpecies.Text ;
+  if SpecieExist(sSpecies) = True then
+   begin
+     ShowMessage('This specie is already on our list');
+     ShowMessage('You can not change the specie name to an existing specie') ;
+     bExucute := False;
+   end;
+  end;
+
+if bExucute = True then
+begin
+if bBegin = True then
+begin
+
+dmDataA.tblAnimals.first;
+while not dmDataA.tblAnimals.Eof do
+ begin
+    if dmDataA.tblAnimals['AnimalID'] = sId then
+    begin
+
+       dmDataA.tblAnimals.Edit;
+      if not(edtSpecies.Text = '') then
+       begin
+        sSpecies := edtSpecies.Text ;
+        dmDataA.tblAnimals['Species'] := sSpecies ;
+        bChange:= True ;
+       end;
+
+       if not(sedAlive.Value = 0) then
+       begin
+        iAlive := sedAlive.Value;
+        dmDataA.tblAnimals['Alive'] := iAlive ;
+         bChange:= True ;
+       end;
+
+
+
+       if (not chkPositive.Checked = False) and (not chkNegative.Checked = False ) then
+       begin
+
+       if chkPositive.Checked = True then
+        begin
+        bGrowth := True ;
+        end;
+
+        dmDataA.tblAnimals['PopulationGrowthPositive'] := booltostr(bGrowth) ;
+         bChange:= True ;
+       end;
+
+      dmDataA.tblAnimals.Post;
+    end;
+
+
+   dmDataA.tblAnimals.Next;
+ end;
+ if  bChange= True  then
+  begin
+  ShowMessage('Table updated') ;
+  end
+  else
+  begin
+    ShowMessage('No changes were made');
+  end;
+ ClearAll;
+ HideALLEdit
+ ///Hides and clears
+end
+else
+begin
+  ValidateID ;
+end;
+end;
+
+end;
+
+
+
+end;
+
+procedure TfrmAdmin.btnAddDataSClick(Sender: TObject);
+
+var
+ sDescription, sOut, sPrice, sLocation, sProvince:string;
+ iError, iSold:integer;
+rPrice:real;
+PGrowth, bExucute:boolean;
+bChange:boolean;
+begin
+/// Adds a new service and validate
+frmLogin.ActivateDatabase;
+ bChange := False;
+ bExucute := True;
+ if (chkADDService.Checked = False) and (chkEDITservice.Checked = False) then
+ begin
+   ShowMessage('Please select edit or add');
+   bExucute := false ;
+ end;
+
+if (chkADDService.Checked = true) and (bExucute = True) then
+begin
+
+   if redDesService.Text = '' then
+  begin
+    ShowMessage('Enter Description');
+    bExucute := false ;
+  end;
+
+    if edtLocation.Text = '' then
+  begin
+    ShowMessage('Enter Location');
+    bExucute := false ;
+    edtLocation.SetFocus;
+  end;
+
+    if cmbProvince.ItemIndex = -1 then
+  begin
+    ShowMessage('Select a province');
+    bExucute := false ;
+    cmbProvince.SetFocus;
+  end;
+       sPrice := edtPriceRS.Text;
+    if edtPriceRS.Text = '' then
+  begin
+    ShowMessage('Enter Price');
+    bExucute := false ;
+    edtPriceRS.SetFocus;
+  end
+  else
+  begin
+
+   val(sPrice,rPrice,iError);
+  if not(iError = 0) then
+   begin
+    ShowMessage('Not valid real value');
+    edtPriceRS.SetFocus;
+    bExucute := False;
+   end;
+  end;
+
+
+
+
+
+
+
+
+  if bExucute = True then
+   begin
+   sProvince := cmbProvince.Items[cmbProvince.ItemIndex];
+   iSold := sedSoldS.Value;
+    sDescription := redDesService.Text;
+    sLocation := edtLocation.Text;
+    iSold := sedSoldP.Value;
+   sOut := 'insert into tblService (ServiceID, Description, Location, Price, Sold, Province)'; //values(20, "Hiking in the karoo", "12 GangGum street", 100, 5, "Northern Cape"))' ;
+   sOut := sOut +   'Values (' +  quotedstr('S' + inttostr(frmLogin.iService))+ ', ' +  QuotedStr(sDescription) + ', ' +  QuotedStr(sLocation) + ', ' + QuotedStr(sPrice) + ', ' +inttostr(iSold) + ', ' + QuotedStr(sProvince) + ')' ;
+
+    dmDataA.qrStore.Close;
+    dmDataA.qrStore.SQL.Clear;
+    dmDataA.qrStore.SQL.Add(sOut) ;
+    dmDataA.qrStore.ExecSQL;
+
+    inc(frmLogin.iService);
+    ShowMessage('Updated table') ;
+    ClearAll ;
+    HideALLEdit;
+   end;
+
+
+end ;
+ ///Edits a service and validate
+if (chkEDITservice.Checked = True) and (bExucute = True) then
+begin
+ if bBegin = True then
+begin
+
+       if not(edtPriceRS.Text = '') then
+       begin
+       sPrice := edtPriceRS.Text;
+       val(sPrice,rPrice,iError);
+       ShowMessage(inttostr(iError));
+        if not(iError = 0) then
+         begin
+         ShowMessage('Not valid real value');
+         edtPriceRS.SetFocus;
+         bExucute := False;
+         end;
+       end;
+
+if bExucute = True then
+begin
+dmDataA.tblService.first;
+while not dmDataA.tblservice.Eof do
+ begin
+    if dmDataA.tblservice['ServiceID'] = sID then
+    begin
+       dmDataA.tblservice.Edit;
+      if not(redDesService.Text = '') then
+       begin
+        sDescription := redDesService.Text ;
+        dmDataA.tblservice['Description'] := sDescription ;
+        bChange := True;
+       end;
+
+       if not(cmbProvince.ItemIndex = -1) then
+       begin
+        sProvince := cmbProvince.Items[cmbChoice.ItemIndex] ;
+        dmDataA.tblservice['Province'] := sProvince ;
+        bChange := True;
+       end;
+
+        if not(edtLocation.Text = '') then
+       begin
+        sLocation := redDesService.Text ;
+        dmDataA.tblservice['Location'] := sLocation ;
+        bChange := True;
+       end;
+
+       if not(edtPriceRS.Text = '') then
+       begin
+       sPrice := edtPriceRS.Text;
+       val(sPrice,rPrice,iError);
+       dmDataA.tblservice['Price'] := rPrice ;
+       bChange := True;
+       end;
+
+        if not(sedSoldS.Value = -1 ) then
+       begin
+       iSold := sedSoldS.Value;
+       dmDataA.tblservice['Sold'] := iSold ;
+       bChange := True;
+       end;
+
+
+      dmDataA.tblservice.Post;
+    end;
+
+
+   dmDataA.tblservice.Next;
+ end;
+   if  bChange = True  then
+   begin
+   ShowMessage('Tabel updated') ;
+   end
+   else
+   begin
+   ShowMessage('No changes were made');
+   end;
+ ClearAll ;
+ HideALLEdit;
+end;
+end
+else
+begin
+ ValidateID ;
+end;
+
+
+end;
+
+
+
+
+end;
+
+
+procedure TfrmAdmin.btnADDDPClick(Sender: TObject);
+var
+sType, sDescription, sOut, sPrice:string;
+iAlive, iError, iStock, iSold:integer;
+rPrice:real;
+PGrowth, bExucute:boolean;
+ bChange: Boolean ;
+
+begin
+///Add Product and validate
+frmLogin.ActivateDatabase;
+ bExucute := True;
+  bChange:= False ;
+ if (chkAddP.Checked = False) and (chkEditP.Checked = False) then
+  begin
+   ShowMessage('Please select a box');
+   bExucute := false ;
+  end;
+ if chkADDP.Checked = True then
+  begin
+
+
+  if edtType.Text = '' then
+  begin
+    ShowMessage('Enter Type');
+    bExucute := false ;
+    edtType.SetFocus;
+  end;
+
+  if redDESP.Text = '' then
+  begin
+    ShowMessage('Enter Description');
+    bExucute := false ;
+
+  end;
+    sPrice := edtMoneyRP.Text;
+   if edtMoneyRP.Text = '' then
+  begin
+    ShowMessage('Enter Price');
+    bExucute := false ;
+    edtMoneyRP.SetFocus;
+  end
+  else
+  begin
+
+   val(sPrice,rPrice,iError);
+   if not(iError = 0) then
+   begin
+    ShowMessage('Not valid real value');
+    edtMoneyRP.SetFocus;
+    bExucute := False;
+   end;
+  end;
+
+
+
+
+  if bExucute = True then
+   begin
+    sType := edtType.Text;
+    sDescription := redDESP.Text;
+    iStock := sedstockP.Value;
+    iSold := sedSoldP.Value;
+   sOut := 'insert into tblProducts (ProductID, Type, Stock, Price, Sold, Description)'; // values(20, "shirt", 4, 100, 5, "whale")' ;
+   sOut := sOut +    'Values (' + quotedstr('P' + inttostr(frmLogin.iProduct))+ ', ' +  quotedstr(sType) + ', ' +  inttostr(iStock) + ', ' + sPrice + ', ' +inttostr(iSold) + ', ' + quotedstr(sDescription) + ')' ;
+
+    dmDataA.qrStore.Close;
+    dmDataA.qrStore.SQL.Clear;
+    dmDataA.qrStore.SQL.Add(sOut) ;
+    dmDataA.qrStore.ExecSQL;
+    inc(frmLogin.iProduct) ;
+    ShowMessage('Tabel updated') ;
+     ClearAll;
+     HideALLEdit;
+   end;
+ end;
+///Edit a product And validate
+ if chkEditP.Checked = True then
+begin
+if bBegin = True then
+begin
+
+  bExucute := True ;
+       if not(edtMoneyRP.Text = '') then
+       begin
+       sPrice := edtMoneyRP.Text;
+       val(sPrice,rPrice,iError);
+        if not(iError = 0) then
+         begin
+         ShowMessage('Not valid real value');
+         edtMoneyRP.SetFocus;
+         bExucute := False;
+         end;
+       end;
+
+if bExucute = True then
+begin
+dmDataA.tblProducts.first;
+while not dmDataA.tblProducts.Eof do
+ begin
+    if dmDataA.tblProducts['ProductID'] = sID then
+    begin
+       dmDataA.tblProducts.Edit;
+      if not(redDESP.Text = '') then
+       begin
+        sDescription := redDESP.Text ;
+        dmDataA.tblProducts['Description'] := sDescription ;
+         bChange:= True ;
+       end;
+
+       if not(edtType.Text = '') then
+       begin
+        sType := edtType.Text ;
+        dmDataA.tblProducts['Type'] := sType ;
+         bChange:= True ;
+       end;
+
+        if not(sedStockP.Value = -1) then
+       begin
+       iStock:= sedStockP.Value ;
+        dmDataA.tblProducts['Stock'] := iStock ;
+         bChange:= True ;
+       end;
+
+       if not(edtMoneyRP.Text = '') then
+       begin
+       sPrice := edtMoneyRP.Text;
+       val(sPrice,rPrice,iError);
+       dmDataA.tblProducts['Price'] := rPrice ;
+        bChange:= True ;
+       end;
+
+        if not(sedSoldP.Value = -1) then
+       begin
+       iSold := sedSoldP.Value;
+       dmDataA.tblProducts['Sold'] := iSold ;
+        bChange:= True ;
+       end;
+
+
+      dmDataA.tblProducts.Post;
+    end;
+
+
+   dmDataA.tblProducts.Next;
+ end;
+  if  bChange = True  then
+   begin
+   ShowMessage('Tabel updated') ;
+   end
+   else
+   begin
+   ShowMessage('No changes were made');
+   end;
+  ClearAll;
+  HideALLEdit;
+end;
+end
+else
+begin
+  ValidateID ;
+end;
+
+end;
+
+end;
+
+
+procedure TfrmAdmin.btnDataClick(Sender: TObject);
+begin
+btnGen.Visible := false ;
+btnDelete.Visible := False ;
+ rgpType.ItemIndex := -1;
+edtID.Clear;
+redData.Clear;
+ tbsAdmin.Visible := False;
+ tbsData.Visible := True ;
+end;
+
+procedure TfrmAdmin.btnDeleteClick(Sender: TObject);
+var
+iNum :integer;
+sOut:string;
+sIDD :string;
+begin
+//Delete Animal from database
+frmLogin.ActivateDatabase;
+bBegin := False ;
+sID := edtID.Text;
+ ValidateID;
+if bBegin = True then
+begin
+iNum := rgpType.ItemIndex ;
+ sIDd := sID;
+ if not (iNum = -1) then
+ begin
+ sOut := 'delete from tblAnimalDonations where AnimalID = ' + sIDD ;
+ dmDataA.qrStore.Close;
+ dmDataA.qrStore.SQL.Clear;
+ dmDataA.qrStore.SQL.Add(sOut) ;
+ dmDataA.qrStore.ExecSQL;
+
+ sOut := 'delete from tblAnimals where AnimalID = ' + sIDD ;
+ dmDataA.qrStore.Close;
+ dmDataA.qrStore.SQL.Clear;
+ dmDataA.qrStore.SQL.Add(sOut) ;
+ dmDataA.qrStore.ExecSQL;
+
+ ShowMessage('Animal removed from endangered species list') ;
+ edtID.Clear;
+ end;
+end;
+
+end;
+
+procedure TfrmAdmin.btnHome1Click(Sender: TObject);
+begin
+rgpType.ItemIndex := -1;
+edtID.Clear;
+redData.Clear;
+ tbsData.Visible := False;
+ tbsAdmin.Visible := True ;
+end;
+
+procedure TfrmAdmin.btnHome2Click(Sender: TObject);
+begin
+cmbChoice.ItemIndex := -1 ;
+ tbsEditing.Visible := False;
+ tbsAdmin.Visible := True ;
+end;
+
+procedure TfrmAdmin.FormActivate(Sender: TObject);
+begin
+///Intantiate values
+pnlNameNumA.Caption := 'Welcome ' + frmLogin.sCNamelogin +' ' + frmLogin.sCSurnameLogin + ' !' ;
+tbsAdmin.TabVisible := false;
+tbsData.TabVisible := false;
+tbsEditing.TabVisible := false;
+tbsQuerries.TabVisible := false;
+tbsAdmin.Visible := True ;
+sedAlive.Value := 1 ;
+
+end;
+
+procedure TfrmAdmin.HideALLEdit;
+begin
+//Hide Animal;
+lblSpecieT.Visible := False ;
+lblAliveT.Visible := False;
+lblPopT.Visible := False ;
+edtSpecies.Visible := False ;
+sedAlive.Visible := false ;
+chkPositive.Visible := False;
+chkNegative.Visible := False;
+btnAddA.Visible := False;
+
+ //Hide Product
+lblTypeT.Visible := False;
+lblDesT.Visible := False;
+lblSoldT.Visible := False;
+lblPriceT.Visible := False;
+lblStockT.Visible := False;
+edtType.Visible := false;
+redDESP.Visible := false;
+sedStockP.Visible := False;
+edtMoneyRP.Visible := False;
+sedSoldP.Visible := False;
+btnADDDP.Visible := False ;
+
+//Hide Service
+lblDesS.Visible := False;
+lblLocS.Visible := False;
+lblProvS.Visible := False;
+lblPrS.Visible := False;
+lblSoldS.Visible := False;
+btnAddDataS.Visible := False;
+redDesService.Visible := False;
+edtLocation.Visible := false;
+cmbProvince.Visible := False;
+edtPriceRS.Visible := False;
+sedSoldS.Visible := False;
+
+end;
+
+function TfrmAdmin.IDExist(sIDV: string): boolean;
+begin
+result := False;
+
+//Checks whether an id exist
+   dmDataA.tblAnimals.First;
+   while not dmDataA.tblAnimals.Eof do
+    begin
+      if inttostr(dmDataA.tblAnimals['AnimalID']) = sIDV then
+       begin
+        result := True ;
+       end;
+    dmDataA.tblAnimals.Next
+    end;
+
+ 
+
+    dmDataA.tblProducts.First;
+   while not dmDataA.tblProducts.Eof do
+    begin
+      if dmDataA.tblProducts['ProductID'] = sIDV then
+       begin
+        result := True ;
+       end;
+    dmDataA.tblProducts.Next
+    end;
+
+    dmDataA.tblService.First;
+   while not dmDataA.tblService.Eof do
+    begin
+      if dmDataA.tblService['ServiceID'] = sIDV then
+       begin
+        result := True ;
+       end;
+    dmDataA.tblService.Next
+    end;
+
+end;
+
+procedure TfrmAdmin.Instansiate(sP: string);
+var
+tTextClient:textfile ;
+sfile:string;
+tTimepassed:TdateTime;
+dStart, dLastLog:Tdate ;
+sOut:string;
+iPos, iID:integer;
+begin
+//Instantiate Object and read from textfile
+ sFile := sP + '.txt' ;
+  //ShowMessage(sFile);
+
+  if FileExists(sfile) then
+ begin
+
+ AssignFile(tTextClient, sFile) ;
+ reset(tTextClient);
+
+
+  readln(tTextClient,sOut) ;
+  tTimepassed := StrToDateTime(sout);
+  readln(tTextClient,sOut) ;
+  dStart := strtodate(sOut) ;
+  readln(tTextClient,sOut) ;
+  dLastLog := strtodate(sOut) ;
+   iId := strtoint(sP) ;
+
+   //ShowMessage(sout);
+
+ objClient:= TClient.create(iID, tTimepassed, dStart, dLastLog) ;
+ end
+ else
+ begin
+   ShowMessage('File does not exist') ;
+ end;
+
+
+end;
+
+procedure TfrmAdmin.rgpAnimalXClick(Sender: TObject);
+var
+iNum:integer;
+sOut, sAmount:string;
+rAmount:real;
+iError:integer;
+Bfalse:boolean;
+begin
+/// Various Querries about Animals
+rgpPS.ItemIndex := -1 ;
+rgpClientQ.ItemIndex := -1 ;
+cmbServiceProducts.ItemIndex := -1;
+ iNum := rgpAnimalQuerries.ItemIndex ;
+ Bfalse := True ;
+ if iNum = 0 then
+ begin
+  sOut := 'SELECT * FROM tblAnimals WHERE Alive = (SELECT (MIN(Alive)) FROM tblAnimals)' ;
+ end;
+
+ if iNum = 1 then
+ begin
+  sOut := 'SELECT * FROM tblAnimals WHERE PopulationGrowthPositive = True'  ;
+ end;
+
+ if iNum = 2 then
+ begin
+  sOut := 'SELECT * FROM tblAnimals WHERE PopulationGrowthPositive = False' ;
+ end;
+
+ if iNum = 3 then
+ begin
+  sOut := 'select tblAnimals.AnimalID, Species, sum(amount) as [Total Money raised] from tblAnimals, tblAnimalDonations where tblAnimals.AnimalID = tblAnimalDonations.AnimalID group by species,  tblAnimals.AnimalID order by Sum(Amount) desc';
+ end;
+
+ if iNum = 4 then
+ begin
+  sOut := 'select tblAnimals.AnimalID, Species, cCur(Sum(Amount)) as [Total Money raised] from tblAnimals, tblAnimalDonations where tblAnimals.AnimalID = tblAnimalDonations.AnimalID group by species,  tblAnimals.AnimalID order by Sum(Amount) asc';
+ end;
+
+ if iNum = 5 then
+ begin
+  sOut := 'select Ccur(sum(Amount)/count(tblAnimals.AnimalID)) as [Average amount recieved(R)] from tblAnimalDonations, tblAnimals';
+ end;
+
+ if iNum = 6 then
+ begin
+  sOut := 'select cCur(Sum(Amount)) as [Total amount recieved(R)] from tblAnimalDonations';
+ end;
+
+ if iNum = 7 then
+ begin
+  sAmount := inputBox('Enter amount', 'Amount', '0') ;
+  val(sAmount,rAmount,iError);
+  if iError = 0 then
+  begin
+  sOut := 'select tblAnimals.AnimalID, Species, Sum(Amount) as [Total Money raised] from tblAnimals, tblAnimalDonations where (tblAnimals.AnimalID = tblAnimalDonations.AnimalID) group by species,  tblAnimals.AnimalID having (Sum(Amount) > ' + sAmount + ') order by Sum(Amount) desc';
+  end
+  else
+  begin
+  ShowMessage('Not a valid real value. Please try again.');
+  bFalse := False ;
+  end;
+ end;
+
+
+ if (not (iNum = -1)) and (bFalse = True) then
+ begin
+ dmDataA.qrStore.Close;
+ dmDataA.qrStore.SQL.Clear;
+ dmDataA.qrStore.SQL.Add(sOut) ;
+ dmDataA.qrStore.open;
+ end;
+
+end;
+
+procedure TfrmAdmin.rgpClientQClick(Sender: TObject);
+var
+iNum, iError:integer;
+rAmount:real;
+sOut, sAmount:string;
+bFalse :boolean  ;
+sAnimal:string;
+begin
+//Qurries for Clients
+rgpPS.ItemIndex := -1;
+rgpAnimalQuerries.ItemIndex := -1 ;
+cmbServiceProducts.ItemIndex := -1 ;
+ iNum := rgpClientQ.ItemIndex ;
+ bFalse := True ;
+ if iNum = 0 then
+ begin
+  sOut := 'select tblClient.ClientID, Name, Surname, Company, phone,  cCur(sum(Total)) as [Total amount spent(R)] from tblTransaction, tblclient '  ;
+  sOut := sOut + 'where tblClient.ClientID = tblTransaction.clientID group by tblClient.ClientID, Name, Surname, Company, phone order by cCur(sum(Total)) desc' ;
+
+ end;
+
+ if iNum = 1 then
+ begin
+  sOut := 'select tblTransaction.ClientID, Company, Name , Surname, count(*) as [Total transactions] from tblTransaction, tblClient where tblClient.clientID = tblTransaction.clientID group by tblTransaction.ClientID, Company, Name , Surname order by count(*) desc' ;
+ end;
+
+ if iNum = 2 then
+ begin
+  sAmount := inputBox('Enter amount', 'Amount', '0') ;
+  val(sAmount,rAmount,iError);
+  if iError = 0 then
+  begin
+  sOut := 'select tblClient.clientID, Name, Surname, Company, sum(total) as [Total] from tblTransaction, tblClient where tblClient.ClientID = tblTransaction.clientID group by tblClient.clientID, Name, Surname,   Company  having sum(total) >' + sAmount + ' order by sum(Total) desc';
+  end
+  else
+  begin
+  ShowMessage('Not a valid real value. Please try again.');
+  bFalse := False ;
+  end;
+ end;
+
+ if iNum = 3 then
+ begin
+ sAnimal :=  inputbox('Animal ID of the desired Animal', 'Animal ID:','1');
+  val(sAnimal,rAmount,iError);
+  if iError = 0 then
+   begin
+
+   if (validateAnimal(sAnimal) = True)  then
+    begin
+    sOut := 'select tblClient.ClientID, name, species, sum( amount) as [Amount Donated(R)] from tblAnimalDonations, tbltransaction, tblClient, tblAnimals ';
+    sOut  := sout + 'where (tblAnimalDonations.TransactionID = tblTransaction.TransactionID) and (tblTransaction.clientID = tblClient.ClientID) and ( tblAnimals.AnimalID = tblAnimalDonations.AnimalID) and (tblAnimals.AnimalID = ' + sAnimal + ')' ;
+    sOut := sOut +  'group by  tblClient.ClientID, name, species order by  sum( amount) desc' ;
+    end
+    else
+    begin
+    ShowMessage('ID does not exist');
+    bFalse := False ;
+    end;
+   end
+   else
+   begin
+     ShowMessage('ID does not exist');
+      bFalse := False ;
+   end;
+ end;
+
+ if (not (iNum = -1)) and (bFalse = True) then
+ begin
+ dmDataA.qrStore.Close;
+ dmDataA.qrStore.SQL.Clear;
+ dmDataA.qrStore.SQL.Add(sOut) ;
+ dmDataA.qrStore.open;
+ end;
+
+end;
+
+procedure TfrmAdmin.rgpPSClick(Sender: TObject);
+var
+iNum, iX:integer;
+sOut: String;
+begin
+//Querries for products
+rgpAnimalQuerries.ItemIndex := -1;
+rgpClientQ.ItemIndex := -1 ;
+iNum := rgpPS.ItemIndex;
+iX := cmbServiceProducts.ItemIndex ;
+ if not (ix = -1) then
+ begin
+
+
+ if iX = 0 then
+ begin
+
+  if iNum = 0 then
+  begin
+  sOut := 'select tblProducts.productID, Description, Type,  sum(productAmount) as [Amount purchased] ' ;
+  sOut := sOut + 'from tblPurchaseRecord, tblProducts where tblproducts.ProductID = tblPurchaserecord.ProductID group by tblProducts.productID, Description, Type order by sum(productAmount) desc'
+  end;
+
+  if iNum = 1 then
+  begin
+  sOut := 'select ProductID, type, description, Price as [Price(R)] from tblProducts order by price desc'  ;
+  end;
+
+ end ;
+
+ if iX = 1 then
+ begin
+   if iNum = 0 then
+  begin
+  sOut := 'select tblService.ServiceID, Description, sum(serviceAmount) as [Amount purchased] from tblPurchaseRecord, tblService where tblService.ServiceID = tblPurchaserecord.ServiceID group by tblService.ServiceID, Description order by sum(ServiceAmount) desc' ;
+  end;
+
+ if iNum = 1 then
+  begin
+  sOut := 'select ServiceID, description, Price as [Price(R)] from tblService order by price desc'  ;
+  end;
+
+ end;
+
+
+ if not (iNum = -1) then
+  begin
+  dmDataA.qrStore.Close;
+  dmDataA.qrStore.SQL.Clear;
+  dmDataA.qrStore.SQL.Add(sOut) ;
+  dmDataA.qrStore.open;
+  end;
+ end
+ else
+ begin
+   ShowMessage('Choose a product or service');
+   cmbServiceProducts.SetFocus;
+ end;
+
+end;
+
+
+
+procedure TfrmAdmin.rgpTypeClick(Sender: TObject);
+var
+iP : integer;
+begin
+///Chooses Animal or Client
+///  Animal Delete
+///  Client Report
+redData.Clear;
+edtID.Clear;
+ip := rgpType.ItemIndex;
+if ip = 0 then
+ begin
+   btnGen.Visible := false ;
+   btnDelete.Visible := True ;
+ end;
+
+ if ip = 1 then
+ begin
+   btnGen.Visible := True ;
+   btnDelete.Visible := False ;
+ end;
+end;
+
+procedure TfrmAdmin.ShowAllEdit;
+begin
+//Hide Animal;
+lblSpecieT.Visible := True ;
+lblAliveT.Visible := True;
+lblPopT.Visible := True ;
+edtSpecies.Visible := True ;
+sedAlive.Visible := True ;
+chkPositive.Visible := True;
+chkNegative.Visible := True;
+btnAddA.Visible := True;
+
+ //Hide Product
+lblTypeT.Visible := True;
+lblDesT.Visible := True;
+lblSoldT.Visible := True;
+lblPriceT.Visible := True;
+lblStockT.Visible := True;
+edtType.Visible := True;
+redDESP.Visible := True;
+sedStockP.Visible := True;
+edtMoneyRP.Visible := True;
+sedSoldP.Visible := True;
+btnADDDP.Visible := True ;
+
+//Hide Service
+lblDesS.Visible := True;
+lblLocS.Visible := True;
+lblProvS.Visible := True;
+lblPrS.Visible := True;
+lblSoldS.Visible := True;
+btnAddDataS.Visible := True;
+redDesService.Visible := True;
+edtLocation.Visible := True;
+cmbProvince.Visible := True;
+edtPriceRS.Visible := True;
+sedSoldS.Visible := True;
+end;
+
+function TfrmAdmin.SpecieExist(sSpecie: string): boolean;
+begin
+///Checks if specie exist
+result := False;
+ dmDataA.tblAnimals.First;
+ while not dmDataA.tblAnimals.Eof do
+  begin
+    if sSpecie = dmDataA.tblAnimals['Species'] then
+     begin
+       result := True ;
+     end;
+
+  dmDataA.tblAnimals.Next;
+  end;
+
+end;
+
+function TfrmAdmin.validateAnimal(sAnimal: string): boolean;
+begin
+///Check if species is already in the database
+Result := False ;
+dmDataA.tblAnimals.First;
+while not dmDataA.tblAnimals.Eof do
+ begin
+
+   if sAnimal = dmDataA.tblAnimals['AnimalID']  then
+   begin
+    result := True ;
+   end;
+
+
+ dmDataA.tblAnimals.Next
+ end;
+
+end;
+
+procedure TfrmAdmin.ValidateID;
+var
+sTemp:string;
+i, iError:integer;
+rX :real;
+sL:string ;
+begin
+///Validates ID
+///  and determines if it is a
+///  AnimalID or
+///  ClientID or
+///  Product or
+///  Service
+bBegin := True ;
+if IDExist(sID) = False then
+ begin
+ bBegin := False;
+ HideALLEdit;
+ ShowMessage('ID does not exist') ;
+ end;
+
+end;
+
+end.
