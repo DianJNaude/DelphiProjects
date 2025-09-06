@@ -1,6 +1,4 @@
 Welcome to Bobs Zoo
-This is an interactive game for children where they get to practise math, spelling and memory in various ways.
-The program is quite intuitive so you can run the exe file and start playing
 Thankyou for purchasing this product.
 
 Starting the program

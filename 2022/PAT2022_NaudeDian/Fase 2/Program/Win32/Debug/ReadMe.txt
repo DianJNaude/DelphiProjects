@@ -11,9 +11,8 @@ following these steps
  Show DbGrid Functionality
  Control panel
 
-Username for Admin: 01DiaWisA
-Password for Admin: DW9561
-Username for User: 01DiaWis
+Username for Admin: 01DiaWis
+Password for Admin: DW9561A
 Password as a user: DW9561 
 
 

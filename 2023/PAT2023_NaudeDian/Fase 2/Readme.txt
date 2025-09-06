@@ -1,21 +1,16 @@
-
+Open program
+NB!!!!
+Do not open NauDia1000xx
 Open SOA_DN
 Open all the delphi scource files
  
 by Login On activate
   ///To see exceptional message feature make bMessagingActive = True
 ///Activate Twillo
-// Update for 2025_ This is not working any more ass the subscription to twillo is not active anymore
 
 In runtime
 //Username: 0826530404
 //Password: PAT1
-
-// For Admin add a "A" to the username
-in this case the username for admin and password will be
-//Username: 0826530404A
-//Password: PAT1
-
 
 ///////////////////////////////////////////
 Learners demo notes
